@@ -161,9 +161,11 @@ window.addEventListener('checklistUpdated',(e)=>{
 	else{
 		selectedCategory.add(selected);
 	}
-	selectedCategory[selectedCategory.length-1].forEach((s)=>{
-		selectedCategory2.add(s);
-	})
+	if(selectedCategory.length>0 && selectedCategory2.length>0){
+		selectedCategory[selectedCategory.length-1].forEach((s)=>{
+			selectedCategory2.add(s);
+		})
+	}	
 	console.log('selectedCategory1: ',selectedCategory);
 	console.log('selectedCategory2: ',selectedCategory2);
 	console.log('selected1: ',selected);
