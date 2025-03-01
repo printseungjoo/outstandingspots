@@ -153,12 +153,14 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 
 window.addEventListener('checklistUpdated',(e)=>{
-	const clickedCategory = e.detail;
-	if(selectedCategory.has(clickedCategory)){
-		selectedCategory.delete(clickedCategory);
+	selected = e.detail;
+	if(selectedCategory.has(selected)){
+		selectedCategory.delete(selected);
 	}
 	else{
-		selectedCategory.add(clickedCategory);
+		selectedCategory.add(selected);
 	}
+	console.log('selectedCategory1: ',selectedCategory);
+	console.log('selected1: ',selected);
 	pointOptions(option); 
 })
