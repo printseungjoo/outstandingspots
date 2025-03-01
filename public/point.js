@@ -111,9 +111,10 @@ function optionDetail(optionData){
 
 let markers = [];
 
-function pointOptions(option){
+function pointOptions(option,categorySelected){
 	hideMarkers();
     option.forEach((o)=>{
+		console.log(categorySelected);
 		if(categorySelected.includes(o.category)){
         	var markerPosition = new kakao.maps.LatLng(o.lat, o.lon);
         	var marker = new kakao.maps.Marker({
@@ -160,5 +161,5 @@ window.addEventListener('checklistUpdated',(e)=>{
 		categorySelected.push(selected);
 	}
 	console.log('e.detail:',selected);
-	pointOptions(option);
+	pointOptions(option,categorySelected);
 })
