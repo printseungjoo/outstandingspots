@@ -153,5 +153,5 @@ document.addEventListener('DOMContentLoaded',()=>{
 window.addEventListener('checklistUpdated',(e)=>{
 	selected = e.detail;
 	console.log('e.detail:',selected);
-	pointOptions(option);
+	pointOptions(option); 
 })
