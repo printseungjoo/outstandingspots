@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-mongoose.connect(process.env.MONGO_URI_CATEGORY,{
+mongoose.connect(process.env.MONGO_URI_CATEGORY ,{
     useNewUrlParser:true,
     useUnifiedTopology:true
 })
