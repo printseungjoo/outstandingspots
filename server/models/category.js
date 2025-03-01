@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb+srv://outstanding:osforsunystudent2025@outstandingspots.xbewg.mongodb.net/category',{
+mongoose.connect(process.env.MONGO_URI_CATEGORY,{
     useNewUrlParser:true,
     useUnifiedTopology:true
 })

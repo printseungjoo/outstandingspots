@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb+srv://outstanding:osforsunystudent2025@outstandingspots.xbewg.mongodb.net/option',{
+mongoose.connect(process.env.MONGO_URI_OPTION,{
     useNewUrlParser:true,
     useUnifiedTopology:true
 })
