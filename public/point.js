@@ -154,7 +154,7 @@ var categorySelected = [];
 window.addEventListener('checklistUpdated',(e)=>{
 	selected = e.detail;
 	if(selected[selected.length-1].includes(categorySelected)){
-		selected.pop(); 
+		// selected.pop(); 
 	}
 	else{
 		categorySelected.push(selected[selected.length-1][categorySelected.length-1]);
