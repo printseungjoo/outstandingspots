@@ -150,8 +150,15 @@ document.addEventListener('DOMContentLoaded',()=>{
 	fetchO();
 });
 
+var categorySelected = [];
 window.addEventListener('checklistUpdated',(e)=>{
 	selected = e.detail;
+	if(categorySelected.includes(selected)){
+		categorySelected = selected.filter(c=>c!==selected);
+	}
+	else{
+		categorySelected.push(selected);
+	}
 	console.log('e.detail:',selected);
 	pointOptions(option);
 })
