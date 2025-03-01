@@ -153,11 +153,11 @@ document.addEventListener('DOMContentLoaded',()=>{
 var categorySelected = [];
 window.addEventListener('checklistUpdated',(e)=>{
 	selected = e.detail;
-	if(selected.includes(categorySelected)){
-		selected.pop();
+	if(selected[-1].includes(categorySelected)){
+		selected[-1].pop();
 	}
 	else{
-		categorySelected.push(selected);
+		categorySelected.push(selected[-1]);
 	}
 	console.log('e.detail:',selected);
 	console.log('categorySelected: ',categorySelected);
