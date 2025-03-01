@@ -110,11 +110,12 @@ function optionDetail(optionData){
 }
 
 let markers = [];
+let selectedCategory = new Set();
 
 function pointOptions(option){
 	hideMarkers();
     option.forEach((o)=>{
-		if(selected.includes(o.category)){
+		if(selectedCategory.has(o.category)){
         	var markerPosition = new kakao.maps.LatLng(o.lat, o.lon);
         	var marker = new kakao.maps.Marker({
             	position: markerPosition,
@@ -152,7 +153,12 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 
 window.addEventListener('checklistUpdated',(e)=>{
-	selected = e.detail;
-	console.log('e.detail:',selected);
+	const clickedCategory = e.detail;
+	if(selectedCategory.has(clickedCategory)){
+		selectedCategory.delete(clickedCategory);
+	}
+	else{
+		selectedCategory.add(clickedCategory);
+	}
 	pointOptions(option); 
 })
