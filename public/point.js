@@ -157,7 +157,7 @@ window.addEventListener('checklistUpdated',(e)=>{
 		selected.pop(); 
 	}
 	else{
-		categorySelected.push(selected[selected.length-1][selected.length-1]);
+		categorySelected.push(selected[selected.length-1][categorySelected.length-1]);
 	}
 	console.log('e.detail:',selected);
 	console.log('categorySelected: ',categorySelected);
