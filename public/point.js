@@ -115,7 +115,7 @@ function pointOptions(option,categorySelected){
 	hideMarkers();
     option.forEach((o)=>{
 		console.log(categorySelected);
-		if(selected.includes(categorySelected)){
+		if(o.category.includes(categorySelected)){
         	var markerPosition = new kakao.maps.LatLng(o.lat, o.lon);
         	var marker = new kakao.maps.Marker({
             	position: markerPosition,
