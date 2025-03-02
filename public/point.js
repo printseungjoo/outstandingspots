@@ -112,6 +112,7 @@ function optionDetail(optionData){
 let markers = [];
 
 function pointOptions(option){
+	console.log("현재 선택된 카테고리:", selected);
 	hideMarkers();
     option.forEach((o)=>{
 		if(selected.includes(o.category)){
