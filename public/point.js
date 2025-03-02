@@ -143,6 +143,7 @@ function hideMarkers() {
     allMarkers.forEach((m)=>{
 		m.setMap(null);
 	})
+	markers = [];
 }
 
 document.addEventListener('DOMContentLoaded',()=>{
