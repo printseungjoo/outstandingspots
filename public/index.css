@@ -635,11 +635,19 @@ a {
     padding: 15px;
 }
 
+#ad{
+    display:none;
+}
+
 @media (max-width: 768px) {
+    #ad{
+        display:block;
+    }
+    
     #adminLogin{
         display:none;
     }
-    
+
     #askClick {
         width: 100%;
     }
