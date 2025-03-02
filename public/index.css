@@ -636,6 +636,10 @@ a {
 }
 
 @media (max-width: 768px) {
+    #adminLogin{
+        display:none;
+    }
+    
     #askClick {
         width: 100%;
     }
@@ -683,6 +687,10 @@ a {
 }
 
 @media (max-width: 835px) {
+    #adminLogin{
+        display:none;
+    }
+
     #askClick {
         width: 100%;
     }
