@@ -20,7 +20,7 @@ function showPasswordBlock() {
 	adminLoginBack1.style.display = 'block';
 }
 
-const adminP = "osforsunystudent2025"
+const adminP = process.env.ADMINPASSWORD;
 function adminLogin() {
 	const adminInput = document.getElementById('adminPassword').value;
 	if (adminInput === adminP) {
