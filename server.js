@@ -13,8 +13,7 @@ app.get('/api/admin-password', (req, res) => {
 
 app.use(cors({
     origin: ['http://localhost:5500', 'https://www.outstandingspots.com', 'https://outstandingspots.com', 'https://web-production-888c9.up.railway.app'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true
+    methods: ['GET', 'POST', 'PUT', 'DELETE']
   }));
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "https://www.outstandingspots.com");
