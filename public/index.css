@@ -639,6 +639,10 @@ a {
     display:none;
 }
 
+#adminLogin{
+    display:none;
+}
+
 @media (max-width: 768px) {
     #ad{
         display:block;
