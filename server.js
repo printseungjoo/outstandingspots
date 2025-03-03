@@ -7,6 +7,10 @@ const app = express();
 const PORT = process.env.PORT || 5500;
 const cors = require('cors');
 
+app.get('/api/admin-password', (req, res) => {
+    res.json({ adminPassword: process.env.ADMINPASSWORD });
+});
+
 app.use(cors({
     origin: ['http://localhost:5500', 'https://www.outstandingspots.com', 'https://outstandingspots.com', 'https://web-production-888c9.up.railway.app'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],

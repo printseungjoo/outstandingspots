@@ -20,7 +20,14 @@ function showPasswordBlock() {
 	adminLoginBack1.style.display = 'block';
 }
 
-const adminP = process.env.ADMINPASSWORD;
+fetch('/api/admin-password')
+.then(response => response.json())
+.then(data => {
+    const adminP = data.adminPassword;
+    console.log(adminP);
+})
+.catch(error => console.error('Error:', error));
+
 function adminLogin() {
 	const adminInput = document.getElementById('adminPassword').value;
 	if (adminInput === adminP) {
