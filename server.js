@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({path:'./server/.env'});
 const express = require('express');
 const categoryModel = require('./server/models/category.js');
 const optionModel = require('./server/models/option.js');
