@@ -20,7 +20,9 @@ function showPasswordBlock() {
 	adminLoginBack1.style.display = 'block';
 }
 
-fetch('https://web-production-888c9.up.railway.app/api/admin-password')
+fetch('https://web-production-888c9.up.railway.app/api/admin-password', {
+	mode: 'no-cors'
+})
 .then(response => response.json())
 .then(data => {
     const adminP = data.adminPassword;
