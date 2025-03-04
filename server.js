@@ -1,6 +1,5 @@
 require('dotenv').config({path:'./server/.env'});
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 
@@ -49,15 +48,19 @@ app.get('/', (req, res) => {
 
 let categories = [];
 app.post('/categories', async (req, res) => {
-    const {name} = req.body;
+    const { name } = req.body;
     try {
+        const existingCategory = await categoryModel.findOne({ name });
+        if (existingCategory) {
+            return res.status(400).json({ error: '이미 존재하는 카테고리입니다.' });
+        }
         const newC = new categoryModel({ name });
         await newC.save();
-        res.status(201).json({ newC });
+        res.status(201).json({ message: '카테고리 추가 성공', newC });
     } catch (err) {
-        res.status(500).json({ error: 'One more time' });
+        res.status(500).json({ error: '카테고리 추가 실패' });
     }
-})
+});
 
 app.put('/categories/:id', async (req, res) => {
     try {
