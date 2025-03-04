@@ -5,6 +5,8 @@ const path = require('path');
 
 const categoryModel = require('./server/models/category.js');
 const optionModel = require('./server/models/option.js');
+const auth = require('./server/routes/auth.js');
+const {authenticate,adminOnly} = require('./server/middlewares/authM.js');
 
 const app = express();
 const PORT = process.env.PORT || 5500;
@@ -21,6 +23,7 @@ app.use(cors({
 
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.json());
+app.use('/api/auth', authRoutes);
 
 app.get('/categories', async (req, res) => {
     try {
@@ -47,7 +50,7 @@ app.get('/', (req, res) => {
 });
 
 let categories = [];
-app.post('/categories', async (req, res) => {
+app.post('/categories', authenticate, adminOnly,  async (req, res) => {
     const { name } = req.body;
     try {
         const existingCategory = await categoryModel.findOne({ name });
@@ -62,7 +65,7 @@ app.post('/categories', async (req, res) => {
     }
 });
 
-app.put('/categories/:id', async (req, res) => {
+app.put('/categories/:id', authenticate, adminOnly, async (req, res) => {
     try {
         const updatedCategory = await categoryModel.findOneAndUpdate(
             { _id: req.params.id },
@@ -78,7 +81,7 @@ app.put('/categories/:id', async (req, res) => {
     }
 });
 
-app.delete('/categories/:id', async (req, res) => {
+app.delete('/categories/:id', authenticate, adminOnly,  async (req, res) => {
     try {
         const deletedCategory = await categoryModel.findOneAndDelete({_id:req.params.id});
         if (!deletedCategory) {
@@ -90,7 +93,7 @@ app.delete('/categories/:id', async (req, res) => {
     }
 });
 
-app.post('/options', async (req, res) => {
+app.post('/options', authenticate, adminOnly, async (req, res) => {
     try {
         const newO = new optionModel(req.body)
         await newO.save();
