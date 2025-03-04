@@ -15,7 +15,7 @@ mongoose.connect(process.env.MONGO_URI, {
   .catch(err => console.error("MongoDB 연결 실패:", err));
 
 async function createAdminUser() {
-    const adminExists = await User.findOne({ username: 'admin' });
+    const adminExists = await user.findOne({ username: 'admin' });
     if (!adminExists) {
         const hashedPassword = await bcrypt.hash('adminpassword', 10);
         const adminUser = new User({
