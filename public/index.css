@@ -700,6 +700,10 @@ a {
 }
 
 @media (max-width: 835px) {
+    #ad{
+        display:block;
+    }
+    
     #adminLogin{
         display:none;
     }
