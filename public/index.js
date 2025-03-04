@@ -20,24 +20,6 @@ function showPasswordBlock() {
 	adminLoginBack1.style.display = 'block';
 }
 
-fetch('https://web-production-888c9.up.railway.app/api/admin-password')
-.then(response => response.json())
-.then(data => {
-    const adminP = data.adminPassword;
-    console.log(adminP);
-})
-.catch(error => console.error('Error:', error));
-
-function adminLogin() {
-	const adminInput = document.getElementById('adminPassword').value;
-	if (adminInput === adminP) {
-		window.location.href = 'admin.html'
-	}
-	else {
-		alert('암호가 틀렸습니다.');
-	}
-}
-
 function adminLoginBack() {
 	const adminPassword = document.getElementById('adminPassword');
 	const adminLoginEnter = document.getElementById('adminLoginEnter');
