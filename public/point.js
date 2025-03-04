@@ -1,24 +1,29 @@
 import { mapContainer, map } from './map.js';
 
 let option = [];
-async function fetchO(){
-	try{
-		// const response = await fetch('https://www.outstandingspots.com/option');
-		const response = await fetch('https://web-production-888c9.up.railway.app/options');
-		// const response = await fetch('https://localhost:5500/option');
-		if(!response.ok){
-			throw new Error('Failed to fetch');
-		}
-		else{
-			console.log('response is ok!');
-		}
-		option = await response.json();
-		showAllOptions(option);
-		showOptions(option);
-	}
-	catch(err){
-		console.error('Error:',err);
-	}
+async function fetchO() {
+    try {
+        const token = localStorage.getItem('token'); 
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+        const response = await fetch('https://web-production-888c9.up.railway.app/options', {
+            headers: headers
+        });
+        if (!response.ok) {
+            const errorText = await response.text(); 
+            throw new Error(`Failed to fetch: ${response.status} - ${errorText}`);
+        }
+        const option = await response.json();
+        showAllOptions(option);
+        showOptions(option);
+    }
+    catch (err) {
+        console.error('Error fetching options:', err.message);
+    }
 }
 
 var allMarkers = [];

@@ -48,23 +48,30 @@ function adminLoginBack() {
 }
 
 async function fetchC() {
-	try {
-		// const response = await fetch('https://www.outstandingspots.com/category');
-		const response = await fetch('https://web-production-888c9.up.railway.app/category');
-		// const response = await fetch('https://localhost:5500/category');
-		if (!response.ok) {
-			throw new Error('Failed to fetch');
-		}
-		else {
-			console.log('response is ok!');
-		}
-		const category = await response.json();
-		showCategories(category);
-	}
-	catch (err) {
-		console.error('Error:', err);
-	}
+    try {
+        const token = localStorage.getItem('token');
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+        const response = await fetch('https://web-production-888c9.up.railway.app/categories', {
+            headers: headers
+        });
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Failed to fetch: ${response.status} - ${errorText}`);
+        }
+        console.log('Response is OK!');
+        const category = await response.json();
+        showCategories(category);
+    }
+    catch (err) {
+        console.error('Error fetching categories:', err.message);
+    }
 }
+
 
 let selected = JSON.parse(localStorage.getItem('selected')) || [];
 function showCategories(category) {
@@ -118,12 +125,3 @@ window.addEventListener('DOMContentLoaded', () => {
 })
 
 window.selected = selected;
-
-// document.addEventListener('DOMContentLoaded', async () => {
-// 	try {
-// 		const response = await fetch('https://ossample3.onrender.com')
-// 		const data = await response.json()
-// 	} catch (error) {
-// 		console.error('Error fetching data:', error)
-// 	}
-// })
