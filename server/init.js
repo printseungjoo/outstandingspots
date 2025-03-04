@@ -13,11 +13,15 @@ mongoose.connect(process.env.MONGO_URI, {
   .then(() => console.log("MongoDB 연결 성공"))
   .catch(err => console.error("MongoDB 연결 실패:", err));
 
-function createCategory(categoryObj){
+async function createCategory(categoryObj) {
+    const existingCategory = await categoryModel.findOne({ name: categoryObj.name });
+    if (existingCategory) {
+        return;
+    }
     let newCategory = new categoryModel({
-        name:categoryObj.name
+        name: categoryObj.name
     });
-    return newCategory.save();
+    await newCategory.save();
 }
 
 function createOption(optionObj){
