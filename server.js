@@ -23,7 +23,7 @@ app.use(cors({
 
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.json());
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', auth);
 
 app.get('/categories', async (req, res) => {
     try {
