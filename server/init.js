@@ -1,8 +1,10 @@
 require('dotenv').config();
 
 const mongoose = require("mongoose");
+const bcrypt = require('bcryptjs');
 const categoryModel = require('./models/category');
 const optionModel = require('./models/option');
+const user = require('./models/user');
 
 // const MONGO_URI = "mongodb://localhost:27017/places"
 mongoose.connect(process.env.MONGO_URI, {
@@ -11,6 +13,20 @@ mongoose.connect(process.env.MONGO_URI, {
   })
   .then(() => console.log("MongoDB 연결 성공"))
   .catch(err => console.error("MongoDB 연결 실패:", err));
+
+async function createAdminUser() {
+    const adminExists = await User.findOne({ username: 'admin' });
+    if (!adminExists) {
+        const hashedPassword = await bcrypt.hash('adminpassword', 10);
+        const adminUser = new User({
+            username: 'admin',
+            password: hashedPassword,
+            isAdmin: true
+        });
+        await adminUser.save();
+    }
+}
+createAdminUser();
 
 async function createCategory(categoryObj) {
     const existingCategory = await categoryModel.findOne({ name: categoryObj.name });
@@ -262,7 +278,7 @@ async function optionData(){
             etc:'24시 연중무휴 매장, PT는 10회 단위로만 등록 가능, 헬스장이 작기 때문에 헬스장 이용권, PT 둘 다 각각 선착순의 인원 수만 등록 가능, PT 진행시 헬스장 이용권은 당연히 무료, 가격은 현금가 기준, 카드 결제 시 수수료 발생'
         },
         {
-            photo:'./images/팀윤짐 PT 송도 5호점 (한 번에 결제 시).png',
+            photo:'./images/팀윤짐 PT 송도 5호점(한 번에 결제 시).png',
             category:'헬스장 및 필라테스',
             name:'히든핏PT(한 번에 결제 시)',
             name2:'송도점',
