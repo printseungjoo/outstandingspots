@@ -131,6 +131,7 @@ function pointOptions(option){
 			})
 			console.log(marker.discount);
         	if (map) {
+				console.log('map 클릭됨');
             	marker.setMap(map);
 				markers.push(marker);
 
