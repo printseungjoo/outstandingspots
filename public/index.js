@@ -70,7 +70,7 @@ function showCategories(category) {
 	label1.textContent = '모두 보기';
 	div1.appendChild(check1);
 	div1.appendChild(label1);
-	categoryList.appendChild(div);
+	categoryList.appendChild(div1);
 	category.forEach((c) => {
 		const div = document.createElement('div');
 		const check = document.createElement('input');
