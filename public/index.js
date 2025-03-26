@@ -8,6 +8,7 @@ function openAsk() {
 function closeAsk() {
 	askClick.style.display = 'none';
 }
+
 const adminPassword = document.getElementById('adminPassword');
 const adminLoginEnter = document.getElementById('adminLoginEnter');
 const adminLoginBack1 = document.getElementById('adminLoginBack');

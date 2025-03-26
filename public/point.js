@@ -26,6 +26,12 @@ async function fetchO() {
     }
 }
 
+function checkAllOButton(){
+	option.forEach((o)=>{
+		o.checked = 'false';
+	})
+}
+
 var allMarkers = [];
 function showAllOptions(option){	
 	option.forEach((o) => {
@@ -119,6 +125,7 @@ let markers = [];
 
 function pointOptions(option){
 	console.log("현재 선택된 카테고리:", selected);
+	document.getElementById('checkAllO').checked = 'false';
 	hideMarkers();
     allMarkers.forEach((marker)=>{
 		const o = marker.optionData;
