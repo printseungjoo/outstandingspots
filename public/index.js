@@ -68,8 +68,8 @@ function showCategories(category) {
 	check1.value = 'checkAllButton';
 	label1.htmlFor = '모두 보기';
 	label1.textContent = '모두 보기';
-	div1.appendChild(check);
-	div1.appendChild(label);
+	div1.appendChild(check1);
+	div1.appendChild(label1);
 	categoryList.appendChild(div);
 	category.forEach((c) => {
 		const div = document.createElement('div');
