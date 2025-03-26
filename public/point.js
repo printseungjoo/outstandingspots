@@ -34,6 +34,7 @@ function showAllOptions(option){
             position: markerPosition,
         });
         marker.setMap(map);
+		marker.optionData = o;
 		allMarkers.push(marker);
 		kakao.maps.event.addListener(marker, 'click', function () {
             showOptionDescription(o);
@@ -119,25 +120,13 @@ let markers = [];
 function pointOptions(option){
 	console.log("현재 선택된 카테고리:", selected);
 	hideMarkers();
-    option.forEach((o)=>{
+    allMarkers.forEach((marker)=>{
+		const o = marker.optionData;
 		if(selected.includes(o.category)){
-        	var markerPosition = new kakao.maps.LatLng(o.lat, o.lon);
-        	var marker = new kakao.maps.Marker({
-            	position: markerPosition,
-        	});
-            kakao.maps.event.addListener(marker, 'click', ()=>{
-				showOptionDescription(o);
-				console.log("마커 클릭됨:", o);
-			})
-			console.log(marker.discount);
-        	if (map) {
-				console.log('map 클릭됨');
-            	marker.setMap(map);
-				markers.push(marker);
-
-        	}
+			marker.setMap(map);
+			markers.push(marker);
 		}
-    })
+	});
 }
 
 function setMarkers(map) {
