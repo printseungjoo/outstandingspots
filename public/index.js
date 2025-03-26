@@ -60,17 +60,6 @@ let selected = JSON.parse(localStorage.getItem('selected')) || [];
 function showCategories(category) {
 	const categoryList = document.getElementById('categoryList');
 	categoryList.innerHTML = '';
-	const div1 = document.createElement('div');
-	const check1 = document.createElement('input');
-	const label1 = document.createElement('label');
-	check1.type = 'checkbox';
-	check1.id = 'checkAllButton';
-	check1.value = 'checkAllButton';
-	label1.htmlFor = '모두 보기';
-	label1.textContent = '모두 보기';
-	div1.appendChild(check1);
-	div1.appendChild(label1);
-	categoryList.appendChild(div1);
 	category.forEach((c) => {
 		const div = document.createElement('div');
 		const check = document.createElement('input');
