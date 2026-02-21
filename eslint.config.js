@@ -17,7 +17,7 @@ export default defineConfig([globalIgnores(['dist']), {
     reactRefresh.configs.vite,
   ],
   languageOptions: {
-    ecmaVersion: 2020,
+    ecmaVersion: 2020, 
     globals: globals.browser,
   },
 }, ...storybook.configs["flat/recommended"]])
