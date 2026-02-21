@@ -12,5 +12,5 @@ const config: StorybookConfig = {
     "@storybook/addon-onboarding"
   ],
   "framework": "@storybook/react-webpack5"
-};
-export default config;
+};  
+export default config;  
