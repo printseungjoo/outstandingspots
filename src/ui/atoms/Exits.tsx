@@ -12,12 +12,12 @@ const Exit = styled.button`
     align-items: center;
 `;
 
-interface classNameProps {
+interface ExitProps {
     readonly className?: string;
     readonly onClick?: () => void;
 }
 
-export function Exits({className, onClick}: classNameProps) {
+export function Exits({className, onClick}: ExitProps) {
     return(
         <Exit className = {className} onClick = {onClick}>
             x
