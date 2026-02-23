@@ -5,11 +5,14 @@ const Exit = styled.button`
     border: 0.8px solid black;
     background-color: #FF9E9E;
     color: white;
-    width: 0.5rem;
+    width: 1rem;
     height: 1rem;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 0;
+    text-align: center;
+    font-size: 0.8rem;
 `;
 
 interface ExitProps {
@@ -17,10 +20,10 @@ interface ExitProps {
     readonly onClick?: () => void;
 }
 
-export function Exits({className, onClick}: ExitProps) {
-    return(
-        <Exit className = {className} onClick = {onClick}>
-            x
+export function Exits({ className, onClick }: ExitProps) {
+    return (
+        <Exit className={className} onClick={onClick}>
+            X
         </Exit>
     )
 }

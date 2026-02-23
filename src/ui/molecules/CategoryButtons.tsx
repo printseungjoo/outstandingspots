@@ -9,7 +9,6 @@ const CategoryButton = styled.div`
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.8rem;
     padding: 0.7rem 0.1rem;
 `;
 
@@ -21,13 +20,17 @@ const ExitsPlus = styled(Exits)`
     z-index: 2;
 `
 
-export function CategoryButtons() {
+interface CategoryButtonsProps {
+    categoryNameProp: string;
+}
+
+export function CategoryButtons({ categoryNameProp }: CategoryButtonsProps) {
     const [clicked, setClicked] = useState(false);
 
-    return(
+    return (
         <CategoryButton>
-            <Categories categoryName = '음식점' clicked = { clicked } onClick={() => setClicked(true)}/>
-            {clicked && <ExitsPlus onClick={() => setClicked(false)}/>}
+            <Categories categoryName={ categoryNameProp } clicked={clicked} onClick={() => setClicked(true)} />
+            {clicked && <ExitsPlus onClick={() => setClicked(false)} />}
         </CategoryButton>
     )
 }

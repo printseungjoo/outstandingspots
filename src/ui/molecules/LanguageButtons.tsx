@@ -7,13 +7,18 @@ const LanguageButton = styled.div`
     display: inline-flex;
     border: 1px solid black;
     padding: 0.5rem 0.5rem;
+    background-color: white;
 `;
 
-export function LanguageButtons() {
+interface LanguageButtonsProps {
+    className?: string;
+}
+
+export function LanguageButtons({ className }: LanguageButtonsProps) {
     const [kor, setKor] = useState(true);
 
     return(
-        <LanguageButton>
+        <LanguageButton className = { className }>
             <Languages languageName = 'KOR' selected = { kor } onClick = {() => setKor(true)}/>
             <Languages languageName = 'ENG' selected = { !kor } onClick = {() => setKor(false)}/>
         </LanguageButton>

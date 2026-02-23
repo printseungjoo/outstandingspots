@@ -4,6 +4,7 @@ const Language = styled.button<{selected: boolean}>`
     font-weight: bold;
     background-color: ${({ selected }) => selected?'#E3E6FF':'white'};
     border: 0px solid black;
+    border-radius: 0;
     padding: 0.5rem 0.6rem;
 `;
 

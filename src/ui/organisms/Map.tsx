@@ -5,16 +5,20 @@ import { InitMap } from '../../apis/InitMap';
 
 const MapStyled = styled.div`
     width: 100%;
-    height: 100%;
+    height: 100vh;
 `;
 
-export function Map() {
+interface MapProps {
+    className?: string;
+}
+
+export function Map({ className }: MapProps) {
     useEffect(() => {
         InitMap();
     }, []);
 
     return(
-        <MapStyled id = 'map'>
+        <MapStyled id = 'map' className = { className }>
         </MapStyled>
     )
 }

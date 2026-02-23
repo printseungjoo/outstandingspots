@@ -7,9 +7,13 @@ const OptionGroup = styled.div`
     flex-direction: column;
 `;
 
-export function OptionGroups() {
+interface OptionGroupsProps {
+    className?: string;
+}
+
+export function OptionGroups({ className }: OptionGroupsProps) {
     return(
-        <OptionGroup>
+        <OptionGroup className = { className }>
             <Options optionName = '🧭'/>
             <Options optionName = '❓'/>
             <Options optionName = '📜'/>
