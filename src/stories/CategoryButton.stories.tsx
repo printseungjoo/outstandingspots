@@ -13,6 +13,6 @@ type Story = StoryObj<typeof CategoryButtons>
 
 export const Example1: Story = {
     args: {
-        categoryName: "음식점",
+        categoryNameProp: "음식점",
     }
 }
