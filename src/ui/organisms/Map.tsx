@@ -14,7 +14,7 @@ interface MapProps {
 
 export function Map({ className }: MapProps) {
     useEffect(() => {
-        InitMap();
+        InitMap(() => {});
     }, []);
 
     return(

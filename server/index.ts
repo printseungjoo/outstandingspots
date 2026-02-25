@@ -5,6 +5,7 @@ import cors from 'cors';
 
 import { connectDB } from './config/ConnectDB';
 import categoryModel from './models/CategoryModels';
+import storeModel from './models/StoreModels';
 
 const app = express();
 
@@ -21,6 +22,16 @@ app.get('/categories', async (req: Request, res: Response) => {
     try {
         const categories = await categoryModel.find({}, 'name');
         res.json(categories);
+    }
+    catch (err) {
+        res.status(500).json({ error: 'Fetch에 실패하였습니다.' });
+    }
+});
+
+app.get('/stores', async (req: Request, res: Response) => {
+    try {
+        const options = await storeModel.find({}, 'photo category name branch naverMap lat lon discount description');
+        res.json(options);
     }
     catch (err) {
         res.status(500).json({ error: 'Fetch에 실패하였습니다.' });
