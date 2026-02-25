@@ -5,7 +5,7 @@ import { InitMap } from '../../apis/InitMap';
 
 const MapStyled = styled.div`
     width: 100%;
-    height: 100vh;
+    height: 84vh;
 `;
 
 interface MapProps {

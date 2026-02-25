@@ -8,7 +8,7 @@ import { Map } from './Map';
 const MainContentStyled = styled.div`
     position: relative;
     width: 100%;
-    height: 100vh;
+    height: 84vh;
 `;
 
 const MapPlus = styled(Map)`
@@ -35,9 +35,13 @@ const AllCategoriesPlus = styled(AllCategories)`
     bottom: 2rem;
 `
 
-export function MainContent() {
+interface MainContentProps {
+    className?: string;
+}
+
+export function MainContent({ className }: MainContentProps) {
     return (
-        <MainContentStyled>
+        <MainContentStyled className = {className}>
             <MapPlus />
             <LanguageButtonsPlus />
             <OptionGroupsPlus />
