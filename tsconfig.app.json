@@ -26,5 +26,6 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src", "server/models", "server/server", "server/config", "server/index.ts"]
+  "include": ["src"],
+  "exclude": ["server"]
 }
