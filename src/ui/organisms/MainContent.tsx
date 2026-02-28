@@ -1,9 +1,12 @@
 import styled from '@emotion/styled';
+import { useState } from 'react';
 
 import { AllCategories } from '../molecules/AllCategories';
 import { LanguageButtons } from '../molecules/LanguageButtons';
 import { OptionGroups } from '../molecules/OptionGroups';
 import { Map } from './Map';
+import { StoreInformationTab } from '../organisms/StoreInformationTab';
+import type { fetchStoreInterface } from '../../interfaces/FetchStoreInterface';
 
 const MainContentStyled = styled.div`
     position: relative;
@@ -33,16 +36,26 @@ const AllCategoriesPlus = styled(AllCategories)`
     position: absolute;
     z-index: 2;
     bottom: 2rem;
-`
+`;
+
+const StoreInformationTabPlus = styled(StoreInformationTab)`
+    position: absolute;
+    z-index: 3;
+`;
 
 interface MainContentProps {
     className?: string;
+    photoSrc?: string;
+    storeKorName?: string;
 }
 
 export function MainContent({ className }: MainContentProps) {
+    const [selectedStore, setSelectedStore] = useState<fetchStoreInterface | null>(null);
+
     return (
-        <MainContentStyled className = {className}>
-            <MapPlus />
+        <MainContentStyled className={className}>
+            {selectedStore && (<StoreInformationTabPlus store = {selectedStore} onClose = {() => setSelectedStore(null)} />)}
+            <MapPlus onSelectStore = {(store: fetchStoreInterface) => setSelectedStore(store)}/>
             <LanguageButtonsPlus />
             <OptionGroupsPlus />
             <AllCategoriesPlus />

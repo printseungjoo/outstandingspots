@@ -1,56 +1,31 @@
 import { useState, useEffect } from 'react';
-import styled from '@emotion/styled';
 
-import { InitMap } from '../../apis/InitMap';
+import type { fetchStoreInterface } from '../../interfaces/FetchStoreInterface';
 
-const MapStyled = styled.div`
-    width: 100%;
-    height: 100vh;
-`;
-
-interface fetchStoreInterface {
-    photo: string;
-    category: {
-        kor: string;
-        eng: string;
-    };
-    name: {
-        kor: string;
-        eng: string;
-    };
-    branchy: {
-        kor: string;
-        eng: string;
-    };
-    naverMap: string;
-    lat: number;
-    lon: number;
-    discount: {
-        kor: string;
-        eng: string;
-    };
-    description: {
-        kor: string;
-        eng: string;
-    };
+declare global {
+    namespace kakao.maps.event {
+        function addListener(
+            marker: Marker,
+            type: string,
+            handler: () => void
+        ): void;
+    }
 }
 
-export function FetchStore() {
-    const [kakaoMap, setkakaoMap] = useState<kakao.maps.Map | null>(null);
-    const [stores, setStores] = useState<fetchStoreInterface[]>([]);
+interface MarkerProps {
+    onSelectStore?: (store: fetchStoreInterface) => void;
+    kakaoMap?: kakao.maps.Map | null;
+}
 
-    useEffect(() => {
-        InitMap((loadedMap) => {
-            setkakaoMap(loadedMap);
-        });
-    }, []);
+export function Marker({ onSelectStore, kakaoMap }: MarkerProps) {
+    const [stores, setStores] = useState<fetchStoreInterface[]>([]);
 
     useEffect(() => {
         fetch('http://localhost:5500/stores')
         .then((res) => res.json())
         .then((data) => setStores(data))
         .catch((err) => console.error(err))
-    }, [])
+    }, []);
 
     useEffect(() => {
         if (!kakaoMap || stores.length === 0) {
@@ -63,8 +38,12 @@ export function FetchStore() {
                 position: markerPosition
             });
             marker.setMap(kakaoMap);
-        });
-    }, [kakaoMap, stores])
 
-    return <MapStyled id="map" />;
+            kakao.maps.event.addListener(marker, 'click', () => {
+                onSelectStore?.(store);
+            })
+        });
+    }, [kakaoMap, stores, onSelectStore]);
+
+    return null;
 }
