@@ -11,9 +11,10 @@ const OptionGroup = styled.div`
 interface OptionGroupsProps {
     className?: string;
     map?: kakao.maps.Map | null;
+    onOpenWebsiteInfo?: () => void;
 }
 
-export function OptionGroups({ className, map }: OptionGroupsProps) {
+export function OptionGroups({ className, map, onOpenWebsiteInfo }: OptionGroupsProps) {
     return (
         <OptionGroup className={className}>
             <Options optionName='🧭' onClick={() => {
@@ -21,7 +22,7 @@ export function OptionGroups({ className, map }: OptionGroupsProps) {
                     CurrentLocation(map);
                 }
             }} />
-            <Options optionName='❓' />
+            <Options optionName='❓' onClick = { onOpenWebsiteInfo } />
             <Options optionName='📜' />
             <Options optionName='🔑' />
         </OptionGroup>

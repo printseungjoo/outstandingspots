@@ -7,6 +7,7 @@ import { OptionGroups } from '../molecules/OptionGroups';
 import { Map } from './Map';
 import { StoreInformationTab } from '../organisms/StoreInformationTab';
 import type { fetchStoreInterface } from '../../interfaces/FetchStoreInterface';
+import { WebsiteInformationTab } from './WebsiteInformationTab';
 
 const MainContentStyled = styled.div`
     position: relative;
@@ -40,7 +41,7 @@ const AllCategoriesPlus = styled(AllCategories)`
 
 const StoreInformationTabPlus = styled(StoreInformationTab)`
     position: absolute;
-    z-index: 3;
+    z-index: 4;
 `;
 
 interface MainContentProps {
@@ -53,13 +54,15 @@ export function MainContent({ className }: MainContentProps) {
     const [selectedStore, setSelectedStore] = useState<fetchStoreInterface | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
     const [map, setMap] = useState<kakao.maps.Map | null>(null);
+    const [isWebsiteInfoOpen, setIsWebsiteInfoOpen] = useState(false);
 
     return (
         <MainContentStyled className={className}>
             {selectedStore && (<StoreInformationTabPlus store={selectedStore} onClose={() => setSelectedStore(null)} />)}
             <MapPlus onGetMap = { setMap } selectedCategory = { selectedCategory } onSelectStore={(store: fetchStoreInterface) => setSelectedStore(store)} />
             <LanguageButtonsPlus />
-            <OptionGroupsPlus map = { map } /> 
+            <OptionGroupsPlus map = { map } onOpenWebsiteInfo = {() => setIsWebsiteInfoOpen(true)} />
+            {isWebsiteInfoOpen && (<WebsiteInformationTab onClose = {() => setIsWebsiteInfoOpen(false)}/>)}
             <AllCategoriesPlus onSelectCategory={(category: string) => {
                 setSelectedCategory((stack) => {
                     if (stack.includes(category)) return stack;
