@@ -12,6 +12,8 @@ const AllCategory = styled.div`
 
 interface AllCategoriesProps {
     className?: string;
+    onSelectCategory: (category: string) => void;
+    onRemoveCategory: (category: string) => void;
 }
 
 interface CategoriesInterface {
@@ -22,7 +24,7 @@ interface CategoriesInterface {
     };
 }
 
-export function AllCategories({ className }: AllCategoriesProps) {
+export function AllCategories({ className, onSelectCategory, onRemoveCategory }: AllCategoriesProps) {
     const [categories, setCategories] = useState<CategoriesInterface[]>([]);
 
     useEffect(() => {
@@ -35,7 +37,7 @@ export function AllCategories({ className }: AllCategoriesProps) {
     return (
         <AllCategory className={className}>
             {categories.map((category) => (
-                <CategoryButtons key={category._id} categoryNameProp={category.name.kor} />
+                <CategoryButtons onRemoveCategory = { onRemoveCategory } onSelectCategory = { onSelectCategory } key={ category._id } categoryNameProp={ category.name.kor } />
             ))}
         </AllCategory>
     )

@@ -18,19 +18,21 @@ const ExitsPlus = styled(Exits)`
     right: 0;
     transform: translate(40%, 20%);
     z-index: 2;
-`
+`;
 
 interface CategoryButtonsProps {
     categoryNameProp: string;
+    onSelectCategory: (category: string) => void;
+    onRemoveCategory: (category: string) => void;
 }
 
-export function CategoryButtons({ categoryNameProp }: CategoryButtonsProps) {
+export function CategoryButtons({ categoryNameProp, onSelectCategory, onRemoveCategory }: CategoryButtonsProps) {
     const [clicked, setClicked] = useState(false);
 
     return (
         <CategoryButton>
-            <Categories categoryName={ categoryNameProp } clicked={clicked} onClick={() => setClicked(true)} />
-            {clicked && <ExitsPlus onClick={() => setClicked(false)} />}
+            <Categories onSelectCategory = { onSelectCategory } categoryName = { categoryNameProp } clicked = { clicked } onClick = {() => setClicked(true)} />
+            {clicked && <ExitsPlus onClick={() => { setClicked(false); onRemoveCategory(categoryNameProp) }} />}
         </CategoryButton>
     )
 }

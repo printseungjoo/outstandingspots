@@ -13,9 +13,10 @@ const MapStyled = styled.div`
 interface MapProps {
     className?: string;
     onSelectStore?: (store: fetchStoreInterface) => void;
+    selectedCategory: string[];
 }
 
-export function Map({ className, onSelectStore }: MapProps) {
+export function Map({ className, onSelectStore, selectedCategory }: MapProps) {
     const [kakaoMap, setKakaoMap] = useState<kakao.maps.Map | null>(null);
 
     useEffect(() => {
@@ -26,7 +27,7 @@ export function Map({ className, onSelectStore }: MapProps) {
         <>
             <MapStyled id='map' className={className}>
             </MapStyled>
-            <Marker onSelectStore = { onSelectStore } kakaoMap = { kakaoMap } />
+            <Marker selectedCategory = { selectedCategory } onSelectStore = { onSelectStore } kakaoMap = { kakaoMap } />
         </>
     )
 }

@@ -51,14 +51,24 @@ interface MainContentProps {
 
 export function MainContent({ className }: MainContentProps) {
     const [selectedStore, setSelectedStore] = useState<fetchStoreInterface | null>(null);
+    const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
 
     return (
         <MainContentStyled className={className}>
-            {selectedStore && (<StoreInformationTabPlus store = {selectedStore} onClose = {() => setSelectedStore(null)} />)}
-            <MapPlus onSelectStore = {(store: fetchStoreInterface) => setSelectedStore(store)}/>
+            {selectedStore && (<StoreInformationTabPlus store={selectedStore} onClose={() => setSelectedStore(null)} />)}
+            <MapPlus selectedCategory = { selectedCategory } onSelectStore={(store: fetchStoreInterface) => setSelectedStore(store)} />
             <LanguageButtonsPlus />
-            <OptionGroupsPlus />
-            <AllCategoriesPlus />
+            <OptionGroupsPlus /> 
+            <AllCategoriesPlus onSelectCategory={(category: string) => {
+                setSelectedCategory((stack) => {
+                    if (stack.includes(category)) return stack;
+                    return [...stack, category];
+                });
+            }} 
+            onRemoveCategory = {(category: string) => {
+                setSelectedCategory((stack) => stack.filter((c) => c !== category))
+            }}
+            />
         </MainContentStyled>
     )
 }
