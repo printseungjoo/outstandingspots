@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { Photos } from '../atoms/Photos';
 import type { fetchStoreInterface } from '../../interfaces/FetchStoreInterface';
 import { StoreInformationGroups } from './StoreInformationGroups';
+import { NaverMaps } from '../atoms/NaverMaps';
 
 const StoreInformationStyled = styled.div`
     width: 25%;
@@ -44,6 +45,11 @@ const BranchName = styled.p`
     margin-top: 0.2rem;
 `;
 
+const ContentFlexing = styled.div`
+    display: flex;
+    align-items: center;
+`;
+
 interface StoreInformationProps {
     store: fetchStoreInterface;
 }
@@ -54,11 +60,14 @@ export function StoreInformation({ store }: StoreInformationProps) {
     return (
         <div>
             <StoreInformationStyled>
-                <Photos photoSrc={ store.photo } storeKorName={ store.name.kor } />
+                <Photos photoSrc = { store.photo } storeKorName = { store.name.kor } />
                 <StoreNamesDiv>
-                    <StoreName>
-                        { store.name.kor }
-                    </StoreName>
+                    <ContentFlexing>
+                        <StoreName>
+                            { store.name.kor }
+                        </StoreName>
+                        <NaverMaps storeNaverMap = { store.naverMap }/>
+                    </ContentFlexing>
                     <BranchName>
                         { store.branch.kor }
                     </BranchName>
