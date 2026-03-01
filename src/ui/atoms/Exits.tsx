@@ -16,8 +16,8 @@ const Exit = styled.button`
 `;
 
 interface ExitProps {
-    readonly className?: string;
-    readonly onClick?: () => void;
+    className?: string;
+    onClick?: () => void;
 }
 
 export function Exits({ className, onClick }: ExitProps) {

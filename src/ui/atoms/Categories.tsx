@@ -8,10 +8,10 @@ const Category = styled.button<{clicked: boolean}>`
 `;
 
 interface CategoryProps {
-    readonly categoryName: string;
-    readonly clicked: boolean;
-    readonly onClick?: () => void;
-    readonly onSelectCategory: (category: string) => void;
+    categoryName: string;
+    clicked: boolean;
+    onClick?: () => void;
+    onSelectCategory: (category: string) => void;
 }
 
 export function Categories({ categoryName, clicked, onClick, onSelectCategory }: CategoryProps) {
