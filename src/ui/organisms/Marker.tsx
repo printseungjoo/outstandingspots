@@ -15,7 +15,7 @@ declare global {
 interface MarkerProps {
     onSelectStore?: (store: fetchStoreInterface) => void;
     kakaoMap?: kakao.maps.Map | null;
-    selectedCategory: string[];
+    selectedCategory?: string[];
 }
 
 type MarkerItem = {
@@ -64,11 +64,11 @@ export function Marker({ onSelectStore, kakaoMap, selectedCategory }: MarkerProp
     useEffect(() => {
         if (!kakaoMap || markersRef.current.length === 0) return;
 
-        const showAll = selectedCategory.length === 0;
+        const showAll = selectedCategory?.length === 0;
 
         markersRef.current.forEach(({ marker, store }) => {
             const storeCategory = store.category.kor;
-            const shouldShow = showAll ? true : selectedCategory.includes(String(storeCategory));
+            const shouldShow = showAll ? true : selectedCategory?.includes(String(storeCategory));
             marker.setMap(shouldShow ? kakaoMap : null);
         });
     }, [kakaoMap, selectedCategory]);
