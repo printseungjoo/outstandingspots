@@ -52,13 +52,14 @@ interface MainContentProps {
 export function MainContent({ className }: MainContentProps) {
     const [selectedStore, setSelectedStore] = useState<fetchStoreInterface | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
+    const [map, setMap] = useState<kakao.maps.Map | null>(null);
 
     return (
         <MainContentStyled className={className}>
             {selectedStore && (<StoreInformationTabPlus store={selectedStore} onClose={() => setSelectedStore(null)} />)}
-            <MapPlus selectedCategory = { selectedCategory } onSelectStore={(store: fetchStoreInterface) => setSelectedStore(store)} />
+            <MapPlus onGetMap = { setMap } selectedCategory = { selectedCategory } onSelectStore={(store: fetchStoreInterface) => setSelectedStore(store)} />
             <LanguageButtonsPlus />
-            <OptionGroupsPlus /> 
+            <OptionGroupsPlus map = { map } /> 
             <AllCategoriesPlus onSelectCategory={(category: string) => {
                 setSelectedCategory((stack) => {
                     if (stack.includes(category)) return stack;

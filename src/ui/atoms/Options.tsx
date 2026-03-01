@@ -15,11 +15,12 @@ const Option = styled.button`
 
 interface OptionProps {
     optionName: string;
+    onClick?: () => void;
 }
 
-export function Options({ optionName }: OptionProps) {
+export function Options({ optionName, onClick }: OptionProps) {
     return(
-        <Option>
+        <Option onClick = { onClick }>
             { optionName }
         </Option>
     )

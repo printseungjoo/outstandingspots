@@ -31,6 +31,12 @@ declare global {
             content: string;
             removable: boolean;
         }
+
+        class InfoWindow {
+            constructor(options: InfoWindowInterface);
+            open(map: Map, marker: Marker): void;
+            close(): void;
+        }
     }
 
     interface Window {
@@ -56,13 +62,6 @@ export function InitMap(callback: (map: kakao.maps.Map) => void) {
         };
         const map = new window.kakao.maps.Map(mapContainer, mapOption);
         window.kakaoMap = map;
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function (position) {
-                const locPosition = new window.kakao.maps.LatLng(position.coords.latitude, position.coords.longitude);
-                new window.kakao.maps.Marker({ map, position: locPosition });
-                map.setCenter(locPosition);
-            });
-        }
 
         callback(map);
 

@@ -14,13 +14,17 @@ interface MapProps {
     className?: string;
     onSelectStore?: (store: fetchStoreInterface) => void;
     selectedCategory: string[];
+    onGetMap?: (map: kakao.maps.Map) => void;
 }
 
-export function Map({ className, onSelectStore, selectedCategory }: MapProps) {
+export function Map({ className, onSelectStore, selectedCategory, onGetMap }: MapProps) {
     const [kakaoMap, setKakaoMap] = useState<kakao.maps.Map | null>(null);
 
     useEffect(() => {
-        InitMap((map) => { setKakaoMap(map) });
+        InitMap((map) => { 
+            setKakaoMap(map);
+            if (onGetMap) onGetMap(map);
+        });
     }, []);
 
     return (
