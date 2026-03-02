@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
+import { useState, useEffect } from 'react';
 
 import { InitMap } from '../../apis/InitMap';
 import { Marker } from './Marker';
@@ -15,9 +15,10 @@ interface MapProps {
     onSelectStore?: (store: fetchStoreInterface) => void;
     selectedCategory: string[];
     onGetMap?: (map: kakao.maps.Map) => void;
+    selectedStore: fetchStoreInterface | null;
 }
 
-export function Map({ className, onSelectStore, selectedCategory, onGetMap }: MapProps) {
+export function Map({ className, onSelectStore, selectedCategory, onGetMap, selectedStore }: MapProps) {
     const [kakaoMap, setKakaoMap] = useState<kakao.maps.Map | null>(null);
 
     useEffect(() => {
@@ -29,9 +30,8 @@ export function Map({ className, onSelectStore, selectedCategory, onGetMap }: Ma
 
     return (
         <>
-            <MapStyled id='map' className={className}>
-            </MapStyled>
-            <Marker selectedCategory = { selectedCategory } onSelectStore = { onSelectStore } kakaoMap = { kakaoMap } />
+            <MapStyled id='map' className={className}/>
+            <Marker selectedCategory = { selectedCategory } onSelectStore = { onSelectStore } kakaoMap = { kakaoMap } selectedStore = { selectedStore } />
         </>
     )
 }

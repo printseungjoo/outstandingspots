@@ -1,4 +1,5 @@
 export interface fetchStoreInterface {
+    _id: string;
     photo: string;
     category: {
         kor: string;

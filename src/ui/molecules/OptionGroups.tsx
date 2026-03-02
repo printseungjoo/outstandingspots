@@ -12,9 +12,10 @@ interface OptionGroupsProps {
     className?: string;
     map?: kakao.maps.Map | null;
     onOpenWebsiteInfo?: () => void;
+    onOpenStoreList?: () => void;
 }
 
-export function OptionGroups({ className, map, onOpenWebsiteInfo }: OptionGroupsProps) {
+export function OptionGroups({ className, map, onOpenWebsiteInfo, onOpenStoreList }: OptionGroupsProps) {
     return (
         <OptionGroup className={className}>
             <Options optionName='🧭' onClick={() => {
@@ -23,7 +24,7 @@ export function OptionGroups({ className, map, onOpenWebsiteInfo }: OptionGroups
                 }
             }} />
             <Options optionName='❓' onClick = { onOpenWebsiteInfo } />
-            <Options optionName='📜' />
+            <Options optionName='📜' onClick = { onOpenStoreList }/>
             <Options optionName='🔑' />
         </OptionGroup>
     )

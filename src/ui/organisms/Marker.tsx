@@ -16,6 +16,7 @@ interface MarkerProps {
     onSelectStore?: (store: fetchStoreInterface) => void;
     kakaoMap?: kakao.maps.Map | null;
     selectedCategory?: string[];
+    selectedStore?: fetchStoreInterface | null;
 }
 
 type MarkerItem = {
@@ -23,7 +24,7 @@ type MarkerItem = {
     store: fetchStoreInterface;
 }
 
-export function Marker({ onSelectStore, kakaoMap, selectedCategory }: MarkerProps) {
+export function Marker({ onSelectStore, kakaoMap, selectedCategory, selectedStore }: MarkerProps) {
     const [stores, setStores] = useState<fetchStoreInterface[]>([]);
     const markersRef = useRef<MarkerItem[]>([]);
 
@@ -72,6 +73,29 @@ export function Marker({ onSelectStore, kakaoMap, selectedCategory }: MarkerProp
             marker.setMap(shouldShow ? kakaoMap : null);
         });
     }, [kakaoMap, selectedCategory]);
+
+    useEffect(() => {
+        if(!kakaoMap || markersRef.current.length === 0) return;
+
+        if(selectedStore) {
+            markersRef.current.forEach(({ marker, store }) => {
+                const isTarget = store._id === selectedStore._id;
+                marker.setMap(isTarget ? kakaoMap : null);
+            });
+            const loc = new kakao.maps.LatLng(selectedStore.lat, selectedStore.lon);
+            kakaoMap.setCenter(loc);
+            kakaoMap.setLevel(3);
+            return;
+        }
+
+        const resetMarkers = selectedCategory?.length === 0;
+
+        markersRef.current.forEach(({ marker, store }) => {
+            const storeCategory = store.category.kor;
+            const show = resetMarkers ? true : selectedCategory?.includes(storeCategory);
+            marker.setMap(show? kakaoMap : null);
+        });
+    }, [kakaoMap, selectedCategory, selectedStore]);
 
     return null;
 }

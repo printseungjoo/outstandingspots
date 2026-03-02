@@ -8,6 +8,7 @@ import { Map } from './Map';
 import { StoreInformationTab } from '../organisms/StoreInformationTab';
 import type { fetchStoreInterface } from '../../interfaces/FetchStoreInterface';
 import { WebsiteInformationTab } from './WebsiteInformationTab';
+import { AllStoresTab } from './AllStoresTab';
 
 const MainContentStyled = styled.div`
     position: relative;
@@ -54,15 +55,17 @@ export function MainContent({ className }: MainContentProps) {
     const [selectedStore, setSelectedStore] = useState<fetchStoreInterface | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
     const [map, setMap] = useState<kakao.maps.Map | null>(null);
-    const [isWebsiteInfoOpen, setIsWebsiteInfoOpen] = useState(false);
+    const [isWebsiteInfoOpen, setIsWebsiteInfoOpen] = useState<boolean>(false);
+    const [isStoreListOpen, setIsStoreListOpen] = useState<boolean>(false);
 
     return (
         <MainContentStyled className={className}>
-            {selectedStore && (<StoreInformationTabPlus store={selectedStore} onClose={() => setSelectedStore(null)} />)}
-            <MapPlus onGetMap = { setMap } selectedCategory = { selectedCategory } onSelectStore={(store: fetchStoreInterface) => setSelectedStore(store)} />
-            <LanguageButtonsPlus />
-            <OptionGroupsPlus map = { map } onOpenWebsiteInfo = {() => setIsWebsiteInfoOpen(true)} />
+            {selectedStore && (<StoreInformationTabPlus store={selectedStore} onClose={() => setSelectedStore(null)}/>)}
+            <MapPlus onGetMap = { setMap } selectedCategory = { selectedCategory } onSelectStore={(store: fetchStoreInterface) => setSelectedStore(store)} selectedStore = { selectedStore }/>
+            <LanguageButtonsPlus/>
+            <OptionGroupsPlus map = { map } onOpenWebsiteInfo = {() => setIsWebsiteInfoOpen(true)} onOpenStoreList = {() => setIsStoreListOpen(true)}/>
             {isWebsiteInfoOpen && (<WebsiteInformationTab onClose = {() => setIsWebsiteInfoOpen(false)}/>)}
+            {isStoreListOpen && (<AllStoresTab onOpen = {(store: fetchStoreInterface) => setSelectedStore(store)} onClose = {() => setIsStoreListOpen(false)}/>)}
             <AllCategoriesPlus onSelectCategory={(category: string) => {
                 setSelectedCategory((stack) => {
                     if (stack.includes(category)) return stack;
