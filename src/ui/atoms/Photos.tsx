@@ -13,13 +13,13 @@ const Photo = styled.div`
 
 interface PhotosProps {
     photoSrc?: string;
-    storeKorName?: string;
+    storeAltName?: string;
 }
 
-export function Photos({ photoSrc, storeKorName }: PhotosProps) {
+export function Photos({ photoSrc, storeAltName }: PhotosProps) {
     return(
         <Photo>
-            <img src = {photoSrc} alt = {storeKorName}/>
+            <img src = {photoSrc} alt = {storeAltName}/>
         </Photo>
     )
 }

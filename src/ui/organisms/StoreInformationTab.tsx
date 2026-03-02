@@ -21,16 +21,19 @@ const ExitsPlus = styled(Exits)`
     pointer-events: auto;
 `;
 
+type Language = 'kor' | 'eng';
+
 interface StoreInformationTabProps {
     className?: string;
     onClose?: () => void;
     store: fetchStoreInterface;
+    language: Language;
 }
 
-export function StoreInformationTab({ className, onClose, store }: StoreInformationTabProps) {
+export function StoreInformationTab({ className, onClose, store, language }: StoreInformationTabProps) {
     return(
         <StoreInformationTabStyled className = { className }>
-            <StoreInformation store = { store }/>
+            <StoreInformation store = { store } language = { language }/>
             <ExitsPlus onClick = { onClose }/>
         </StoreInformationTabStyled>
     )

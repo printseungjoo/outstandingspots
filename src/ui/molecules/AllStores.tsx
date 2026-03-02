@@ -44,11 +44,14 @@ const StoreButton = styled.button`
     padding: 3vh;
 `;
 
+type Language = 'kor' | 'eng';
+
 interface AllStoresProps {
     onOpen?: (store: fetchStoreInterface) => void;
+    language: Language;
 }
 
-export function AllStores({ onOpen }: AllStoresProps) {
+export function AllStores({ onOpen, language }: AllStoresProps) {
     const [stores, setStores] = useState<fetchStoreInterface[]>([]);
 
     useEffect(() => {
@@ -61,14 +64,14 @@ export function AllStores({ onOpen }: AllStoresProps) {
     return (
         <AllStore>
             <Title>
-                전체 매장 확인하기
+                {language === 'eng' ? 'View all stores' : '전체 매장 확인하기'}
             </Title>
             <Detail>
-                가나다 순으로 정렬되어 있습니다. <br/> 스크롤을 통해 더 확인하세요!
+                {language === 'eng' ? 'It is arranged in alphabetical order.' : '가나다 순으로 정렬되어 있습니다.'} <br/> {language === 'eng' ? 'Scroll through to find out more!' : '스크롤을 통해 더 확인하세요!'}
             </Detail>
             {stores.map((store) => (
                 <StoreButton key = {store._id} onClick = {() => {onOpen?.(store);}}>
-                    {store.name.kor} {store.branch.kor}
+                    {language === 'eng' ? store.name.eng : store.name.kor} {language === 'eng' ? store.branch.eng : store.branch.kor}
                 </StoreButton>
             ))}
         </AllStore>

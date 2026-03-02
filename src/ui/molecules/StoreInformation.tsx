@@ -50,30 +50,33 @@ const ContentFlexing = styled.div`
     align-items: center;
 `;
 
+type Language = 'kor' | 'eng';
+
 interface StoreInformationProps {
     store: fetchStoreInterface;
+    language: Language;
 }
 
 // 일단 데이터 가져오는 걸 한국어로 맞춰놓고 나중에 수정 예정
 // 사진 데이터는 현재 임시 데이터
-export function StoreInformation({ store }: StoreInformationProps) {
+export function StoreInformation({ store, language }: StoreInformationProps) {
     return (
         <div>
             <StoreInformationStyled>
-                <Photos photoSrc = { store.photo } storeKorName = { store.name.kor } />
+                <Photos photoSrc = { store.photo } storeAltName = {language === 'eng' ? store.name.eng : store.name.kor} />
                 <StoreNamesDiv>
                     <ContentFlexing>
                         <StoreName>
-                            { store.name.kor }
+                            {language === 'eng' ? store.name.eng : store.name.kor}
                         </StoreName>
                         <NaverMaps storeNaverMap = { store.naverMap }/>
                     </ContentFlexing>
                     <BranchName>
-                        { store.branch.kor }
+                        {language === 'eng' ? store.branch.eng : store.branch.kor}
                     </BranchName>
                 </StoreNamesDiv>
-                <StoreInformationGroups storeInformationTitle='할인 가격' storeInformationContent = { store.discount.kor } />
-                <StoreInformationGroups storeInformationTitle='추가 유의사항' storeInformationContent = { store.description.kor } />
+                <StoreInformationGroups storeInformationTitle = {language === 'eng' ? 'A discounted price' : '할인 가격'} storeInformationContent = {language === 'eng' ? store.discount.eng : store.discount.kor} />
+                <StoreInformationGroups storeInformationTitle = {language === 'eng' ? 'Additional precautions' : '추가 유의사항'} storeInformationContent = {language === 'eng' ? store.description.eng : store.description.kor} />
             </StoreInformationStyled>
         </div>
     )

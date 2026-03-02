@@ -10,17 +10,20 @@ const LanguageButton = styled.div`
     background-color: white;
 `;
 
+type Language = 'kor' | 'eng';
+
 interface LanguageButtonsProps {
     className?: string;
+    onChangeLanguage: (language: Language) => void;
 }
 
-export function LanguageButtons({ className }: LanguageButtonsProps) {
+export function LanguageButtons({ className, onChangeLanguage }: LanguageButtonsProps) {
     const [kor, setKor] = useState(true);
 
     return(
         <LanguageButton className = { className }>
-            <Languages languageName = 'KOR' selected = { kor } onClick = {() => setKor(true)}/>
-            <Languages languageName = 'ENG' selected = { !kor } onClick = {() => setKor(false)}/>
+            <Languages languageName = 'KOR' selected = { kor } onClick = {() => {setKor(true); onChangeLanguage('kor')}}/>
+            <Languages languageName = 'ENG' selected = { !kor } onClick = {() => {setKor(false); onChangeLanguage('eng')}}/>
         </LanguageButton>
     )
 }

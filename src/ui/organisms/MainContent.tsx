@@ -51,22 +51,25 @@ interface MainContentProps {
     storeKorName?: string;
 }
 
+type Language = 'kor' | 'eng';
+
 export function MainContent({ className }: MainContentProps) {
     const [selectedStore, setSelectedStore] = useState<fetchStoreInterface | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
     const [map, setMap] = useState<kakao.maps.Map | null>(null);
     const [isWebsiteInfoOpen, setIsWebsiteInfoOpen] = useState<boolean>(false);
     const [isStoreListOpen, setIsStoreListOpen] = useState<boolean>(false);
+    const [language, setLanguage] = useState<Language>('kor');
 
     return (
         <MainContentStyled className={className}>
-            {selectedStore && (<StoreInformationTabPlus store={selectedStore} onClose={() => setSelectedStore(null)}/>)}
+            {selectedStore && (<StoreInformationTabPlus store={selectedStore} onClose={() => setSelectedStore(null)} language = { language }/>)}
             <MapPlus onGetMap = { setMap } selectedCategory = { selectedCategory } onSelectStore={(store: fetchStoreInterface) => setSelectedStore(store)} selectedStore = { selectedStore }/>
-            <LanguageButtonsPlus/>
+            <LanguageButtonsPlus onChangeLanguage = { setLanguage }/>
             <OptionGroupsPlus map = { map } onOpenWebsiteInfo = {() => setIsWebsiteInfoOpen(true)} onOpenStoreList = {() => setIsStoreListOpen(true)}/>
-            {isWebsiteInfoOpen && (<WebsiteInformationTab onClose = {() => setIsWebsiteInfoOpen(false)}/>)}
-            {isStoreListOpen && (<AllStoresTab onOpen = {(store: fetchStoreInterface) => setSelectedStore(store)} onClose = {() => setIsStoreListOpen(false)}/>)}
-            <AllCategoriesPlus onSelectCategory={(category: string) => {
+            {isWebsiteInfoOpen && (<WebsiteInformationTab onClose = {() => setIsWebsiteInfoOpen(false)} language = { language }/>)}
+            {isStoreListOpen && (<AllStoresTab onOpen = {(store: fetchStoreInterface) => setSelectedStore(store)} onClose = {() => setIsStoreListOpen(false)} language = { language }/>)}
+            <AllCategoriesPlus language = { language } onSelectCategory={(category: string) => {
                 setSelectedCategory((stack) => {
                     if (stack.includes(category)) return stack;
                     return [...stack, category];

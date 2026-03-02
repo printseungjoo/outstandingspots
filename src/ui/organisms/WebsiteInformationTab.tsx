@@ -23,14 +23,17 @@ const ExitsPlus = styled(Exits)`
     pointer-events: auto;
 `;
 
+type Language = 'kor' | 'eng';
+
 interface WebsiteInformationTabProps {
     onClose?: () => void;
+    language: Language;
 }
 
-export function WebsiteInformationTab({ onClose }: WebsiteInformationTabProps) {
+export function WebsiteInformationTab({ onClose, language }: WebsiteInformationTabProps) {
     return(
         <WebsiteInformationTabStyled>
-            <WebsiteInformation/>
+            <WebsiteInformation language = { language }/>
             <ExitsPlus onClick={ onClose }/>
         </WebsiteInformationTabStyled>
     )

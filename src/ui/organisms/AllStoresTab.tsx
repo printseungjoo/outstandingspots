@@ -21,15 +21,18 @@ const ExitsPlus = styled(Exits)`
     pointer-events: auto;
 `;
 
+type Language = 'kor' | 'eng';
+
 interface AllStoresTabProps {
     onOpen?: (store: fetchStoreInterface) => void;
     onClose?: () => void;
+    language: Language;
 }
 
-export function AllStoresTab({ onOpen, onClose }: AllStoresTabProps) {
+export function AllStoresTab({ onOpen, onClose, language }: AllStoresTabProps) {
     return(
         <AllStoresTabStyled>
-            <AllStores onOpen = { onOpen }/>
+            <AllStores onOpen = { onOpen } language = { language }/>
             <ExitsPlus onClick = { onClose }/>
         </AllStoresTabStyled>
     )
