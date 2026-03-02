@@ -11,7 +11,7 @@ const HeaderPlus = styled(Header)`
 export function FullMainScreen() {
     return(
         <div>
-            <HeaderPlus content = "Outstanding Spots"/>
+            <HeaderPlus content = "Outstanding Spots" onClick = {() => window.location.reload()}/>
             <MainContent/>
             <Header content = "Only for SUNY Korea students"/>
         </div>

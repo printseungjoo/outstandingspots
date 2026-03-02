@@ -14,12 +14,13 @@ const HeaderStyled = styled.div`
 interface ContentProps {
     content: string;
     className?: string;
+    onClick?: () => void;
 }
 
-export function Header({ content, className }: ContentProps) {
+export function Header({ content, className, onClick }: ContentProps) {
     return(
-        <HeaderStyled className = {className}>
-            {content}
+        <HeaderStyled className = { className } onClick = { onClick }>
+            { content }
         </HeaderStyled>
     )
 }
