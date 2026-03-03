@@ -54,7 +54,7 @@ export function AllCategories({ className, onSelectCategory, onRemoveCategory, l
     const [categories, setCategories] = useState<CategoriesInterface[]>([]);
 
     useEffect(() => {
-        fetch('http://localhost:5500/categories')
+        fetch(`${import.meta.env.VITE_API_URL}/categories`)
             .then((res) => (res.json()))
             .then((data) => setCategories(data))
             .catch((err) => console.error(err))
