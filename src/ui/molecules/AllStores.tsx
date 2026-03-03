@@ -20,6 +20,16 @@ const AllStore = styled.div`
     overflow-y: auto;
     pointer-events: auto;
     z-index: 3;
+
+    @media(max-width: 1024px) and (min-width: 768px) {
+        width: 50%;
+    }
+
+    @media(max-width: 767px) {
+        width: 90%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
 `;
 
 const Title = styled.p`

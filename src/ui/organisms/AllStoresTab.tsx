@@ -19,6 +19,14 @@ const ExitsPlus = styled(Exits)`
     width: 1.5rem;
     height: 1.5rem;
     pointer-events: auto;
+
+    @media(max-width: 1024px) and (min-width: 768px) {
+        left: calc(50% + 1rem);
+    }
+
+    @media(max-width: 767px) {
+        left: 90%;
+    }
 `;
 
 type Language = 'kor' | 'eng';
