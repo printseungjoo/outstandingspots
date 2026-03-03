@@ -2,6 +2,7 @@ import express from 'express';
 import type { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import path from 'path';
 
 import { connectDB } from './config/ConnectDB';
 import categoryModel from './models/CategoryModels';
@@ -10,6 +11,7 @@ import storeModel from './models/StoreModels';
 dotenv.config();
 
 const app = express();
+const PORT = process.env.PORT ? Number(process.env.PORT) : 5500;
 
 app.use(cors({
     origin: [
@@ -44,6 +46,13 @@ app.get('/stores', async (_req: Request, res: Response) => {
     }
 });
 
-app.listen(5500, () => {
+const distPath = path.resolve(__dirname, '..', 'dist');
+app.use(express.static(distPath));
+
+app.get('*', (_req, res) => {
+  res.sendFile(path.join(distPath, 'index.html'));
+});
+
+app.listen(PORT, () => {
     console.log('Server가 실행 중입니다.');
 });
