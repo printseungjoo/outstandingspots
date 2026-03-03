@@ -1,5 +1,8 @@
 {
-  "name": "os0220",
+  "name": "outstandingspots",
+  "engines": {
+    "node": "22.x"
+  },
   "private": true,
   "version": "0.0.0",
   "type": "module",
