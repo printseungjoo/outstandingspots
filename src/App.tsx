@@ -10,6 +10,6 @@ function App() {
       <Marker />
     </div>
   )
-}
+} 
 
 export default App
