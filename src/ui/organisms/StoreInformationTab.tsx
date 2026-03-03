@@ -14,11 +14,19 @@ const StoreInformationTabStyled = styled.div`
 const ExitsPlus = styled(Exits)`
     z-index: 4;
     position: absolute;
-    left: calc(25% + 1rem);
+    left: calc(25% + 0.5rem);
     margin-top: 0.5rem;
     width: 1.5rem;
     height: 1.5rem;
     pointer-events: auto;
+
+    @media(max-width: 1024px) and (min-width: 768px) {
+        left: calc(50% + 1rem);
+    }
+
+    @media(max-width: 767px) {
+        left: 90%;
+    }
 `;
 
 type Language = 'kor' | 'eng';
