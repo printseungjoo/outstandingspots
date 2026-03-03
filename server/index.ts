@@ -2,6 +2,7 @@ import express from 'express';
 import type { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import path from 'path';
 
 import { connectDB } from './config/ConnectDB';
 import categoryModel from './models/CategoryModels';
@@ -42,6 +43,13 @@ app.get('/stores', async (_req: Request, res: Response) => {
     catch (err) {
         res.status(500).json({ error: 'Fetch에 실패하였습니다.' });
     }
+});
+
+const distPath = path.resolve(__dirname, '..', 'dist');
+app.use(express.static(distPath));
+
+app.get('*', (_req, res) => {
+  res.sendFile(path.join(distPath, 'index.html'));
 });
 
 app.listen(5500, () => {
