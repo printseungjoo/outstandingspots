@@ -13,15 +13,24 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT ? Number(process.env.PORT) : 8080;
 
-app.use(cors({
-    origin: [
-        'http://localhost:5173',
-        'https://www.outstandingspots.com',
-        'https://outstandingspots.com',
-        'https://web-production-888c9.up.railway.app'
-    ],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-}));
+
+const allowedOrigins = [
+  "https://outstandingspots.com",
+  "https://www.outstandingspots.com",
+  "http://localhost:5173",
+];
+
+const corsOptions: cors.CorsOptions = {
+  origin: (origin, cb) => {
+    if (!origin) return cb(null, true);
+    if (allowedOrigins.includes(origin)) return cb(null, true);
+    return cb(new Error("CORS를 허용하지 않습니다"));
+  },
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 app.use(express.json());
 
@@ -56,4 +65,5 @@ app.get('*', (_req, res) => {
 
 app.listen(PORT, () => {
     console.log('Server가 실행 중입니다.');
+    console.log("CORS가 허용되었습니다:", allowedOrigins.join(", "));
 });
