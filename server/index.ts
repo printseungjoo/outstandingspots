@@ -11,13 +11,14 @@ import storeModel from './models/StoreModels';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT ? Number(process.env.PORT) : 5500;
+const PORT = process.env.PORT ? Number(process.env.PORT) : 8080;
 
 app.use(cors({
     origin: [
         'http://localhost:5173',
         'https://www.outstandingspots.com',
-        'https://outstandingspots.com'
+        'https://outstandingspots.com',
+        'https://web-production-888c9.up.railway.app'
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
 }));
