@@ -11,6 +11,7 @@ import storeModel from './models/StoreModels';
 dotenv.config();
 
 const app = express();
+const PORT = process.env.PORT ? Number(process.env.PORT) : 5500;
 
 app.use(cors({
     origin: [
@@ -52,6 +53,6 @@ app.get('*', (_req, res) => {
   res.sendFile(path.join(distPath, 'index.html'));
 });
 
-app.listen(5500, () => {
+app.listen(PORT, () => {
     console.log('Server가 실행 중입니다.');
 });
