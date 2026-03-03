@@ -2,7 +2,6 @@ import express from 'express';
 import type { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import path from 'path';
 
 import { connectDB } from './config/ConnectDB';
 import categoryModel from './models/CategoryModels';
@@ -13,24 +12,24 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT ? Number(process.env.PORT) : 8080;
 
-
 const allowedOrigins = [
   "https://outstandingspots.com",
   "https://www.outstandingspots.com",
   "http://localhost:5173",
 ];
 
-const corsOptions: cors.CorsOptions = {
-  origin: (origin, cb) => {
-    if (!origin) return cb(null, true);
-    if (allowedOrigins.includes(origin)) return cb(null, true);
-    return cb(new Error("CORS를 허용하지 않습니다"));
-  },
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-};
-
-app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
+app.use(
+  cors({
+    origin: (origin, cb) => {
+      if (!origin) return cb(null, true);
+      if (allowedOrigins.includes(origin)) return cb(null, true);
+      return cb(new Error('CORS를 허용하지 않습니다'));
+    },
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    credentials: true,
+    optionsSuccessStatus: 204,
+  })
+);
 
 app.use(express.json());
 
@@ -56,14 +55,6 @@ app.get('/stores', async (_req: Request, res: Response) => {
     }
 });
 
-const distPath = path.resolve(__dirname, '..', 'dist');
-app.use(express.static(distPath));
-
-app.get('*', (_req, res) => {
-  res.sendFile(path.join(distPath, 'index.html'));
-});
-
 app.listen(PORT, () => {
     console.log('Server가 실행 중입니다.');
-    console.log("CORS가 허용되었습니다:", allowedOrigins.join(", "));
 });
