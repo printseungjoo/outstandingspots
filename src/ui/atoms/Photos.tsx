@@ -9,6 +9,13 @@ const Photo = styled.div`
     height: 25vh;
     border: 1px solid black;
     margin-top: 1.5rem;
+    overflow: hidden;
+`;
+
+const ImgStyled = styled.img`
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 `;
 
 interface PhotosProps {
@@ -19,7 +26,8 @@ interface PhotosProps {
 export function Photos({ photoSrc, storeAltName }: PhotosProps) {
     return(
         <Photo>
-            <img src = {photoSrc} alt = {storeAltName}/>
+            <ImgStyled src = {photoSrc} alt = {storeAltName}>
+            </ImgStyled>
         </Photo>
     )
 }
