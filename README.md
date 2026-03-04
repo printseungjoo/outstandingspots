@@ -1,4 +1,4 @@
 # outstandingspots
 [outstandingspots 링크](https://www.outstandingspots.com/)
 
-안녕하세요! Outstanding spots 웹사이트를 개발한 함승주입니다. Outstanding 단체에서는 한국뉴욕주립대 학생분들을 위해 50곳 이상의 제휴 매장과 계약하여 할인을 도와드리고 있습니다. Outstanding spots 웹사이트는 여러분들의 위치(혹은 트리플스트리트)에서 가까운 제휴 매장을 지도에 표시해주고 매장의 정보와 할인 정보, 참고 사항을 안내해주는 웹사이트입니다. 모바일로 방문하시는 경우 밑으로 스크롤 하면 옵션 선택도 가능합니다. 웹사이트에 방문하셔서 한국뉴욕주립대학교 근처 매장들의 할인을 받아보세요!
+Outstanding Spots 웹사이트는 2026.03.04 기준으로 2025년 버전, 2026년 버전 총 2가지 버전이 있습니다. 이 브랜치는 2025년 버전 Outstanding spots 웹사이트의 코드를 저장한 브랜치입니다. version2026 브랜치나 main 브랜치에 가셔서 변화를 확인해보세요!
