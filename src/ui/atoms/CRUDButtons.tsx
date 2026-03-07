@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 
 const CRUDButton = styled.button`
-    width: 13%;
-    height: 11vh;
-    margin-left: 4%;
+    width: 10rem;
+    height: 8vh;
+    margin-right: 1%;
     background-color: #78A7FF;
     color: white;
     font-weight: bolder;

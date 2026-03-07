@@ -7,23 +7,24 @@ const ToggleButtonStyled = styled.div`
 
 const ToggleOption = styled.p`
     font-weight: bolder;
-    margin-left: 1%;
-    margin-right: 1%;
+    margin-left: 1rem;
+    margin-right: 1rem;
     font-size: 1.2em;
     color: white;
+    white-space: nowrap;
 `;
 
 const ToggleInput = styled.input`
     display: none;
 
     &:checked + label span {
-        left: 67%;
+        left: 64%;
     }
 `;
 
 const Square = styled.label`
-    width: 17%;
-    height: 12vh;
+    width: 7.5rem;
+    height: 3.2rem;
     display: block;
     position: relative;
     border-radius: 999px;
@@ -34,27 +35,36 @@ const Square = styled.label`
 `;
 
 const Circle = styled.span`
-    width: 28%;
-    height: 10vh;
+    width: 2.4rem;
+    height: 2.4rem;
     position: absolute;
     border-radius: 50%;
     top: 50%;
     transform: translateY(-50%);
-    left: 4%;
+    left: 0.25rem;
     background-color: #78A7FF;
     transition: all 0.2s ease-in;
 `;
 
-export function ToggleButton() {
+interface ToggleButtonProps {
+    className?: string;
+}
+
+export function ToggleButton({ className }: ToggleButtonProps) {
     return (
-        <ToggleButtonStyled>
-            <ToggleOption> 매장 </ToggleOption>
+        <ToggleButtonStyled className = { className }>
+            <ToggleOption>
+                매장 
+            </ToggleOption>
             <ToggleInput type = "checkbox" id = "toggle">
             </ToggleInput>
             <Square htmlFor = "toggle">
-                <Circle></Circle>
+                <Circle>
+                </Circle>
             </Square>
-            <ToggleOption> 카테고리 </ToggleOption>
+            <ToggleOption> 
+                카테고리 
+            </ToggleOption>
         </ToggleButtonStyled>
     )
 }
