@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 const CRUDButton = styled.button`
-    width: 10rem;
+    width: 40%;
     height: 8vh;
     margin-right: 1%;
     background-color: #78A7FF;
@@ -9,6 +9,7 @@ const CRUDButton = styled.button`
     font-weight: bolder;
     border: 0;
     border-radius: 10px;
+    white-space: nowrap;
 `;
 
 interface CRUDButtonsProps {

@@ -27,13 +27,13 @@ const Title = styled.p`
     font-weight: bolder;
     color: white;
     font-size: 2.3rem;
-    margin: 0 1rem 0 0;
+    margin: 0 3% 0 0;
     white-space: nowrap;
 `;
 
 const ToggleButtonPlus = styled(ToggleButton)`
-    margin-left: 27rem;
-    margin-right: 2rem;
+    margin-left: 42vw;
+    margin-right: 2%;
 `;
 
 type Language = 'kor' | 'eng'

@@ -9,7 +9,7 @@ const AdminMiddleBackground = styled.div`
 `;
 
 const Box = styled.div`
-    width: 90%;
+    width: 100%;
     height: 68vh;
     border: 0;
     border-radius: 10px;

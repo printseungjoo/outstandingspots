@@ -5,13 +5,23 @@ import { AdminMiddle } from '../molecules/AdminMiddle';
 
 const AdminMainContentStyled = styled.div`
     background-color: #5A536B;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`;
+
+const AdminInner = styled.div`
+    width: 91%;
 `;
 
 export function AdminMainContent() {
-    return(
+    return (
         <AdminMainContentStyled>
-            <AdminTop/>
-            <AdminMiddle/>
+            <AdminInner>
+                <AdminTop />
+                <AdminMiddle />
+            </AdminInner>
         </AdminMainContentStyled>
     )
 }
