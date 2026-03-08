@@ -38,7 +38,12 @@ const ToggleButtonPlus = styled(ToggleButton)`
 
 type Language = 'kor' | 'eng'
 
-export function AdminTop() {
+interface AdminTopProps {
+    isChecked: boolean;
+    onToggle: (checked: boolean) => void;
+}
+
+export function AdminTop({ isChecked, onToggle }: AdminTopProps) {
     const [language, setLanguage] = useState<Language>('kor');
 
     return (
@@ -47,7 +52,7 @@ export function AdminTop() {
                 <AdminTopStyled>
                     <Title> Admin Page </Title>
                     <LanguageButtons onChangeLanguage = { setLanguage }/>
-                    <ToggleButtonPlus />
+                    <ToggleButtonPlus isChecked = { isChecked } onToggle = { onToggle } />
                     <CRUDButtons name = '추가' />
                     <CRUDButtons name = '편집' />
                     <CRUDButtons name = '삭제' />

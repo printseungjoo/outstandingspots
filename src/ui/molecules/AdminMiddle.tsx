@@ -1,5 +1,8 @@
 import styled from '@emotion/styled';
 
+import { AdminStores } from './AdminStores';
+import { AdminCategories } from './AdminCategories';
+
 const AdminMiddleBackground = styled.div`
     width: 100%;
     height: 73vh;
@@ -17,10 +20,15 @@ const Box = styled.div`
     margin-bottom: 5vh;
 `;
 
-export function AdminMiddle() {
+interface AdminMiddleProps {
+    isChecked: boolean;
+}
+
+export function AdminMiddle({ isChecked }: AdminMiddleProps) {
     return(
         <AdminMiddleBackground>
             <Box>
+                {isChecked ? <AdminCategories/> : <AdminStores/>}
             </Box>
         </AdminMiddleBackground>
     )

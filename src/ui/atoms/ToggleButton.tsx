@@ -48,15 +48,17 @@ const Circle = styled.span`
 
 interface ToggleButtonProps {
     className?: string;
+    isChecked?: boolean;
+    onToggle: (checked: boolean) => void;
 }
 
-export function ToggleButton({ className }: ToggleButtonProps) {
+export function ToggleButton({ className, isChecked, onToggle }: ToggleButtonProps) {
     return (
         <ToggleButtonStyled className = { className }>
             <ToggleOption>
-                매장 
+                매장
             </ToggleOption>
-            <ToggleInput type = "checkbox" id = "toggle">
+            <ToggleInput type = "checkbox" id = "toggle" checked = { isChecked } onChange = {(e) => onToggle(e.target.checked)}>
             </ToggleInput>
             <Square htmlFor = "toggle">
                 <Circle>

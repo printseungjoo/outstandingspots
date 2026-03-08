@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useState } from 'react';
 
 import { AdminTop } from '../molecules/AdminTop';
 import { AdminMiddle } from '../molecules/AdminMiddle';
@@ -16,11 +17,13 @@ const AdminInner = styled.div`
 `;
 
 export function AdminMainContent() {
+    const [isChecked, setIsChecked] = useState<boolean>(false);
+
     return (
         <AdminMainContentStyled>
             <AdminInner>
-                <AdminTop />
-                <AdminMiddle />
+                <AdminTop isChecked = { isChecked } onToggle = { setIsChecked }/>
+                <AdminMiddle isChecked = { isChecked } />
             </AdminInner>
         </AdminMainContentStyled>
     )
