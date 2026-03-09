@@ -1,73 +1,93 @@
-# React + TypeScript + Vite
+# Outstanding Spots
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Outstanding Spots란?
 
-Currently, two official plugins are available:
+![Outstanding Spots 한글 버전](https://res.cloudinary.com/dm2ginyde/image/upload/v1772635729/1_qpmiww.jpg)
+![Outstanding Spots 영어 버전](https://res.cloudinary.com/dm2ginyde/image/upload/v1772635733/2_hxlc3b.jpg)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Outstanding은 한국뉴욕주립대학교(SUNY Korea) 근처 매장들과 계약해  
+한국뉴욕주립대학교 학생들에게 할인과 혜택을 제공하고 있습니다.
 
-## React Compiler
+Outstanding Spots 웹사이트는 지도와 마커를 통해 한눈에 계약된 매장들을 볼 수 있게 도와줍니다. 또한 이 웹사이트는 계약된 모든 매장을 조회할 수 있고 마커 클릭 시 해당 매장의 매장 정보와 할인 내용, 유의해야할 사항들을 알려줍니다.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+한국뉴욕주립대학교 학생 중에는 외국인 비율도 많기에 한글 영어 중 선택해서 웹사이트를 이용할 수 있도록 설계되었습니다.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 웹사이트 링크
+[https://outstandingspots.com/](https://outstandingspots.com/)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 기술 스택
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Frontend
+- React
+- TypeScript
+- Emotion
+- Storybook
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### Backend
+- Node.js
+- Express.js
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### API
+- Kakao Maps JavaScript SDK
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Database
+- MongoDB
+- Mongoose
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### Deployment
+- Railway
+
+---
+
+## 프로젝트 작업 기간
+
+### 2025년 버전
+2024.12.12 ~ 2025.02.26
+
+### 2026년 버전
+2026.02.20 ~ 2026.03.04
+
+---
+
+## 프로젝트 인원
+
+1명  
+@printseungjoo
+
+기획부터 디자인, 프론트엔드 개발, 백엔드 개발, 배포, 유지보수까지 저 혼자 진행하였습니다.  
+(당시 Outstanding 회장님께서 아이디어를 제시해주셨습니다.)
+
+---
+
+## 리팩토링한 내용
+
+1. HTML, CSS 중심 구조에서 React, TypeScript, Emotion 기반으로 재구성
+2. 아토믹 디자인 폴더 구조로 UI 컴포넌트를 모듈화하여 유지보수성과 재사용성 개선
+3. Storybook을 통해 UI 개발 생산성 향상
+4. 웹 디자인을 통째로 변경하여 개발
+
+---
+
+## 리팩토링 후 성능 향상
+
+1. LCP (Largest Contentful Paint, 로딩 속도)
+   - 52% 단축 (1.9초 -> 0.9초)
+
+2. 불필요한 JavaScript(코드) 감소
+   - 172KiB 감소 (303KiB -> 131KiB)
+
+3. Lighthouse Best Practices (보안 및 신뢰성)
+   - 135% 상향 (31점 -> 73점)
+
+4. Lighthouse 접근성 점수 100점(만점) 달성
+
+5. 서드파티 쿠키 사용량을 50% 이상 절감
+   - 안정적인 서비스 환경 구축
+
+---
+
+## 개발자 연락처
+
+이메일 : printseungjoo@gmail.com
