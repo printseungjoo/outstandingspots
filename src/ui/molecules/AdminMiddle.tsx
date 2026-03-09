@@ -20,15 +20,18 @@ const Box = styled.div`
     margin-bottom: 5vh;
 `;
 
+type Language = 'kor' | 'eng';
+
 interface AdminMiddleProps {
     isChecked: boolean;
+    onChangeLanguage: Language;
 }
 
-export function AdminMiddle({ isChecked }: AdminMiddleProps) {
+export function AdminMiddle({ isChecked, onChangeLanguage }: AdminMiddleProps) {
     return(
         <AdminMiddleBackground>
             <Box>
-                {isChecked ? <AdminCategories/> : <AdminStores/>}
+                {isChecked ? <AdminCategories onChangeLanguage = { onChangeLanguage }/> : <AdminStores onChangeLanguage = { onChangeLanguage }/>}
             </Box>
         </AdminMiddleBackground>
     )

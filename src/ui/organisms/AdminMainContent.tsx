@@ -16,14 +16,17 @@ const AdminInner = styled.div`
     width: 91%;
 `;
 
+type Language = 'kor' | 'eng';
+
 export function AdminMainContent() {
     const [isChecked, setIsChecked] = useState<boolean>(false);
+    const [language, setLanguage] = useState<Language>('kor')
 
     return (
         <AdminMainContentStyled>
             <AdminInner>
-                <AdminTop isChecked = { isChecked } onToggle = { setIsChecked }/>
-                <AdminMiddle isChecked = { isChecked } />
+                <AdminTop isChecked = { isChecked } onToggle = { setIsChecked } onChangeLanguage = { language } setLanguage = { setLanguage }/>
+                <AdminMiddle isChecked = { isChecked } onChangeLanguage = { language } />
             </AdminInner>
         </AdminMainContentStyled>
     )

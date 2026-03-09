@@ -65,7 +65,13 @@ const BoldText = styled.p`
     white-space: nowrap;
 `;
 
-export function AdminStores() {
+type Language = 'kor' | 'eng';
+
+interface AdminStoresProps {
+    onChangeLanguage: Language;
+}
+
+export function AdminStores({ onChangeLanguage }: AdminStoresProps) {
     const [stores, setStores] = useState<fetchStoreInterface[]>([]);
 
     useEffect(() => {
@@ -81,9 +87,11 @@ export function AdminStores() {
                 <StoresStyled key={ store._id }>
                     <StoreTop>
                         <StoreTopLeft>
-                            <StoreName>{ store.name.kor }</StoreName>
+                            <StoreName>
+                                {onChangeLanguage === 'eng' ? store.name.eng : store.name.kor}
+                            </StoreName>
                             <StoreBranch>
-                                { store.branch.kor }
+                                {onChangeLanguage === 'eng' ? store.branch.eng : store.branch.kor}
                             </StoreBranch>
                             <StoreLatLon>
                                 ({ store.lat }, { store.lon })
@@ -96,15 +104,15 @@ export function AdminStores() {
                     </StoreTop>
                     <StoreDiscount>
                         <BoldText>
-                            할인 가격 :
+                             {onChangeLanguage === 'eng' ? 'A discounted price :' : '할인 가격 :'}
                         </BoldText>
-                        { store.discount.kor }
+                        {onChangeLanguage === 'eng' ? store.discount.eng : store.discount.kor}
                     </StoreDiscount>
                     <StoreDiscount>
                         <BoldText>
-                            추가 유의사항 :
+                            {onChangeLanguage === 'eng' ? 'Additional precautions :' : '추가 유의사항 :'}
                         </BoldText>
-                        { store.description.kor }
+                        {onChangeLanguage === 'eng' ? store.description.eng : store.description.kor}
                     </StoreDiscount>
                 </StoresStyled>
             ))}

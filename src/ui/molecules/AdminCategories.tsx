@@ -23,7 +23,13 @@ interface Category {
     }
 }
 
-export function AdminCategories() {
+type Language = 'kor' | 'eng';
+
+interface AdminCategoriesProps {
+    onChangeLanguage: Language;
+}
+
+export function AdminCategories({ onChangeLanguage }: AdminCategoriesProps) {
     const [categories, setCategories] = useState<Category[]>([]);
 
     useEffect(() => {
@@ -37,7 +43,7 @@ export function AdminCategories() {
         <AdminCategoriesStyled>
             {categories.map((category) => (
                 <CategoryStyled key = { category._id }>
-                    { category.name.kor }
+                    {onChangeLanguage === 'eng' ? category.name.eng : category.name.kor}
                 </CategoryStyled>
             ))}
         </AdminCategoriesStyled>

@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useState } from 'react';
 
 import { LanguageButtons } from './LanguageButtons';
 import { ToggleButton } from '../atoms/ToggleButton';
@@ -41,11 +40,11 @@ type Language = 'kor' | 'eng'
 interface AdminTopProps {
     isChecked: boolean;
     onToggle: (checked: boolean) => void;
+    onChangeLanguage: Language;
+    setLanguage: (language: Language) => void;
 }
 
-export function AdminTop({ isChecked, onToggle }: AdminTopProps) {
-    const [language, setLanguage] = useState<Language>('kor');
-
+export function AdminTop({ isChecked, onToggle, setLanguage }: AdminTopProps) {
     return (
         <AdminTopOuter>
             <AdminTopScale>
