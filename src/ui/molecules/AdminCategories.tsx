@@ -7,12 +7,13 @@ const AdminCategoriesStyled = styled.div`
     overflow-y: scroll;
 `;
 
-const CategoryStyled = styled.button`
+const CategoryStyled = styled.button<{isSelected : boolean}>`
     width: 100%;
     display: flex;
     justify-content: center;
     border: 0.5px solid black;
     border-radius: 0;
+    background-color: ${({isSelected}) => (isSelected ? '#E3E6FF' : 'white')};
 `;
 
 interface Category {
@@ -31,6 +32,7 @@ interface AdminCategoriesProps {
 
 export function AdminCategories({ onChangeLanguage }: AdminCategoriesProps) {
     const [categories, setCategories] = useState<Category[]>([]);
+    const [checked, setChecked] = useState<string>('');
 
     useEffect(() => {
         fetch('http://localhost:8080/categories')
@@ -42,7 +44,7 @@ export function AdminCategories({ onChangeLanguage }: AdminCategoriesProps) {
     return (
         <AdminCategoriesStyled>
             {categories.map((category) => (
-                <CategoryStyled key = { category._id }>
+                <CategoryStyled key = { category._id } onClick = {() => setChecked(category._id)} isSelected = {checked === category._id}>
                     {onChangeLanguage === 'eng' ? category.name.eng : category.name.kor}
                 </CategoryStyled>
             ))}

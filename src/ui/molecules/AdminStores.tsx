@@ -11,11 +11,12 @@ const AdminStoresStyled = styled.div`
     overflow-y: scroll;
 `;
 
-const StoresStyled = styled.button`
+const StoresStyled = styled.button<{isSelected : boolean}>`
     width: 100%;
     border: 0.5px solid black;
     border-radius: 0;
     padding: 0.8rem;
+    background-color: ${({isSelected}) => (isSelected ? '#E3E6FF' : 'white')};
 `;
 
 const StoreTopLeft = styled.div`
@@ -73,6 +74,7 @@ interface AdminStoresProps {
 
 export function AdminStores({ onChangeLanguage }: AdminStoresProps) {
     const [stores, setStores] = useState<fetchStoreInterface[]>([]);
+    const [checked, setChecked] = useState<string>('');
 
     useEffect(() => {
         fetch('http://localhost:8080/stores')
@@ -84,7 +86,7 @@ export function AdminStores({ onChangeLanguage }: AdminStoresProps) {
     return (
         <AdminStoresStyled>
             {stores.map((store) => (
-                <StoresStyled key={ store._id }>
+                <StoresStyled key={ store._id } onClick = {() => setChecked(store._id)} isSelected = {checked === store._id}>
                     <StoreTop>
                         <StoreTopLeft>
                             <StoreName>
