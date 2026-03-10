@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 
+alert('현재 오류 수정 중입니다. 이용에 불편을 드려 죄송합니다.')
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />
