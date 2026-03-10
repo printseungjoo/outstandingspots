@@ -33,10 +33,14 @@ export function Marker({ onSelectStore, kakaoMap, selectedCategory = [], selecte
     }, [onSelectStore]);
 
     useEffect(() => {
+        const controller = new AbortController();
+
         fetch(`${import.meta.env.VITE_API_URL}/stores`)
             .then((res) => res.json())
             .then((data) => setStores(data))
             .catch((err) => console.error(err));
+
+        return () => controller.abort();
     }, []);
 
     useEffect(() => {
@@ -68,16 +72,6 @@ export function Marker({ onSelectStore, kakaoMap, selectedCategory = [], selecte
 
     useEffect(() => {
         if (!kakaoMap || markersRef.current.length === 0) return;
-        const showAll = selectedCategory.length === 0;
-        markersRef.current.forEach(({ marker, store }) => {
-            const storeCategory = String(store.category.kor);
-            const shouldShow = showAll || selectedCategory.includes(storeCategory);
-            marker.setMap(shouldShow ? kakaoMap : null);
-        });
-    }, [kakaoMap, selectedCategory]);
-
-    useEffect(() => {
-        if (!kakaoMap || markersRef.current.length === 0) return;
         if (selectedStore) {
             markersRef.current.forEach(({ marker, store }) => {
                 const isTarget = store._id === selectedStore._id;
@@ -94,7 +88,7 @@ export function Marker({ onSelectStore, kakaoMap, selectedCategory = [], selecte
             const shouldShow = showAll || selectedCategory.includes(storeCategory);
             marker.setMap(shouldShow ? kakaoMap : null);
         });
-    }, [kakaoMap, selectedCategory, selectedStore]);
+    }, [kakaoMap, selectedCategory]);
 
     return null;
 }
