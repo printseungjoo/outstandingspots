@@ -60,16 +60,7 @@ export function MainContent({ className }: MainContentProps) {
   const [isStoreListOpen, setIsStoreListOpen] = useState(false);
   const [language, setLanguage] = useState<Language>('kor');
 
-  console.log('MainContent 렌더하기', {
-    선택된가게: selectedStore?._id ?? null,
-    선택된카테고리: selectedCategory,
-    웹사이트정보열림: isWebsiteInfoOpen,
-    가게목록열림: isStoreListOpen,
-    언어: language
-  });
-
   const handleSelectStore = useCallback((store: fetchStoreInterface) => {
-    console.log('가게 선택하기', store._id);
     setSelectedStore(store);
     setIsStoreListOpen(false);
   }, []);
@@ -83,22 +74,17 @@ export function MainContent({ className }: MainContentProps) {
       {isWebsiteInfoOpen && (<WebsiteInformationTab onClose={() => setIsWebsiteInfoOpen(false)} language={language} />)}
       {isStoreListOpen && (<AllStoresTab onOpen={handleSelectStore} onClose={() => setIsStoreListOpen(false)} language={language} />)}
       <AllCategoriesPlus onSelectCategory={(category: string) => {
-        console.log('카테고리 선택하기', category);
         setSelectedCategory((stack) => {
           if (stack.includes(category)) {
-            console.log('이미 선택된 카테고리라서 유지하기');
             return stack;
           }
           const next = [...stack, category];
-          console.log('카테고리 목록 업데이트하기', next);
           return next;
         });
       }}
         onRemoveCategory={(category: string) => {
-          console.log('카테고리 제거하기', category);
           setSelectedCategory((stack) => {
             const next = stack.filter((c) => c !== category);
-            console.log('카테고리 목록 업데이트하기', next);
             return next;
           });
         }}
