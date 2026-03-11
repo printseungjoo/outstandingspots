@@ -22,7 +22,7 @@ export function Map({ className, onSelectStore, selectedCategory, onGetMap, sele
     const [kakaoMap, setKakaoMap] = useState<kakao.maps.Map | null>(null);
 
     useEffect(() => {
-        InitMap((map) => { 
+        InitMap((map) => {
             setKakaoMap(map);
             if (onGetMap) onGetMap(map);
         });
@@ -30,8 +30,8 @@ export function Map({ className, onSelectStore, selectedCategory, onGetMap, sele
 
     return (
         <>
-            <MapStyled id='map' className={className}/>
-            <Marker selectedCategory = { selectedCategory } onSelectStore = { onSelectStore } kakaoMap = { kakaoMap } selectedStore = { selectedStore } />
+            <MapStyled id='map' className={className} />
+            <Marker selectedCategory={selectedCategory} onSelectStore={onSelectStore} kakaoMap={kakaoMap} selectedStore={selectedStore} />
         </>
     )
 }
