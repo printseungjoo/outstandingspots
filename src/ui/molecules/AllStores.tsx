@@ -65,7 +65,6 @@ export function AllStores({ onOpen, language }: AllStoresProps) {
     const [stores, setStores] = useState<fetchStoreInterface[]>([]);
 
     useEffect(() => {
-        console.log('VITE_API_URL =', import.meta.env.VITE_API_URL);
         fetch(`${import.meta.env.VITE_API_URL}/stores`)
             .then((res) => res.json())
             .then((data) => setStores(data))
