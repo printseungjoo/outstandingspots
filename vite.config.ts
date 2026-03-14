@@ -8,6 +8,6 @@ export default defineConfig({
   server: {
     allowedHosts: ['web-production-888c9.up.railway.app'],
     host: '0.0.0.0',
-    port: 8080
+    port: 5173
   }
 })
