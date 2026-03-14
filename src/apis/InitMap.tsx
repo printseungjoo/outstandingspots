@@ -1,3 +1,5 @@
+import { loadKakaoMapSdk } from "./LoadKakaoMapSdk";
+
 declare global {
     namespace kakao.maps {
         function load(callback: () => void): void;
@@ -26,17 +28,6 @@ declare global {
             constructor(options: MarkerInterface);
             setMap(map: Map | null): void;
         }
-
-        interface InfoWindowInterface {
-            content: string;
-            removable: boolean;
-        }
-
-        class InfoWindow {
-            constructor(options: InfoWindowInterface);
-            open(map: Map, marker: Marker): void;
-            close(): void;
-        }
     }
 
     interface Window {
@@ -46,35 +37,29 @@ declare global {
     }
 }
 
-export function InitMap(callback: (map: kakao.maps.Map) => void) {
-    if (typeof window.kakao === 'undefined') {
-        console.error('카카오맵이 로드되지 않았습니다.');
-        return;
-    }
-    const mapContainer = document.getElementById('map');
+export async function InitMap(callback: (map: kakao.maps.Map) => void) {
+    try {
+        await loadKakaoMapSdk();
 
-    if (!mapContainer) {
-        return;
-    }
-    if (window.kakaoMap) {
-        callback(window.kakaoMap);
-        return;
-    }
+        const mapContainer = document.getElementById('map');
+        if (!mapContainer) return;
 
-    window.kakao.maps.load(() => {
         const mapOption = {
             center: new window.kakao.maps.LatLng(37.378760, 126.662809),
-            level: 3,
+            level: 3
         };
         const map = new window.kakao.maps.Map(mapContainer, mapOption);
         window.kakaoMap = map;
         callback(map);
 
-        window.SButton = function (suny: boolean) {
+        function SButton(suny: boolean) {
             if (suny) {
                 map.setCenter(new window.kakao.maps.LatLng(37.378760, 126.662809));
                 map.setLevel(3);
             }
-        };
-    });
+        }
+        window.SButton = SButton;
+    } catch (error) {
+        console.error('카카오맵 초기화를 실패하였습니다:', error);
+    }
 }
