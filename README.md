@@ -2,9 +2,7 @@
 
 ## Outstanding Spots란?
 
-![Outstanding Spots 한글 버전](https://res.cloudinary.com/dm2ginyde/image/upload/v1772635729/1_qpmiww.jpg)
-![Outstanding Spots 영어 버전](https://res.cloudinary.com/dm2ginyde/image/upload/v1772635733/2_hxlc3b.jpg)
-
+![Outstanding Spots 스크린샷](https://res.cloudinary.com/dm2ginyde/image/upload/v1773507667/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7_l6xwor.jpg)
 Outstanding은 한국뉴욕주립대학교(SUNY Korea) 근처 매장들과 계약해  
 한국뉴욕주립대학교 학생들에게 할인과 혜택을 제공하고 있습니다.
 
@@ -24,13 +22,12 @@ Outstanding Spots 웹사이트는 지도와 마커를 통해 한눈에 계약된
 - TypeScript
 - Emotion
 - Storybook
+- Leaflet / React-Leaflet
+- Vite
 
 ### Backend
 - Node.js
 - Express.js
-
-### API
-- Kakao Maps JavaScript SDK
 
 ### Database
 - MongoDB
@@ -47,7 +44,7 @@ Outstanding Spots 웹사이트는 지도와 마커를 통해 한눈에 계약된
 2024.12.12 ~ 2025.02.26
 
 ### 2026년 버전
-2026.02.20 ~ 2026.03.04
+2026.02.20 ~ 진행중
 
 ---
 
@@ -57,7 +54,7 @@ Outstanding Spots 웹사이트는 지도와 마커를 통해 한눈에 계약된
 @printseungjoo
 
 기획부터 디자인, 프론트엔드 개발, 백엔드 개발, 배포, 유지보수까지 저 혼자 진행하였습니다.  
-(당시 Outstanding 회장님께서 아이디어를 제시해주셨습니다.)
+(당시 Outstanding 임원진님께서 아이디어를 제시해주셨습니다.)
 
 ---
 
@@ -73,18 +70,13 @@ Outstanding Spots 웹사이트는 지도와 마커를 통해 한눈에 계약된
 ## 리팩토링 후 성능 향상
 
 1. LCP (Largest Contentful Paint, 로딩 속도)
-   - 52% 단축 (1.9초 -> 0.9초)
+   - 47% 단축 (1.9초 -> 1초)
 
 2. 불필요한 JavaScript(코드) 감소
-   - 172KiB 감소 (303KiB -> 131KiB)
+   - 186KiB 감소 (303KiB -> 117KiB)
 
 3. Lighthouse Best Practices (보안 및 신뢰성)
-   - 135% 상향 (31점 -> 73점)
-
-4. Lighthouse 접근성 점수 100점(만점) 달성
-
-5. 서드파티 쿠키 사용량을 50% 이상 절감
-   - 안정적인 서비스 환경 구축
+   - 148% 상향 (31점 -> 77점)
 
 ---
 
