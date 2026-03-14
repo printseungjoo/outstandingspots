@@ -1,7 +1,5 @@
 # Outstanding Spots
 
-## Outstanding Spots란?
-
 ![Outstanding Spots 스크린샷](https://res.cloudinary.com/dm2ginyde/image/upload/v1773507667/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7_l6xwor.jpg)
 Outstanding은 한국뉴욕주립대학교(SUNY Korea) 근처 매장들과 계약해  
 한국뉴욕주립대학교 학생들에게 할인과 혜택을 제공하고 있습니다.
@@ -20,9 +18,8 @@ Outstanding Spots 웹사이트는 지도와 마커를 통해 한눈에 계약된
 ### Frontend
 - React
 - TypeScript
-- Emotion
+- Emotion (CSS-in-JS)
 - Storybook
-- Leaflet / React-Leaflet
 - Vite
 
 ### Backend
@@ -35,6 +32,11 @@ Outstanding Spots 웹사이트는 지도와 마커를 통해 한눈에 계약된
 
 ### Deployment
 - Railway
+
+### Map
+- Leaflet
+- React-Leaflet
+- OpenStreetMap
 
 ---
 
