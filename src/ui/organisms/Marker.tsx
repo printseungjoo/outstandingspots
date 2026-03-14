@@ -1,48 +1,60 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import L from 'leaflet';
+
+import { Marker as LeafletMarker, useMap } from 'react-leaflet';
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import type { fetchStoreInterface } from '../../interfaces/FetchStoreInterface';
 
-declare global {
-    namespace kakao.maps.event {
-        function addListener(
-            marker: kakao.maps.Marker,
-            type: string,
-            handler: () => void
-        ): void;
-    }
-}
+delete (L.Icon.Default.prototype as { _getIconUrl?: () => string })._getIconUrl
+
+L.Icon.Default.mergeOptions({
+    iconRetinaUrl: markerIcon2x,
+    iconUrl: markerIcon,
+    shadowUrl: markerShadow
+})
 
 interface MarkerProps {
     onSelectStore?: (store: fetchStoreInterface) => void;
-    kakaoMap?: kakao.maps.Map | null;
     selectedCategory?: string[];
     selectedStore?: fetchStoreInterface | null;
 }
 
-type MarkerItem = {
-    marker: kakao.maps.Marker;
-    store: fetchStoreInterface;
-};
+function MapUpdater({ selectedStore }: {selectedStore?: fetchStoreInterface | null}) {
+    const map = useMap()
+    useEffect(() => {
+        if (!selectedStore) return
+        map.setView([selectedStore.lat, selectedStore.lon], 18, {
+            animate: true,
+        })
+    }, [map, selectedStore])
+    return null
+}
 
-export function Marker({ onSelectStore, kakaoMap, selectedCategory = [], selectedStore }: MarkerProps) {
+export function Marker({onSelectStore, selectedCategory = [], selectedStore}: MarkerProps) {
     const [stores, setStores] = useState<fetchStoreInterface[]>([]);
-    const markersRef = useRef<MarkerItem[]>([]);
     const onSelectStoreRef = useRef<typeof onSelectStore>(onSelectStore);
-
+    
     useEffect(() => {
         onSelectStoreRef.current = onSelectStore;
     }, [onSelectStore]);
 
     useEffect(() => {
-
         const controller = new AbortController();
         fetch(`${import.meta.env.VITE_API_URL}/stores`, {
             signal: controller.signal,
         })
-            .then((res) => (res.json()))
+            .then((res) => {
+                if (!res.ok) {
+                    throw new Error('가게 데이터를 불러오지 못했습니다.')
+                }
+                return res.json()
+            })
             .then((data) => (setStores(data)))
             .catch((err) => {
                 if (err.name === 'AbortError') {
-                    console.error('가게 데이터 요청 실패', err);
+                    console.error('가게 데이터 요청을 실패하였습니다.', err);
                     return;
                 }
             });
@@ -52,55 +64,28 @@ export function Marker({ onSelectStore, kakaoMap, selectedCategory = [], selecte
         };
     }, []);
 
-    useEffect(() => {
-
-        if (!kakaoMap || stores.length === 0) {
-            return;
-        }
-
-        markersRef.current.forEach(({ marker }) => marker.setMap(null));
-        markersRef.current = [];
-        stores.forEach((store) => {
-            const markerPosition = new window.kakao.maps.LatLng(store.lat, store.lon);
-            const marker = new window.kakao.maps.Marker({
-                position: markerPosition,
-            });
-
-            marker.setMap(kakaoMap);
-            markersRef.current.push({ marker, store });
-
-            kakao.maps.event.addListener(marker, 'click', () => {
-                onSelectStoreRef.current?.(store);
-            });
-        });
-
-
-        return () => {
-            markersRef.current.forEach(({ marker }) => marker.setMap(null));
-            markersRef.current = [];
-        };
-    }, [kakaoMap, stores]);
-
-    useEffect(() => {
-
-        if (!kakaoMap || markersRef.current.length === 0) return;
+    const visibleStores = useMemo(() => {
         if (selectedStore) {
-            markersRef.current.forEach(({ marker, store }) => {
-                const isTarget = store._id === selectedStore._id;
-                marker.setMap(isTarget ? kakaoMap : null);
-            });
-            const loc = new kakao.maps.LatLng(selectedStore.lat, selectedStore.lon);
-            kakaoMap.setCenter(loc);
-            kakaoMap.setLevel(3);
-            return;
+            return stores.filter((store) => store._id === selectedStore._id)
         }
-        const showAll = selectedCategory.length === 0;
-        markersRef.current.forEach(({ marker, store }) => {
-            const storeCategory = String(store.category.kor);
-            const shouldShow = showAll || selectedCategory.includes(storeCategory);
-            marker.setMap(shouldShow ? kakaoMap : null);
-        });
-    }, [kakaoMap, selectedCategory]);
+        if (selectedCategory.length === 0) {
+            return stores
+        }
+        return stores.filter((store) => selectedCategory.includes(String(store.category.kor)))
+    }, [stores, selectedCategory, selectedStore])
 
-    return null;
+    return (
+        <>
+            <MapUpdater selectedStore={ selectedStore } />
+            {visibleStores.map((store) => (
+                <LeafletMarker key={ store._id } position={[store.lat, store.lon]} eventHandlers={{
+                    click: () => {
+                        onSelectStoreRef.current?.(store)
+                    },
+                }}
+                >
+                </LeafletMarker>
+            ))}
+        </>
+    )
 }
