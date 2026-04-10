@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 import type { fetchStoreInterface } from '../../interfaces/FetchStoreInterface';
 
@@ -71,6 +71,16 @@ export function AllStores({ onOpen, language }: AllStoresProps) {
             .catch((err) => console.error(err))
     }, []);
 
+    const sortedStores = useMemo(() => {
+        return [...stores].sort((a, b) => {
+            const aName =
+                language === 'eng' ? `${a.name.eng} ${a.branch.eng}` : `${a.name.kor} ${a.branch.kor}`;
+            const bName =
+                language === 'eng' ? `${b.name.eng} ${b.branch.eng}` : `${b.name.kor} ${b.branch.kor}`;
+            return language === 'eng' ? aName.localeCompare(bName, 'en') : aName.localeCompare(bName, 'ko');
+        });
+    }, [stores, language]);
+
     return (
         <AllStore>
             <Title>
@@ -79,7 +89,7 @@ export function AllStores({ onOpen, language }: AllStoresProps) {
             <Detail>
                 {language === 'eng' ? 'It is arranged in alphabetical order.' : '가나다 순으로 정렬되어 있습니다.'} <br/> {language === 'eng' ? 'Scroll through to find out more!' : '스크롤을 통해 더 확인하세요!'}
             </Detail>
-            {stores.map((store) => (
+            {sortedStores.map((store) => (
                 <StoreButton key = {store._id} onClick = {() => {onOpen?.(store);}}>
                     {language === 'eng' ? store.name.eng : store.name.kor} {language === 'eng' ? store.branch.eng : store.branch.kor}
                 </StoreButton>
