@@ -13,6 +13,32 @@ Outstanding Spots 웹사이트는 지도와 마커를 통해 한눈에 계약된
 ## 웹사이트 링크
 [https://outstandingspots.com/](https://outstandingspots.com/)
 
+---
+
+## 핵심 기능들
+
+### 매장 상세 정보 확인
+![매장 상세 정보 확인](https://res.cloudinary.com/dm2ginyde/image/upload/v1775809481/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7_2026-04-10_170805_umsbqp.png)
+마커를 클릭하면 위치와 매장 상세 정보가 뜹니다. 상세 정보에서는 매장 이미지, 매장명, 지점명, 할인 가격, 추가 유의사항, 네이버맵 링크를 확인할 수 있습니다.
+
+### 다국어 지원 (KOR / ENG)
+![다국어 지원](https://res.cloudinary.com/dm2ginyde/image/upload/v1775810951/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7_2026-04-10_174845_cj65u2.png)
+버튼 클릭으로 한국어로 된 웹사이트를 전부 영어로 전환시킬 수 있습니다. 외국인 학생까지 고려하여 UX를 설계하였습니다.
+
+### 카테고리 필터 기능
+![카테고리 필터 기능](https://res.cloudinary.com/dm2ginyde/image/upload/v1775809482/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7_2026-04-10_170913_ohsnia.png)
+음식점, 놀거리, 술집 등 다양한 테마별로 매장을 필터링하여 볼 수 있습니다. 모바일로 웹사이트 이용 시 스크롤 형식으로 카테고리 필터를 확인할 수 있습니다.
+
+### 전체 매장 리스트 조회
+![전체 매장 리스트 조회](https://res.cloudinary.com/dm2ginyde/image/upload/v1775810837/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7_2026-04-10_174655_stixcf.png)
+모든 매장을 한 눈에 볼 수 파악할 수 있도록 리스트 형태로 제공하고 있습니다. 스크롤을 통해 빠르게 탐색할 수 있습니다. 이들 중 한 매장을 선택하면 매장 상세 정보 확인과 같은 화면으로 넘어갑니다.
+
+### 서비스 소개
+![서비스 소개](https://res.cloudinary.com/dm2ginyde/image/upload/v1775809482/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7_2026-04-10_170944_noremd.png)
+이 웹사이트를 처음 이용하시는 분들을 위해 서비스, Outstanding SNS 등을를 소개하고 있고 이 기능을 통해 제휴 매장 신청을 할 수 있습니다.
+
+---
+
 ## 기술 스택
 
 ### Frontend
