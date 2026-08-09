@@ -9,6 +9,7 @@ import { StoreInformationTab } from '../organisms/StoreInformationTab';
 import type { fetchStoreInterface } from '../../interfaces/FetchStoreInterface';
 import { WebsiteInformationTab } from './WebsiteInformationTab';
 import { AllStoresTab } from './AllStoresTab';
+import fetchJson from '../../lib/fetchJson';
 
 const MainContentStyled = styled.div`
   position: relative;
@@ -61,6 +62,8 @@ interface CategoriesInterface {
 
 type Language = 'kor' | 'eng';
 
+const baseUrl = import.meta.env.VITE_API_URL;
+
 export function MainContent({ className }: MainContentProps) {
   const [selectedStore, setSelectedStore] = useState<fetchStoreInterface | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
@@ -76,18 +79,20 @@ export function MainContent({ className }: MainContentProps) {
   }, []);
 
   useEffect(() => {
-      fetch(`${import.meta.env.VITE_API_URL}/categories`)
-          .then((res) => (res.json()))
-          .then((data) => setCategories(data))
-          .catch((err) => console.error(err))
-  }, []);
-
-  useEffect(() => {
-      fetch(`${import.meta.env.VITE_API_URL}/stores`)
-          .then((res) => res.json())
-          .then((data) => setStores(data))
-          .catch((err) => console.error(err))
-  }, []);
+    const controller = new AbortController();
+    Promise.all([
+      fetchJson<CategoriesInterface[]>(`${baseUrl}/categories`, { signal: controller.signal }),
+      fetchJson<fetchStoreInterface[]>(`${baseUrl}/stores`, { signal: controller.signal })
+    ])
+    .then(([categoriesData, storesData]) => {
+      setCategories(categoriesData);
+      setStores(storesData);
+    })
+    .catch((error) => {
+      console.error(error);
+    })
+    return () => controller.abort();
+  }, [])
 
   return (
     <MainContentStyled className = { className }>
