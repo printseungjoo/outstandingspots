@@ -40,6 +40,7 @@ interface AllCategoriesProps {
     onSelectCategory: (category: string) => void;
     onRemoveCategory: (category: string) => void;
     language: Language;
+    selectedCategory: string[];
 }
 
 interface CategoriesInterface {
@@ -50,7 +51,7 @@ interface CategoriesInterface {
     };
 }
 
-export function AllCategories({ className, onSelectCategory, onRemoveCategory, language }: AllCategoriesProps) {
+export function AllCategories({ className, onRemoveCategory, onSelectCategory, language, selectedCategory }: AllCategoriesProps) {
     const [categories, setCategories] = useState<CategoriesInterface[]>([]);
 
     useEffect(() => {
@@ -63,7 +64,7 @@ export function AllCategories({ className, onSelectCategory, onRemoveCategory, l
     return (
         <AllCategory className={className}>
             {categories.map((category) => (
-                <CategoryButtons onRemoveCategory = {() => onRemoveCategory(category.name.kor)} onSelectCategory = {() => onSelectCategory(category.name.kor)} key = { category._id } categoryNameProp = { language === 'eng' ? category.name.eng : category.name.kor } language = { language }/>
+                <CategoryButtons onRemoveCategory = {onRemoveCategory} onSelectCategory = {onSelectCategory} key = { category._id } categoryNameProp = { language === 'eng' ? category.name.eng : category.name.kor } language = { language } categoryKoreanName = { category.name.kor } selectedCategory = { selectedCategory }/>
             ))}
         </AllCategory>
     )

@@ -73,20 +73,13 @@ export function MainContent({ className }: MainContentProps) {
       <OptionGroupsPlus onOpenWebsiteInfo={() => setIsWebsiteInfoOpen(true)} onOpenStoreList={() => setIsStoreListOpen(true)} />
       {isWebsiteInfoOpen && (<WebsiteInformationTab onClose={() => setIsWebsiteInfoOpen(false)} language={language} />)}
       {isStoreListOpen && (<AllStoresTab onOpen={handleSelectStore} onClose={() => setIsStoreListOpen(false)} language={language} />)}
-      <AllCategoriesPlus onSelectCategory={(category: string) => {
-        setSelectedCategory((stack) => {
-          if (stack.includes(category)) {
-            return stack;
-          }
-          const next = [...stack, category];
-          return next;
-        });
-      }}
+      <AllCategoriesPlus 
+        selectedCategory={selectedCategory}
+        onSelectCategory={(category: string) => {
+          setSelectedCategory((stack) => [...stack, category]);
+        }}
         onRemoveCategory={(category: string) => {
-          setSelectedCategory((stack) => {
-            const next = stack.filter((c) => c !== category);
-            return next;
-          });
+          setSelectedCategory((stack) => stack.filter((c) => c !== category));
         }}
         language={language}
       />

@@ -25,21 +25,19 @@ type Language = 'kor' | 'eng';
 interface CategoryButtonsProps {
     categoryNameProp: string;
     onSelectCategory: (category: string) => void;
-    onRemoveCategory: (category: string) => void;
+    onRemoveCategory: (category: string) => void;   
     language: Language;
+    categoryKoreanName: string;
+    selectedCategory: string[];
 }
 
-export function CategoryButtons({ categoryNameProp, onSelectCategory, onRemoveCategory, language }: CategoryButtonsProps) {
-    const [clicked, setClicked] = useState(false);
-
-    useEffect(() => {
-        setClicked(false);
-    }, [language]);
+export function CategoryButtons({ categoryNameProp, onSelectCategory, onRemoveCategory, categoryKoreanName, selectedCategory }: CategoryButtonsProps) {
+    const isSelected = selectedCategory.includes(categoryKoreanName);
 
     return (
         <CategoryButton>
-            <Categories onSelectCategory = { onSelectCategory } categoryName = { categoryNameProp } clicked = { clicked } onClick = {() => setClicked(true)} />
-            {clicked && <ExitsPlus onClick={() => {setClicked(false); onRemoveCategory(categoryNameProp)}} />}
+            <Categories categoryName = { categoryNameProp } clicked = { isSelected } onClick = {() => onSelectCategory(categoryKoreanName)} />            
+            {isSelected && <ExitsPlus onClick={() => onRemoveCategory(categoryKoreanName)} />}        
         </CategoryButton>
     )
 }
