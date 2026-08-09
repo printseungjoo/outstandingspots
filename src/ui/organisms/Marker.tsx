@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import L from 'leaflet';
 
 import { Marker as LeafletMarker, useMap } from 'react-leaflet';
@@ -19,6 +19,7 @@ interface MarkerProps {
     onSelectStore?: (store: fetchStoreInterface) => void;
     selectedCategory?: string[];
     selectedStore?: fetchStoreInterface | null;
+    stores?: fetchStoreInterface[];
 }
 
 function MapUpdater({ selectedStore }: {selectedStore?: fetchStoreInterface | null}) {
@@ -32,37 +33,12 @@ function MapUpdater({ selectedStore }: {selectedStore?: fetchStoreInterface | nu
     return null
 }
 
-export function Marker({onSelectStore, selectedCategory = [], selectedStore}: MarkerProps) {
-    const [stores, setStores] = useState<fetchStoreInterface[]>([]);
+export function Marker({onSelectStore, selectedCategory = [], selectedStore, stores = []}: MarkerProps) {
     const onSelectStoreRef = useRef<typeof onSelectStore>(onSelectStore);
     
     useEffect(() => {
         onSelectStoreRef.current = onSelectStore;
     }, [onSelectStore]);
-
-    useEffect(() => {
-        const controller = new AbortController();
-        fetch(`${import.meta.env.VITE_API_URL}/stores`, {
-            signal: controller.signal,
-        })
-            .then((res) => {
-                if (!res.ok) {
-                    throw new Error('가게 데이터를 불러오지 못했습니다.')
-                }
-                return res.json()
-            })
-            .then((data) => (setStores(data)))
-            .catch((err) => {
-                if (err.name === 'AbortError') {
-                    console.error('가게 데이터 요청을 실패하였습니다.', err);
-                    return;
-                }
-            });
-
-        return () => {
-            controller.abort();
-        };
-    }, []);
 
     const visibleStores = useMemo(() => {
         if (selectedStore) {

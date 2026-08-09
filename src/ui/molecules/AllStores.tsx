@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useState, useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import type { fetchStoreInterface } from '../../interfaces/FetchStoreInterface';
 
@@ -59,17 +59,10 @@ type Language = 'kor' | 'eng';
 interface AllStoresProps {
     onOpen?: (store: fetchStoreInterface) => void;
     language: Language;
+    stores: fetchStoreInterface[];
 }
 
-export function AllStores({ onOpen, language }: AllStoresProps) {
-    const [stores, setStores] = useState<fetchStoreInterface[]>([]);
-
-    useEffect(() => {
-        fetch(`${import.meta.env.VITE_API_URL}/stores`)
-            .then((res) => res.json())
-            .then((data) => setStores(data))
-            .catch((err) => console.error(err))
-    }, []);
+export function AllStores({ onOpen, language, stores }: AllStoresProps) {
 
     const sortedStores = useMemo(() => {
         return [...stores].sort((a, b) => {

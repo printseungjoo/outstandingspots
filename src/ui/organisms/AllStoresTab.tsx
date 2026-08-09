@@ -35,12 +35,13 @@ interface AllStoresTabProps {
     onOpen?: (store: fetchStoreInterface) => void;
     onClose?: () => void;
     language: Language;
+    stores: fetchStoreInterface[];
 }
 
-export function AllStoresTab({ onOpen, onClose, language }: AllStoresTabProps) {
+export function AllStoresTab({ onOpen, onClose, language, stores }: AllStoresTabProps) {
     return(
         <AllStoresTabStyled>
-            <AllStores onOpen = { onOpen } language = { language }/>
+            <AllStores onOpen = { onOpen } language = { language } stores = { stores }/>
             <ExitsPlus onClick = { onClose }/>
         </AllStoresTabStyled>
     )

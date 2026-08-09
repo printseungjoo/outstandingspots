@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { AllCategories } from '../molecules/AllCategories';
 import { LanguageButtons } from '../molecules/LanguageButtons';
@@ -51,37 +51,62 @@ interface MainContentProps {
   storeKorName?: string;
 }
 
+interface CategoriesInterface {
+  _id: string;
+  name: {
+      kor: string;
+      eng: string;
+  };
+}
+
 type Language = 'kor' | 'eng';
 
 export function MainContent({ className }: MainContentProps) {
   const [selectedStore, setSelectedStore] = useState<fetchStoreInterface | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
-  const [isWebsiteInfoOpen, setIsWebsiteInfoOpen] = useState(false);
-  const [isStoreListOpen, setIsStoreListOpen] = useState(false);
+  const [isWebsiteInfoOpen, setIsWebsiteInfoOpen] = useState<boolean>(false);
+  const [isStoreListOpen, setIsStoreListOpen] = useState<boolean>(false);
   const [language, setLanguage] = useState<Language>('kor');
+  const [categories, setCategories] = useState<CategoriesInterface[]>([]);
+  const [stores, setStores] = useState<fetchStoreInterface[]>([]);
 
   const handleSelectStore = useCallback((store: fetchStoreInterface) => {
     setSelectedStore(store);
     setIsStoreListOpen(false);
   }, []);
 
+  useEffect(() => {
+      fetch(`${import.meta.env.VITE_API_URL}/categories`)
+          .then((res) => (res.json()))
+          .then((data) => setCategories(data))
+          .catch((err) => console.error(err))
+  }, []);
+
+  useEffect(() => {
+      fetch(`${import.meta.env.VITE_API_URL}/stores`)
+          .then((res) => res.json())
+          .then((data) => setStores(data))
+          .catch((err) => console.error(err))
+  }, []);
+
   return (
-    <MainContentStyled className={className}>
-      {selectedStore && (<StoreInformationTabPlus store={selectedStore} onClose={() => setSelectedStore(null)} language={language} />)}
-      <MapPlus onSelectStore={handleSelectStore} selectedCategory={selectedCategory} selectedStore={selectedStore} />
-      <LanguageButtonsPlus onChangeLanguage={setLanguage} />
-      <OptionGroupsPlus onOpenWebsiteInfo={() => setIsWebsiteInfoOpen(true)} onOpenStoreList={() => setIsStoreListOpen(true)} />
-      {isWebsiteInfoOpen && (<WebsiteInformationTab onClose={() => setIsWebsiteInfoOpen(false)} language={language} />)}
-      {isStoreListOpen && (<AllStoresTab onOpen={handleSelectStore} onClose={() => setIsStoreListOpen(false)} language={language} />)}
+    <MainContentStyled className = { className }>
+      {selectedStore && (<StoreInformationTabPlus store = { selectedStore } onClose = {() => setSelectedStore(null)} language = { language } />)}
+      <MapPlus onSelectStore = { handleSelectStore } selectedCategory = { selectedCategory } selectedStore = { selectedStore } stores = { stores } />
+      <LanguageButtonsPlus onChangeLanguage = { setLanguage } />
+      <OptionGroupsPlus onOpenWebsiteInfo = {() => setIsWebsiteInfoOpen(true)} onOpenStoreList = {() => setIsStoreListOpen(true)} />
+      {isWebsiteInfoOpen && (<WebsiteInformationTab onClose = {() => setIsWebsiteInfoOpen(false)} language = { language } />)}
+      {isStoreListOpen && (<AllStoresTab onOpen = { handleSelectStore } onClose = {() => setIsStoreListOpen(false)} language = { language } stores = { stores } />)}
       <AllCategoriesPlus 
-        selectedCategory={selectedCategory}
-        onSelectCategory={(category: string) => {
+        selectedCategory = { selectedCategory }
+        onSelectCategory = {(category: string) => {
           setSelectedCategory((stack) => [...stack, category]);
         }}
-        onRemoveCategory={(category: string) => {
+        onRemoveCategory = {(category: string) => {
           setSelectedCategory((stack) => stack.filter((c) => c !== category));
         }}
-        language={language}
+        language = { language }
+        categories = { categories }
       />
     </MainContentStyled>
   );

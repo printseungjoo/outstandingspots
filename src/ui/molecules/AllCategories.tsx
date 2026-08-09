@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useState, useEffect } from 'react';
 
 import { CategoryButtons } from './CategoryButtons';
 
@@ -35,14 +34,6 @@ const AllCategory = styled.div`
 
 type Language = 'kor' | 'eng';
 
-interface AllCategoriesProps {
-    className?: string;
-    onSelectCategory: (category: string) => void;
-    onRemoveCategory: (category: string) => void;
-    language: Language;
-    selectedCategory: string[];
-}
-
 interface CategoriesInterface {
     _id: string;
     name: {
@@ -51,20 +42,21 @@ interface CategoriesInterface {
     };
 }
 
-export function AllCategories({ className, onRemoveCategory, onSelectCategory, language, selectedCategory }: AllCategoriesProps) {
-    const [categories, setCategories] = useState<CategoriesInterface[]>([]);
+interface AllCategoriesProps {
+    className?: string;
+    onSelectCategory: (category: string) => void;
+    onRemoveCategory: (category: string) => void;
+    language: Language;
+    selectedCategory: string[];
+    categories: CategoriesInterface[];
+}
 
-    useEffect(() => {
-        fetch(`${import.meta.env.VITE_API_URL}/categories`)
-            .then((res) => (res.json()))
-            .then((data) => setCategories(data))
-            .catch((err) => console.error(err))
-    }, []);
+export function AllCategories({ className, onRemoveCategory, onSelectCategory, language, selectedCategory, categories }: AllCategoriesProps) {
 
     return (
-        <AllCategory className={className}>
+        <AllCategory className = { className }>
             {categories.map((category) => (
-                <CategoryButtons onRemoveCategory = {onRemoveCategory} onSelectCategory = {onSelectCategory} key = { category._id } categoryNameProp = { language === 'eng' ? category.name.eng : category.name.kor } language = { language } categoryKoreanName = { category.name.kor } selectedCategory = { selectedCategory }/>
+                <CategoryButtons onRemoveCategory = { onRemoveCategory } onSelectCategory = { onSelectCategory } key = { category._id } categoryNameProp = { language === 'eng' ? category.name.eng : category.name.kor } language = { language } categoryKoreanName = { category.name.kor } selectedCategory = { selectedCategory }/>
             ))}
         </AllCategory>
     )

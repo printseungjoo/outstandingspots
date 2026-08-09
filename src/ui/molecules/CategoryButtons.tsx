@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useState, useEffect } from 'react';
 
 import { Categories } from '../atoms/Categories';
 import { Exits } from '../atoms/Exits';

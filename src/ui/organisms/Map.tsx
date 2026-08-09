@@ -17,21 +17,22 @@ const MapWrapper = styled.div`
 `
 
 interface MapProps {
-    className?: string
+    className?: string;
     onSelectStore?: (store: fetchStoreInterface) => void
-    selectedCategory: string[]
-    selectedStore: fetchStoreInterface | null
+    selectedCategory: string[];
+    selectedStore: fetchStoreInterface | null;
+    stores: fetchStoreInterface[];
 }
 
 const DEFAULT_CENTER: [number, number] = [37.378760, 126.662809]
 const DEFAULT_ZOOM = 16
 
-export function Map({ className, onSelectStore, selectedCategory, selectedStore }: MapProps) {
+export function Map({ className, onSelectStore, selectedCategory, selectedStore, stores }: MapProps) {
     return (
         <MapWrapper className = { className }>
             <MapContainer center = { DEFAULT_CENTER } zoom = { DEFAULT_ZOOM } scrollWheelZoom = { true } style = {{ width: '100%', height: '100%' }}>
                 <TileLayer url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' />
-                <Marker onSelectStore = { onSelectStore } selectedCategory = { selectedCategory } selectedStore = { selectedStore } />
+                <Marker onSelectStore = { onSelectStore } selectedCategory = { selectedCategory } selectedStore = { selectedStore } stores = { stores } />
             </MapContainer>
         </MapWrapper>
     )
