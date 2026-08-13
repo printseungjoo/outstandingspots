@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { css, keyframes } from '@emotion/react';
 import { useCallback, useEffect, useState } from 'react';
 
 import { AllCategories } from '../molecules/AllCategories';
@@ -35,15 +36,57 @@ const OptionGroupsPlus = styled(OptionGroups)`
   margin: 2rem 2rem;
 `;
 
-const AllCategoriesPlus = styled(AllCategories)`
-  position: absolute;
-  z-index: 2;
-  bottom: 2rem;
-`;
-
 const StoreInformationTabPlus = styled(StoreInformationTab)`
   position: absolute;
   z-index: 4;
+`;
+
+const MainContentBottomDiv = styled.div`
+  position: absolute;
+  bottom: 3%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.8rem; 
+  width: 100%;
+  height: 40%;
+`;
+
+const fadeOut = keyframes`
+  0% {
+    opacity: 1;
+  }
+  12.5% {
+    transform: scale(1.2);
+  }
+  25% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+`;
+
+const Loading = styled.div<{ loadingState: string }>`
+  background-color: #e3e6ff;
+  color: #535FC1;
+  font-size: 1.2rem;
+  font-weight: bolder;
+  padding: 0.6vh 2rem;
+  height: 15%;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.5px solid gray;
+  animation: ${({ loadingState }) => (loadingState === '즐거운 이용 되세요! Enjoy the service!' ? css`${fadeOut} 3s ease-out forwards` : 'none')};
+
+  @media(max-width: 767px) {
+    font-size: 1rem;
+  }
 `;
 
 interface MainContentProps {
@@ -72,6 +115,7 @@ export function MainContent({ className }: MainContentProps) {
   const [language, setLanguage] = useState<Language>('kor');
   const [categories, setCategories] = useState<CategoriesInterface[]>([]);
   const [stores, setStores] = useState<fetchStoreInterface[]>([]);
+  const [loadingState, setLoadingState] = useState<string>('매장 정보를 불러오는 중입니다 Loading store information');
 
   const handleSelectStore = useCallback((store: fetchStoreInterface) => {
     setSelectedStore(store);
@@ -87,9 +131,12 @@ export function MainContent({ className }: MainContentProps) {
     .then(([categoriesData, storesData]) => {
       setCategories(categoriesData);
       setStores(storesData);
+      setLoadingState('즐거운 이용 되세요! Enjoy the service!');
     })
     .catch((error) => {
+      if (controller.signal.aborted) return;
       console.error(error);
+      setLoadingState('다시 시도해주세요 Try again');
     })
     return () => controller.abort();
   }, [])
@@ -102,17 +149,20 @@ export function MainContent({ className }: MainContentProps) {
       <OptionGroupsPlus onOpenWebsiteInfo = {() => setIsWebsiteInfoOpen(true)} onOpenStoreList = {() => setIsStoreListOpen(true)} />
       {isWebsiteInfoOpen && (<WebsiteInformationTab onClose = {() => setIsWebsiteInfoOpen(false)} language = { language } />)}
       {isStoreListOpen && (<AllStoresTab onOpen = { handleSelectStore } onClose = {() => setIsStoreListOpen(false)} language = { language } stores = { stores } />)}
-      <AllCategoriesPlus 
-        selectedCategory = { selectedCategory }
-        onSelectCategory = {(category: string) => {
-          setSelectedCategory((stack) => [...stack, category]);
-        }}
-        onRemoveCategory = {(category: string) => {
-          setSelectedCategory((stack) => stack.filter((c) => c !== category));
-        }}
-        language = { language }
-        categories = { categories }
-      />
+      <MainContentBottomDiv>
+        <Loading loadingState = { loadingState }> { loadingState } </Loading>
+        <AllCategories 
+          selectedCategory = { selectedCategory }
+          onSelectCategory = {(category: string) => {
+            setSelectedCategory((stack) => [...stack, category]);
+          }}
+          onRemoveCategory = {(category: string) => {
+            setSelectedCategory((stack) => stack.filter((c) => c !== category));
+          }}
+          language = { language }
+          categories = { categories }
+        />
+      </MainContentBottomDiv>
     </MainContentStyled>
   );
 }
