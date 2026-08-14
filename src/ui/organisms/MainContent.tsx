@@ -7,10 +7,12 @@ import { LanguageButtons } from '../molecules/LanguageButtons';
 import { OptionGroups } from '../molecules/OptionGroups';
 import { Map } from './Map';
 import { StoreInformationTab } from '../organisms/StoreInformationTab';
-import type { fetchStoreInterface } from '../../interfaces/FetchStoreInterface';
+import type Store from '../../types/Store';
 import { WebsiteInformationTab } from './WebsiteInformationTab';
 import { AllStoresTab } from './AllStoresTab';
 import fetchJson from '../../lib/fetchJson';
+import type Language from '../../types/Language';
+import type Category from '../../types/Category';
 
 const MainContentStyled = styled.div`
   position: relative;
@@ -95,29 +97,19 @@ interface MainContentProps {
   storeKorName?: string;
 }
 
-interface CategoriesInterface {
-  _id: string;
-  name: {
-      kor: string;
-      eng: string;
-  };
-}
-
-type Language = 'kor' | 'eng';
-
 const baseUrl = import.meta.env.VITE_API_URL;
 
 export function MainContent({ className }: MainContentProps) {
-  const [selectedStore, setSelectedStore] = useState<fetchStoreInterface | null>(null);
+  const [selectedStore, setSelectedStore] = useState<Store | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
   const [isWebsiteInfoOpen, setIsWebsiteInfoOpen] = useState<boolean>(false);
   const [isStoreListOpen, setIsStoreListOpen] = useState<boolean>(false);
   const [language, setLanguage] = useState<Language>('kor');
-  const [categories, setCategories] = useState<CategoriesInterface[]>([]);
-  const [stores, setStores] = useState<fetchStoreInterface[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [stores, setStores] = useState<Store[]>([]);
   const [loadingState, setLoadingState] = useState<string>('매장 정보를 불러오는 중입니다 Loading store information');
 
-  const handleSelectStore = useCallback((store: fetchStoreInterface) => {
+  const handleSelectStore = useCallback((store: Store) => {
     setSelectedStore(store);
     setIsStoreListOpen(false);
   }, []);
@@ -125,8 +117,8 @@ export function MainContent({ className }: MainContentProps) {
   useEffect(() => {
     const controller = new AbortController();
     Promise.all([
-      fetchJson<CategoriesInterface[]>(`${baseUrl}/categories`, { signal: controller.signal }),
-      fetchJson<fetchStoreInterface[]>(`${baseUrl}/stores`, { signal: controller.signal })
+      fetchJson<Category[]>(`${baseUrl}/categories`, { signal: controller.signal }),
+      fetchJson<Store[]>(`${baseUrl}/stores`, { signal: controller.signal })
     ])
     .then(([categoriesData, storesData]) => {
       setCategories(categoriesData);

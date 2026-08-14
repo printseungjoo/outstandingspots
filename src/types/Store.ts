@@ -1,4 +1,4 @@
-export interface fetchStoreInterface {
+export default interface Store {
     _id: string;
     photo: string;
     category: {

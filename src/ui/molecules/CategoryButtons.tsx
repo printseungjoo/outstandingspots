@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 
 import { Categories } from '../atoms/Categories';
 import { Exits } from '../atoms/Exits';
+import type Language from '../../types/Language';
 
 const CategoryButton = styled.div`
     position: relative;
@@ -18,8 +19,6 @@ const ExitsPlus = styled(Exits)`
     transform: translate(40%, 20%);
     z-index: 2;
 `;
-
-type Language = 'kor' | 'eng';
 
 interface CategoryButtonsProps {
     categoryNameProp: string;

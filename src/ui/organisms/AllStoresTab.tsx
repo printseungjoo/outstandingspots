@@ -2,7 +2,8 @@ import styled from '@emotion/styled';
 
 import { Exits } from '../atoms/Exits';
 import { AllStores } from '../molecules/AllStores';
-import type { fetchStoreInterface } from '../../interfaces/FetchStoreInterface';
+import type Store from '../../types/Store';
+import type Language from '../../types/Language';
 
 const AllStoresTabStyled = styled.div`
     position: relative;
@@ -29,13 +30,11 @@ const ExitsPlus = styled(Exits)`
     }
 `;
 
-type Language = 'kor' | 'eng';
-
 interface AllStoresTabProps {
-    onOpen?: (store: fetchStoreInterface) => void;
+    onOpen?: (store: Store) => void;
     onClose?: () => void;
     language: Language;
-    stores: fetchStoreInterface[];
+    stores: Store[];
 }
 
 export function AllStoresTab({ onOpen, onClose, language, stores }: AllStoresTabProps) {

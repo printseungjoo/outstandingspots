@@ -1,7 +1,8 @@
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
 
-import type { fetchStoreInterface } from '../../interfaces/FetchStoreInterface';
+import type Store from '../../types/Store';
+import type Language from '../../types/Language';
 
 const AllStore = styled.div`
     width: 25%;
@@ -54,12 +55,10 @@ const StoreButton = styled.button`
     padding: 3vh;
 `;
 
-type Language = 'kor' | 'eng';
-
 interface AllStoresProps {
-    onOpen?: (store: fetchStoreInterface) => void;
+    onOpen?: (store: Store) => void;
     language: Language;
-    stores: fetchStoreInterface[];
+    stores: Store[];
 }
 
 export function AllStores({ onOpen, language, stores }: AllStoresProps) {

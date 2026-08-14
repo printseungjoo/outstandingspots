@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
 
 import { CategoryButtons } from './CategoryButtons';
+import type Language from '../../types/Language';   
+import type Category from '../../types/Category';
 
 const AllCategory = styled.div`
     display: flex;
@@ -24,23 +26,13 @@ const AllCategory = styled.div`
     }
 `;
 
-type Language = 'kor' | 'eng';
-
-interface CategoriesInterface {
-    _id: string;
-    name: {
-        kor: string;
-        eng: string;
-    };
-}
-
 interface AllCategoriesProps {
     className?: string;
     onSelectCategory: (category: string) => void;
     onRemoveCategory: (category: string) => void;
     language: Language;
     selectedCategory: string[];
-    categories: CategoriesInterface[];
+    categories: Category[];
 }
 
 export function AllCategories({ className, onRemoveCategory, onSelectCategory, language, selectedCategory, categories }: AllCategoriesProps) {

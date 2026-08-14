@@ -1,9 +1,10 @@
 import styled from '@emotion/styled';
 
 import { Photos } from '../atoms/Photos';
-import type { fetchStoreInterface } from '../../interfaces/FetchStoreInterface';
+import type Store from '../../types/Store';
 import { StoreInformationGroups } from './StoreInformationGroups';
 import { NaverMaps } from '../atoms/NaverMaps';
+import type Language from '../../types/Language';
 
 const StoreInformationStyled = styled.div`
     width: 25%;
@@ -60,15 +61,11 @@ const ContentFlexing = styled.div`
     align-items: center;
 `;
 
-type Language = 'kor' | 'eng';
-
 interface StoreInformationProps {
-    store: fetchStoreInterface;
+    store: Store;
     language: Language;
 }
 
-// 일단 데이터 가져오는 걸 한국어로 맞춰놓고 나중에 수정 예정
-// 사진 데이터는 현재 임시 데이터
 export function StoreInformation({ store, language }: StoreInformationProps) {
     return (
         <div>

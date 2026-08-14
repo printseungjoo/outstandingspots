@@ -5,7 +5,7 @@ import { Marker as LeafletMarker, useMap } from 'react-leaflet';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-import type { fetchStoreInterface } from '../../interfaces/FetchStoreInterface';
+import type Store from '../../types/Store';
 
 delete (L.Icon.Default.prototype as { _getIconUrl?: () => string })._getIconUrl
 
@@ -16,13 +16,13 @@ L.Icon.Default.mergeOptions({
 })
 
 interface MarkerProps {
-    onSelectStore?: (store: fetchStoreInterface) => void;
+    onSelectStore?: (store: Store) => void;
     selectedCategory?: string[];
-    selectedStore?: fetchStoreInterface | null;
-    stores?: fetchStoreInterface[];
+    selectedStore?: Store | null;
+    stores?: Store[];
 }
 
-function MapUpdater({ selectedStore }: {selectedStore?: fetchStoreInterface | null}) {
+function MapUpdater({ selectedStore }: {selectedStore: Store | null}) {
     const map = useMap()
     useEffect(() => {
         if (!selectedStore) return
@@ -52,7 +52,7 @@ export function Marker({onSelectStore, selectedCategory = [], selectedStore, sto
 
     return (
         <>
-            <MapUpdater selectedStore={ selectedStore } />
+            <MapUpdater selectedStore = { selectedStore || null } />
             {visibleStores.map((store) => (
                 <LeafletMarker key={ store._id } position={[store.lat, store.lon]} eventHandlers={{
                     click: () => {

@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { MapContainer, TileLayer } from 'react-leaflet';
 
 import { Marker } from './Marker';
-import type { fetchStoreInterface } from '../../interfaces/FetchStoreInterface';
+import type Store from '../../types/Store';
 
 const MapWrapper = styled.div`
   width: 100%;
@@ -18,10 +18,10 @@ const MapWrapper = styled.div`
 
 interface MapProps {
     className?: string;
-    onSelectStore?: (store: fetchStoreInterface) => void
+    onSelectStore?: (store: Store) => void
     selectedCategory: string[];
-    selectedStore: fetchStoreInterface | null;
-    stores: fetchStoreInterface[];
+    selectedStore: Store | null;
+    stores: Store[];
 }
 
 const DEFAULT_CENTER: [number, number] = [37.378760, 126.662809]

@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 
 import { Exits } from '../atoms/Exits';
 import { WebsiteInformation } from '../molecules/WebsiteInformation';
+import type Language from '../../types/Language';
 
 const WebsiteInformationTabStyled = styled.div`
     position: fixed;
@@ -30,8 +31,6 @@ const ExitsPlus = styled(Exits)`
         left: calc(90% + 0.5rem);
     }
 `;
-
-type Language = 'kor' | 'eng';
 
 interface WebsiteInformationTabProps {
     onClose?: () => void;
