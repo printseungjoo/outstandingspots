@@ -25,7 +25,7 @@ app.use(
         origin: (origin, cb) => {
             if (!origin) return cb(null, true);
             if (allowedOrigins.includes(origin)) return cb(null, true);
-            return cb(new Error('CORS를 허용하지 않습니다'));
+            return cb(null, false);
         },
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
         credentials: true,

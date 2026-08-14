@@ -76,7 +76,7 @@ export function AdminStores({ onChangeLanguage }: AdminStoresProps) {
     const [checked, setChecked] = useState<string>('');
 
     useEffect(() => {
-        fetch('http://localhost:8080/stores')
+        fetch(`${import.meta.env.VITE_API_URL}/stores`)
             .then((res) => res.json())
             .then((data) => setStores(data))
             .catch((err) => console.error(err))

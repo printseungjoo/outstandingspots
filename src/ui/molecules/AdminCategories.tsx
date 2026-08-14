@@ -34,7 +34,7 @@ export function AdminCategories({ onChangeLanguage }: AdminCategoriesProps) {
     const [checked, setChecked] = useState<string>('');
 
     useEffect(() => {
-        fetch('http://localhost:8080/categories')
+        fetch(`${import.meta.env.VITE_API_URL}/categories`)
             .then((res) => (res.json()))
             .then((data) => setCategories(data))
             .catch((err) => console.error(err))
