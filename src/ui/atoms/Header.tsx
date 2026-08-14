@@ -2,7 +2,8 @@ import styled from '@emotion/styled';
 
 const HeaderStyled = styled.div`
     width: 100%;
-    height: 8vh;
+    height: 8dvh;
+    flex-shrink: 0;
     color: #535FC1;
     font-weight: bold;
     display: flex;

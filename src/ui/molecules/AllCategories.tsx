@@ -11,8 +11,8 @@ const AllCategory = styled.div`
     overflow-x: auto;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
-    width: 100vw;
-    max-width: 100vw;
+    width: 100%;
+    max-width: 100%;
     box-sizing: border-box;
     gap: 1.5rem;
     padding-left: 1em;

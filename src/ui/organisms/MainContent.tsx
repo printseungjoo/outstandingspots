@@ -17,11 +17,13 @@ import type Category from '../../types/Category';
 const MainContentStyled = styled.div`
   position: relative;
   width: 100%;
-  height: 84vh;
+  flex: 1;
+  min-height: 0;
 `;
 
 const MapPlus = styled(Map)`
   position: absolute;
+  inset: 0;
   z-index: 1;
 `;
 
@@ -54,6 +56,10 @@ const MainContentBottomDiv = styled.div`
   gap: 0.8rem; 
   width: 100%;
   height: 40%;
+  pointer-events: none;
+  > * {
+    pointer-events: auto;
+  }
 `;
 
 const fadeOut = keyframes`
@@ -72,7 +78,9 @@ const fadeOut = keyframes`
   }
 `;
 
-const Loading = styled.div<{ loadingState: string }>`
+const SUCCESS_MESSAGE = '즐거운 이용 되세요! Enjoy the service!';
+
+const Loading = styled.div<{ $animate: boolean }>`
   background-color: #e3e6ff;
   color: #535FC1;
   font-size: 1.2rem;
@@ -83,10 +91,14 @@ const Loading = styled.div<{ loadingState: string }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 0.5px solid gray;
-  animation: ${({ loadingState }) => (loadingState === '즐거운 이용 되세요! Enjoy the service!' ? css`${fadeOut} 3s ease-out forwards` : 'none')};
+  border: 0.05rem solid gray;
+  ${({ $animate }) =>
+    $animate &&
+    css`
+      animation: ${fadeOut} 3s ease-out forwards;
+    `}
 
-  @media(max-width: 767px) {
+  @media (max-width: 47.9375rem) {
     font-size: 1rem;
   }
 `;
@@ -108,6 +120,7 @@ export function MainContent({ className }: MainContentProps) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [stores, setStores] = useState<Store[]>([]);
   const [loadingState, setLoadingState] = useState<string>('매장 정보를 불러오는 중입니다 Loading store information');
+  const [isLoadingVisible, setIsLoadingVisible] = useState(true);
 
   const handleSelectStore = useCallback((store: Store) => {
     setSelectedStore(store);
@@ -123,7 +136,7 @@ export function MainContent({ className }: MainContentProps) {
     .then(([categoriesData, storesData]) => {
       setCategories(categoriesData);
       setStores(storesData);
-      setLoadingState('즐거운 이용 되세요! Enjoy the service!');
+      setLoadingState(SUCCESS_MESSAGE);
     })
     .catch((error) => {
       if (controller.signal.aborted) return;
@@ -132,6 +145,8 @@ export function MainContent({ className }: MainContentProps) {
     })
     return () => controller.abort();
   }, [])
+
+  const isSuccess = loadingState === SUCCESS_MESSAGE;
 
   return (
     <MainContentStyled className = { className }>
@@ -142,7 +157,15 @@ export function MainContent({ className }: MainContentProps) {
       {isWebsiteInfoOpen && (<WebsiteInformationTab onClose = {() => setIsWebsiteInfoOpen(false)} language = { language } />)}
       {isStoreListOpen && (<AllStoresTab onOpen = { handleSelectStore } onClose = {() => setIsStoreListOpen(false)} language = { language } stores = { stores } />)}
       <MainContentBottomDiv>
-        <Loading loadingState = { loadingState }> { loadingState } </Loading>
+        {isLoadingVisible && 
+          (<Loading $animate = { isSuccess }
+            onAnimationEnd={() => {
+              if (isSuccess) setIsLoadingVisible(false);
+            }}
+          >
+          { loadingState }
+          </Loading>
+        )}
         <AllCategories 
           selectedCategory = { selectedCategory }
           onSelectCategory = {(category: string) => {

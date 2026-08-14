@@ -6,7 +6,7 @@ import type Store from '../../types/Store';
 
 const MapWrapper = styled.div`
   width: 100%;
-  height: 84vh;
+  height: 100%;
   position: relative;
   z-index: 0;
 
