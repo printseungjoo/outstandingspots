@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 
 import { Languages } from '../atoms/Languages';
+import type Language from '../../types/Language';
 
 const LanguageButton = styled.div`
     display: inline-flex;
@@ -9,8 +10,6 @@ const LanguageButton = styled.div`
     padding: 0.5rem 0.5rem;
     background-color: white;
 `;
-
-type Language = 'kor' | 'eng';
 
 interface LanguageButtonsProps {
     className?: string;

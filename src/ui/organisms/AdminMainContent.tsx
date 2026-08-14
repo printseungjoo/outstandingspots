@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import { AdminTop } from '../molecules/AdminTop';
 import { AdminMiddle } from '../molecules/AdminMiddle';
+import type Language from '../../types/Language';
 
 const AdminMainContentStyled = styled.div`
     background-color: #5A536B;
@@ -15,8 +16,6 @@ const AdminMainContentStyled = styled.div`
 const AdminInner = styled.div`
     width: 91%;
 `;
-
-type Language = 'kor' | 'eng';
 
 export function AdminMainContent() {
     const [isChecked, setIsChecked] = useState<boolean>(false);

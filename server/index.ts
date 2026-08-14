@@ -47,10 +47,16 @@ app.get('/categories', async (_req: Request, res: Response) => {
         if (categoriesCache && now - categoriesCacheTime < CATEGORIES_CACHE_DURATION) {
             return res.json(categoriesCache);
         }
-        const categories = await categoryModel.find({}, 'name');
-        categoriesCache = categories;
+        const categories = await categoryModel.find({}, 'name').lean();
+        categoriesCache = categories.map((category) => ({
+            _id: String(category._id),
+            name: {
+                kor: category.name?.kor ?? '',
+                eng: category.name?.eng ?? '',
+            },
+        }));
         categoriesCacheTime = now;
-        res.json(categories);
+        res.json(categoriesCache);
     }
     catch (err) {
         console.error("categories를 가져오는 데에 오류가 발생했습니다:", err);
@@ -68,10 +74,36 @@ app.get("/stores", async (_req: Request, res: Response) => {
         if (storesCache && now - storesCacheTime < STORES_CACHE_DURATION) {
             return res.json(storesCache);
         }
-        const stores = await storeModel.find({}, 'photo category name branch naverMap lat lon discount description');
-        storesCache = stores as StoreInterface[];
+        const stores = await storeModel.find({}, 'photo category name branch naverMap lat lon discount description').lean();
+        storesCache = stores.map((store) => ({
+            _id: String(store._id),
+            photo: store.photo,
+            category: {
+                kor: store.category?.kor ?? '',
+                eng: store.category?.eng ?? '',
+            },
+            name: {
+                kor: store.name?.kor ?? '',
+                eng: store.name?.eng ?? '',
+            },
+            branch: {
+                kor: store.branch?.kor ?? '',
+                eng: store.branch?.eng ?? '',
+            },
+            naverMap: store.naverMap,
+            lat: store.lat,
+            lon: store.lon,
+            discount: {
+                kor: store.discount?.kor ?? '',
+                eng: store.discount?.eng ?? '',
+            },
+            description: {
+                kor: store.description?.kor ?? '',
+                eng: store.description?.eng ?? '',
+            },
+        }));
         storesCacheTime = now;
-        res.json(stores);
+        res.json(storesCache);
     } catch (error) {
         console.error("stores를 가져오는 데에 오류가 발생했습니다:", error);
         res.status(500).json({ error: "stores fetch를 실패하였습니다." });

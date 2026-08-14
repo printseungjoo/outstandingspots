@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { useState, useEffect } from 'react';
+import type Language from '../../types/Language';
 
 const AdminCategoriesStyled = styled.div`
     width: 100%;
@@ -23,8 +24,6 @@ interface Category {
         eng: string;
     }
 }
-
-type Language = 'kor' | 'eng';
 
 interface AdminCategoriesProps {
     onChangeLanguage: Language;

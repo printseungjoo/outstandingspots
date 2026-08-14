@@ -1,7 +1,8 @@
 import styled from '@emotion/styled';
-import { useState, useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
-import type { fetchStoreInterface } from '../../interfaces/FetchStoreInterface';
+import type Store from '../../types/Store';
+import type Language from '../../types/Language';
 
 const AllStore = styled.div`
     width: 25%;
@@ -54,22 +55,13 @@ const StoreButton = styled.button`
     padding: 3vh;
 `;
 
-type Language = 'kor' | 'eng';
-
 interface AllStoresProps {
-    onOpen?: (store: fetchStoreInterface) => void;
+    onOpen?: (store: Store) => void;
     language: Language;
+    stores: Store[];
 }
 
-export function AllStores({ onOpen, language }: AllStoresProps) {
-    const [stores, setStores] = useState<fetchStoreInterface[]>([]);
-
-    useEffect(() => {
-        fetch(`${import.meta.env.VITE_API_URL}/stores`)
-            .then((res) => res.json())
-            .then((data) => setStores(data))
-            .catch((err) => console.error(err))
-    }, []);
+export function AllStores({ onOpen, language, stores }: AllStoresProps) {
 
     const sortedStores = useMemo(() => {
         return [...stores].sort((a, b) => {

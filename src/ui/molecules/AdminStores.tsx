@@ -1,9 +1,10 @@
 import styled from '@emotion/styled';
 import { useState, useEffect } from 'react';
 
-import type { fetchStoreInterface } from '../../interfaces/FetchStoreInterface';
+import type Store from '../../types/Store';
 import { NaverMaps } from '../atoms/NaverMaps';
 import { Camera } from '../atoms/Camera';
+import type Language from '../../types/Language';
 
 const AdminStoresStyled = styled.div`
     width: 100%;
@@ -66,14 +67,12 @@ const BoldText = styled.p`
     white-space: nowrap;
 `;
 
-type Language = 'kor' | 'eng';
-
 interface AdminStoresProps {
     onChangeLanguage: Language;
 }
 
 export function AdminStores({ onChangeLanguage }: AdminStoresProps) {
-    const [stores, setStores] = useState<fetchStoreInterface[]>([]);
+        const [stores, setStores] = useState<Store[]>([]);
     const [checked, setChecked] = useState<string>('');
 
     useEffect(() => {

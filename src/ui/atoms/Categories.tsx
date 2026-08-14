@@ -11,12 +11,11 @@ interface CategoryProps {
     categoryName: string;
     clicked: boolean;
     onClick?: () => void;
-    onSelectCategory: (category: string) => void;
 }
 
-export function Categories({ categoryName, clicked, onClick, onSelectCategory }: CategoryProps) {
+export function Categories({ categoryName, clicked, onClick }: CategoryProps) {
     return (
-        <Category clicked = { clicked } onClick = {() => { onClick?.(); onSelectCategory(categoryName) }} >
+        <Category clicked = { clicked } onClick = {() => { onClick?.(); }} >
             { categoryName }
         </Category>
     )

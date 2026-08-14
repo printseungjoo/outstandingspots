@@ -1,5 +1,7 @@
 import styled from '@emotion/styled';
 
+import type Language from '../../types/Language';
+
 const LogoImage = styled.img`
     margin-top: 3vh;
 `;
@@ -63,13 +65,10 @@ const OptionButton = styled.a`
     color: black;
 `;
 
-type Language = 'kor' | 'eng';
-
 interface WebsiteInformationProps {
     language: Language;
 }
 
-// 로고 사진은 리뉴얼 될 예정이고 현재는 리뉴얼 전 로고 사진
 export function WebsiteInformation({ language }: WebsiteInformationProps) {
     return (
         <WebsiteInformationStyled>

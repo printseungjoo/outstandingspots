@@ -2,7 +2,8 @@ import styled from '@emotion/styled';
 
 import { Exits } from '../atoms/Exits';
 import { StoreInformation } from '../molecules/StoreInformation';
-import type { fetchStoreInterface } from '../../interfaces/FetchStoreInterface';
+import type Store from '../../types/Store';
+import type Language from '../../types/Language';
 
 const StoreInformationTabStyled = styled.div`
     position: relative;
@@ -29,12 +30,10 @@ const ExitsPlus = styled(Exits)`
     }
 `;
 
-type Language = 'kor' | 'eng';
-
 interface StoreInformationTabProps {
     className?: string;
     onClose?: () => void;
-    store: fetchStoreInterface;
+    store: Store;
     language: Language;
 }
 

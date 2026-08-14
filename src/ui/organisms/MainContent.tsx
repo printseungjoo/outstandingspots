@@ -1,14 +1,18 @@
 import styled from '@emotion/styled';
-import { useCallback, useState } from 'react';
+import { css, keyframes } from '@emotion/react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { AllCategories } from '../molecules/AllCategories';
 import { LanguageButtons } from '../molecules/LanguageButtons';
 import { OptionGroups } from '../molecules/OptionGroups';
 import { Map } from './Map';
 import { StoreInformationTab } from '../organisms/StoreInformationTab';
-import type { fetchStoreInterface } from '../../interfaces/FetchStoreInterface';
+import type Store from '../../types/Store';
 import { WebsiteInformationTab } from './WebsiteInformationTab';
 import { AllStoresTab } from './AllStoresTab';
+import fetchJson from '../../lib/fetchJson';
+import type Language from '../../types/Language';
+import type Category from '../../types/Category';
 
 const MainContentStyled = styled.div`
   position: relative;
@@ -34,15 +38,57 @@ const OptionGroupsPlus = styled(OptionGroups)`
   margin: 2rem 2rem;
 `;
 
-const AllCategoriesPlus = styled(AllCategories)`
-  position: absolute;
-  z-index: 2;
-  bottom: 2rem;
-`;
-
 const StoreInformationTabPlus = styled(StoreInformationTab)`
   position: absolute;
   z-index: 4;
+`;
+
+const MainContentBottomDiv = styled.div`
+  position: absolute;
+  bottom: 3%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.8rem; 
+  width: 100%;
+  height: 40%;
+`;
+
+const fadeOut = keyframes`
+  0% {
+    opacity: 1;
+  }
+  12.5% {
+    transform: scale(1.2);
+  }
+  25% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+`;
+
+const Loading = styled.div<{ loadingState: string }>`
+  background-color: #e3e6ff;
+  color: #535FC1;
+  font-size: 1.2rem;
+  font-weight: bolder;
+  padding: 0.6vh 2rem;
+  height: 15%;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.5px solid gray;
+  animation: ${({ loadingState }) => (loadingState === '즐거운 이용 되세요! Enjoy the service!' ? css`${fadeOut} 3s ease-out forwards` : 'none')};
+
+  @media(max-width: 767px) {
+    font-size: 1rem;
+  }
 `;
 
 interface MainContentProps {
@@ -51,45 +97,64 @@ interface MainContentProps {
   storeKorName?: string;
 }
 
-type Language = 'kor' | 'eng';
+const baseUrl = import.meta.env.VITE_API_URL;
 
 export function MainContent({ className }: MainContentProps) {
-  const [selectedStore, setSelectedStore] = useState<fetchStoreInterface | null>(null);
+  const [selectedStore, setSelectedStore] = useState<Store | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
-  const [isWebsiteInfoOpen, setIsWebsiteInfoOpen] = useState(false);
-  const [isStoreListOpen, setIsStoreListOpen] = useState(false);
+  const [isWebsiteInfoOpen, setIsWebsiteInfoOpen] = useState<boolean>(false);
+  const [isStoreListOpen, setIsStoreListOpen] = useState<boolean>(false);
   const [language, setLanguage] = useState<Language>('kor');
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [stores, setStores] = useState<Store[]>([]);
+  const [loadingState, setLoadingState] = useState<string>('매장 정보를 불러오는 중입니다 Loading store information');
 
-  const handleSelectStore = useCallback((store: fetchStoreInterface) => {
+  const handleSelectStore = useCallback((store: Store) => {
     setSelectedStore(store);
     setIsStoreListOpen(false);
   }, []);
 
+  useEffect(() => {
+    const controller = new AbortController();
+    Promise.all([
+      fetchJson<Category[]>(`${baseUrl}/categories`, { signal: controller.signal }),
+      fetchJson<Store[]>(`${baseUrl}/stores`, { signal: controller.signal })
+    ])
+    .then(([categoriesData, storesData]) => {
+      setCategories(categoriesData);
+      setStores(storesData);
+      setLoadingState('즐거운 이용 되세요! Enjoy the service!');
+    })
+    .catch((error) => {
+      if (controller.signal.aborted) return;
+      console.error(error);
+      setLoadingState('다시 시도해주세요 Try again');
+    })
+    return () => controller.abort();
+  }, [])
+
   return (
-    <MainContentStyled className={className}>
-      {selectedStore && (<StoreInformationTabPlus store={selectedStore} onClose={() => setSelectedStore(null)} language={language} />)}
-      <MapPlus onSelectStore={handleSelectStore} selectedCategory={selectedCategory} selectedStore={selectedStore} />
-      <LanguageButtonsPlus onChangeLanguage={setLanguage} />
-      <OptionGroupsPlus onOpenWebsiteInfo={() => setIsWebsiteInfoOpen(true)} onOpenStoreList={() => setIsStoreListOpen(true)} />
-      {isWebsiteInfoOpen && (<WebsiteInformationTab onClose={() => setIsWebsiteInfoOpen(false)} language={language} />)}
-      {isStoreListOpen && (<AllStoresTab onOpen={handleSelectStore} onClose={() => setIsStoreListOpen(false)} language={language} />)}
-      <AllCategoriesPlus onSelectCategory={(category: string) => {
-        setSelectedCategory((stack) => {
-          if (stack.includes(category)) {
-            return stack;
-          }
-          const next = [...stack, category];
-          return next;
-        });
-      }}
-        onRemoveCategory={(category: string) => {
-          setSelectedCategory((stack) => {
-            const next = stack.filter((c) => c !== category);
-            return next;
-          });
-        }}
-        language={language}
-      />
+    <MainContentStyled className = { className }>
+      {selectedStore && (<StoreInformationTabPlus store = { selectedStore } onClose = {() => setSelectedStore(null)} language = { language } />)}
+      <MapPlus onSelectStore = { handleSelectStore } selectedCategory = { selectedCategory } selectedStore = { selectedStore } stores = { stores } />
+      <LanguageButtonsPlus onChangeLanguage = { setLanguage } />
+      <OptionGroupsPlus onOpenWebsiteInfo = {() => setIsWebsiteInfoOpen(true)} onOpenStoreList = {() => setIsStoreListOpen(true)} />
+      {isWebsiteInfoOpen && (<WebsiteInformationTab onClose = {() => setIsWebsiteInfoOpen(false)} language = { language } />)}
+      {isStoreListOpen && (<AllStoresTab onOpen = { handleSelectStore } onClose = {() => setIsStoreListOpen(false)} language = { language } stores = { stores } />)}
+      <MainContentBottomDiv>
+        <Loading loadingState = { loadingState }> { loadingState } </Loading>
+        <AllCategories 
+          selectedCategory = { selectedCategory }
+          onSelectCategory = {(category: string) => {
+            setSelectedCategory((stack) => [...stack, category]);
+          }}
+          onRemoveCategory = {(category: string) => {
+            setSelectedCategory((stack) => stack.filter((c) => c !== category));
+          }}
+          language = { language }
+          categories = { categories }
+        />
+      </MainContentBottomDiv>
     </MainContentStyled>
   );
 }

@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 
 import { AdminStores } from './AdminStores';
 import { AdminCategories } from './AdminCategories';
+import type Language from '../../types/Language';
 
 const AdminMiddleBackground = styled.div`
     width: 100%;
@@ -19,8 +20,6 @@ const Box = styled.div`
     background-color: white;
     margin-bottom: 5vh;
 `;
-
-type Language = 'kor' | 'eng';
 
 interface AdminMiddleProps {
     isChecked: boolean;
