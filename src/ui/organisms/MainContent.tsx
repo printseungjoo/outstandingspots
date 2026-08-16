@@ -31,13 +31,13 @@ const LanguageButtonsPlus = styled(LanguageButtons)`
   position: absolute;
   z-index: 2;
   right: 0;
-  margin: 2rem 2rem;
+  margin: 0 2rem;
 `;
 
 const OptionGroupsPlus = styled(OptionGroups)`
   position: absolute;
   z-index: 2;
-  margin: 2rem 2rem;
+  margin: 0 2rem;
 `;
 
 const StoreInformationTabPlus = styled(StoreInformationTab)`
@@ -45,7 +45,7 @@ const StoreInformationTabPlus = styled(StoreInformationTab)`
   z-index: 4;
 `;
 
-const MainContentBottomDiv = styled.div`
+const LoadingDiv = styled.div`
   position: absolute;
   bottom: 3%;
   z-index: 2;
@@ -152,11 +152,22 @@ export function MainContent({ className }: MainContentProps) {
     <MainContentStyled className = { className }>
       {selectedStore && (<StoreInformationTabPlus store = { selectedStore } onClose = {() => setSelectedStore(null)} language = { language } />)}
       <MapPlus onSelectStore = { handleSelectStore } selectedCategory = { selectedCategory } selectedStore = { selectedStore } stores = { stores } />
+      <AllCategories 
+        selectedCategory = { selectedCategory }
+        onSelectCategory = {(category: string) => {
+          setSelectedCategory((stack) => [...stack, category]);
+        }}
+        onRemoveCategory = {(category: string) => {
+          setSelectedCategory((stack) => stack.filter((c) => c !== category));
+        }}
+        language = { language }
+        categories = { categories }
+      />
       <LanguageButtonsPlus onChangeLanguage = { setLanguage } />
       <OptionGroupsPlus onOpenWebsiteInfo = {() => setIsWebsiteInfoOpen(true)} onOpenStoreList = {() => setIsStoreListOpen(true)} />
       {isWebsiteInfoOpen && (<WebsiteInformationTab onClose = {() => setIsWebsiteInfoOpen(false)} language = { language } />)}
       {isStoreListOpen && (<AllStoresTab onOpen = { handleSelectStore } onClose = {() => setIsStoreListOpen(false)} language = { language } stores = { stores } />)}
-      <MainContentBottomDiv>
+      <LoadingDiv>
         {isLoadingVisible && 
           (<Loading $animate = { isSuccess }
             onAnimationEnd={() => {
@@ -166,18 +177,7 @@ export function MainContent({ className }: MainContentProps) {
           { loadingState }
           </Loading>
         )}
-        <AllCategories 
-          selectedCategory = { selectedCategory }
-          onSelectCategory = {(category: string) => {
-            setSelectedCategory((stack) => [...stack, category]);
-          }}
-          onRemoveCategory = {(category: string) => {
-            setSelectedCategory((stack) => stack.filter((c) => c !== category));
-          }}
-          language = { language }
-          categories = { categories }
-        />
-      </MainContentBottomDiv>
+      </LoadingDiv>
     </MainContentStyled>
   );
 }
