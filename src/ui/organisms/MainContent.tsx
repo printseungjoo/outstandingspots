@@ -13,6 +13,7 @@ import { AllStoresTab } from './AllStoresTab';
 import fetchJson from '../../lib/fetchJson';
 import type Language from '../../types/Language';
 import type Category from '../../types/Category';
+import { SearchBar } from '../molecules/SearchBar';
 
 const MainContentStyled = styled.div`
     position: relative;
@@ -28,21 +29,28 @@ const MapPlus = styled(Map)`
 `;
 
 const LanguageButtonsPlus = styled(LanguageButtons)`
-    position: absolute;
+    position: relative;
     z-index: 2;
     right: 0;
-    margin: 0 2rem;
 `;
 
 const OptionGroupsPlus = styled(OptionGroups)`
-    position: absolute;
+    position: relative;
     z-index: 2;
-    margin: 0 2rem;
 `;
 
 const StoreInformationTabPlus = styled(StoreInformationTab)`
     position: absolute;
     z-index: 4;
+`;
+
+const UpperContentDiv = styled.div`
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 1rem 2rem;
 `;
 
 const BottomContentDiv = styled.div`
@@ -190,8 +198,11 @@ export function MainContent({ className }: MainContentProps) {
         <MainContentStyled className = { className }>
             {selectedStore && (<StoreInformationTabPlus store = { selectedStore } onClose = {() => setSelectedStore(null)} language = { language } />)}
             <MapPlus onSelectStore = { handleSelectStore } selectedCategory = { selectedCategory } selectedStore = { selectedStore } stores = { stores } />
-            <LanguageButtonsPlus onChangeLanguage = { setLanguage } />
-            <OptionGroupsPlus onOpenWebsiteInfo = {() => setIsWebsiteInfoOpen(true)} onOpenStoreList = {() => setIsStoreListOpen(true)} />
+            <UpperContentDiv>
+                <OptionGroupsPlus onOpenWebsiteInfo = {() => setIsWebsiteInfoOpen(true)} onOpenStoreList = {() => setIsStoreListOpen(true)} />
+                <SearchBar language = { language } />
+                <LanguageButtonsPlus onChangeLanguage = { setLanguage } />
+            </UpperContentDiv>
             {isWebsiteInfoOpen && (<WebsiteInformationTab onClose = {() => setIsWebsiteInfoOpen(false)} language = { language } />)}
             {isStoreListOpen && (<AllStoresTab onOpen = { handleSelectStore } onClose = {() => setIsStoreListOpen(false)} language = { language } stores = { stores } />)}
             <BottomContentDiv>
