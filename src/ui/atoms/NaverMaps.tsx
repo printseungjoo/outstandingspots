@@ -10,9 +10,9 @@ const NaverMap = styled.button`
     align-items: center;
     background-color: #6EEB7D;
     color: white;
-    margin-top: 1vh;
-    margin-left: 50%;
+    margin-left: 20%;
     border: 0.8px solid black;
+    scale: 0.8;
 `;
 
 interface NaverMapsProps {

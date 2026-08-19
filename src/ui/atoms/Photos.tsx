@@ -6,7 +6,7 @@ const Photo = styled.div`
     justify-content: center;
     align-items: center;
     width: 90%;
-    height: 25vh;
+    height: 20vh;
     border: 1px solid black;
     margin-top: 1.5rem;
     overflow: hidden;

@@ -7,27 +7,37 @@ import type Language from '../../types/Language';
 
 const StoreInformationTabStyled = styled.div`
     position: relative;
-    width: 100%;
-    height: 84vh;
+    width: 25%;
+    height: 79vh;
     pointer-events: none;
+    left: 2rem;
+    padding-right: 1rem;
+`;
+
+const StoreInformationDiv = styled.div`
+    width: 100%;
+    height: 100%;
+    gap: 0;
+    display: flex;
+    align-items: center;
+`;
+
+const ExitDiv = styled.div`
+    position: relative;
+    z-index: 4;
+    display: flex;
+    align-items: flex-start;
+    height: 97%;
+    justify-content: flex-end;
+    width: 100%;
 `;
 
 const ExitsPlus = styled(Exits)`
     z-index: 4;
-    position: absolute;
-    left: calc(25% + 0.5rem);
-    margin-top: 0.5rem;
+    position: relative;
     width: 1.5rem;
     height: 1.5rem;
     pointer-events: auto;
-
-    @media(max-width: 1024px) and (min-width: 768px) {
-        left: calc(50% + 1rem);
-    }
-
-    @media(max-width: 767px) {
-        left: 90%;
-    }
 `;
 
 interface StoreInformationTabProps {
@@ -40,8 +50,12 @@ interface StoreInformationTabProps {
 export function StoreInformationTab({ className, onClose, store, language }: StoreInformationTabProps) {
     return(
         <StoreInformationTabStyled className = { className }>
-            <StoreInformation store = { store } language = { language }/>
-            <ExitsPlus onClick = { onClose }/>
+            <StoreInformationDiv>
+                <StoreInformation store = { store } language = { language }/>
+                <ExitDiv>
+                    <ExitsPlus onClick = { onClose }/>
+                </ExitDiv>
+            </StoreInformationDiv>
         </StoreInformationTabStyled>
     )
 }

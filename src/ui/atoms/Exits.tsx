@@ -22,7 +22,7 @@ interface ExitProps {
 
 export function Exits({ className, onClick }: ExitProps) {
     return (
-        <Exit className={className} onClick={onClick}>
+        <Exit className = { className } onClick = { onClick }>
             X
         </Exit>
     )
