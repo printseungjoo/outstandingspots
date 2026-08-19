@@ -200,7 +200,7 @@ export function MainContent({ className }: MainContentProps) {
             <MapPlus onSelectStore = { handleSelectStore } selectedCategory = { selectedCategory } selectedStore = { selectedStore } stores = { stores } />
             <UpperContentDiv>
                 <OptionGroupsPlus onOpenWebsiteInfo = {() => setIsWebsiteInfoOpen(true)} onOpenStoreList = {() => setIsStoreListOpen(true)} />
-                <SearchBar language = { language } />
+                <SearchBar language = { language } stores = { stores } />
                 <LanguageButtonsPlus onChangeLanguage = { setLanguage } />
             </UpperContentDiv>
             {isWebsiteInfoOpen && (<WebsiteInformationTab onClose = {() => setIsWebsiteInfoOpen(false)} language = { language } />)}

@@ -24,8 +24,8 @@ interface MapProps {
     stores: Store[];
 }
 
-const DEFAULT_CENTER: [number, number] = [37.378760, 126.662809]
-const DEFAULT_ZOOM = 16
+const DEFAULT_CENTER: [number, number] = [37.379995, 126.662810];
+const DEFAULT_ZOOM = 16;
 
 export function Map({ className, onSelectStore, selectedCategory, selectedStore, stores }: MapProps) {
     return (
