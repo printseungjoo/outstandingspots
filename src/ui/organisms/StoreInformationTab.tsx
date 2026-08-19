@@ -27,7 +27,7 @@ const ExitDiv = styled.div`
     z-index: 4;
     display: flex;
     align-items: flex-start;
-    height: 97%;
+    height: 98%;
     justify-content: flex-end;
     width: 100%;
 `;

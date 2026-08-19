@@ -7,7 +7,7 @@ import type Language from '../../types/Language';
 
 const StoreInformationStyled = styled.div`
     width: 92%;
-    height: 74vh;
+    height: 75vh;
     background-color: white;
     border: 1px solid black;
     position: absolute;
@@ -39,11 +39,10 @@ const StoreInfoDiv = styled.div`
 const StoreNameMap = styled.p`
     color: black;
     font-weight: bolder;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: inline;
     font-size: 1.3rem;
     margin: 0;
+    line-height: 1.3;
 `;
 
 const BranchName = styled.p`

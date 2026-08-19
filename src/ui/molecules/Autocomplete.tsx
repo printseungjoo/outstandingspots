@@ -16,6 +16,7 @@ const AutocompleteList = styled.div`
         padding-left: 1.3rem;
         background-color: white;
         opacity: 0.75;
+        cursor: pointer;
     }
 
     & > div.active {
@@ -24,24 +25,26 @@ const AutocompleteList = styled.div`
     }
 `;
 
-interface showListProps {
-    matchDataList: Store[];
-    value: string;
-    nowIndex: number;
+interface AutocompleteProps {
     language: Language;
+    matchDataList: Store[];
+    nowIndex: number;
+    onSelectStore: (store: Store) => void;
 }
 
-export const showList = ({ matchDataList, nowIndex, language }: showListProps) => {
-    const autocomplete = document.getElementById('autocomplete');
-    if (!autocomplete) return;
-    autocomplete.innerHTML = matchDataList
-        .map((store, index) => `
-            <div class = "${index === nowIndex ? 'active' : ''}" data-index = "${index}">
-                ${language === 'eng' ? store.name.eng : store.name.kor}
-            </div>
-        `).join('');
-};
-
-export function Autocomplete() {
-    return <AutocompleteList id = "autocomplete"/> 
+export function Autocomplete({ language, matchDataList, nowIndex, onSelectStore }: AutocompleteProps) {
+    return (
+        <AutocompleteList id = "autocomplete">
+            {matchDataList.map((store, index) => (
+                <div key = { store._id } className = { index === nowIndex ? 'active' : '' }
+                    onMouseDown = {(event) => {
+                        event.preventDefault()
+                        onSelectStore(store)
+                    }}
+                >
+                    {language === 'eng' ? store.name.eng : store.name.kor}
+                </div>
+            ))}
+        </AutocompleteList>
+    )
 }

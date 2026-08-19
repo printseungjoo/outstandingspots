@@ -58,7 +58,7 @@ const UpperContentDiv = styled.div`
 
 const BottomContentDiv = styled.div`
     position: absolute;
-    bottom: 7%;
+    bottom: 2.5%;
     z-index: 2;
     display: flex;
     flex-direction: column;
@@ -165,7 +165,7 @@ export function MainContent({ className }: MainContentProps) {
             <MapPlus onSelectStore = { handleSelectStore } selectedCategory = { selectedCategory } selectedStore = { selectedStore } stores = { stores } />
             <UpperContentDiv>
                 <OptionGroupsPlus onOpenWebsiteInfo = {() => setIsWebsiteInfoOpen(true)} onOpenStoreList = {() => setIsStoreListOpen(true)} />
-                <SearchBar language = { language } stores = { stores } />
+                <SearchBar language = { language } stores = { stores } onSelectStore = { handleSelectStore } />
                 <LanguageButtonsPlus onChangeLanguage = { setLanguage } />
             </UpperContentDiv>
             {isWebsiteInfoOpen && (<WebsiteInformationTab onClose = {() => setIsWebsiteInfoOpen(false)} language = { language } />)}

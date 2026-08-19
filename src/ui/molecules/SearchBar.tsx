@@ -1,7 +1,8 @@
 import styled from "@emotion/styled";
-import type { KeyboardEvent } from 'react';
+import { useRef, useState } from 'react';
+import type { ChangeEvent, KeyboardEvent } from 'react';
 
-import { Autocomplete, showList } from './Autocomplete';
+import { Autocomplete } from './Autocomplete';
 import type Language from '../../types/Language';
 import type Store from '../../types/Store';
 
@@ -54,46 +55,97 @@ const SearchInput = styled.input`
 interface SearchBarProps {
     language: Language;
     stores: Store[];
+    onSelectStore?: (store: Store) => void;
 }
 
-export function SearchBar({ language, stores }: SearchBarProps) {
-    let nowIndex = 0;
+export function SearchBar({ language, stores, onSelectStore }: SearchBarProps) {
+    const [matchDataList, setMatchDataList] = useState<Store[]>([]);
+    const [nowIndex, setNowIndex] = useState(0);
+    const [inputValue, setInputValue] = useState('');
+    const inputRef = useRef<HTMLInputElement>(null);
+    const skipInputUpdate = useRef(false);
+
+    const clearInput = () => {
+        skipInputUpdate.current = true;
+        setInputValue('');
+        if (inputRef.current) {
+            inputRef.current.value = '';
+        }
+        requestAnimationFrame(() => {
+            skipInputUpdate.current = false;
+            setInputValue('');
+            if (inputRef.current) {
+                inputRef.current.value = '';
+            }
+        });
+    }
+
+    const selectStore = (store: Store) => {
+        clearInput();
+        setMatchDataList([]);
+        setNowIndex(0);
+        inputRef.current?.blur();
+        onSelectStore?.(store);
+    }
+
+    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+        if (skipInputUpdate.current) {
+            setInputValue('');
+            return;
+        }
+        setInputValue(event.target.value);
+    }
+
+    const handleCompositionEnd = () => {
+        if (skipInputUpdate.current) {
+            setInputValue('');
+            if (inputRef.current) {
+                inputRef.current.value = '';
+            }
+        }
+    }
+
     const handleKeyUp = (event: KeyboardEvent<HTMLInputElement>) => {
         const value = event.currentTarget.value.trim();
-        const matchDataList = value
+        const nextMatches = value
             ? stores.filter((store) => {
                 const label = (language === 'eng' ? store.name.eng : store.name.kor).toLowerCase();
                 return label.includes(value.toLowerCase());
-            }):[];
+            }) : [];
+
         switch(event.keyCode) {
             case 38:
-                nowIndex = Math.max(nowIndex-1, 0);
+                setNowIndex((index) => Math.max(index - 1, 0));
+                setMatchDataList(nextMatches);
                 break;
             case 40:
-                nowIndex = Math.min(nowIndex+1, matchDataList.length-1);
+                setNowIndex((index) => Math.min(index + 1, Math.max(nextMatches.length - 1, 0)));
+                setMatchDataList(nextMatches);
                 break;
-            case 13:
-                const searchBar = document.getElementById('searchBar') as HTMLInputElement;
-                if (searchBar) {
-                    searchBar.value = matchDataList[nowIndex]?.name[language] || "";
+            case 13: {
+                const selected = nextMatches[nowIndex] ?? nextMatches[0];
+                if (selected) {
+                    selectStore(selected);
                 }
-                nowIndex = 0;
-                matchDataList.length = 0;
                 break;
+            }
             default:
-                nowIndex = 0;
+                setNowIndex(0);
+                setMatchDataList(nextMatches);
                 break;
         }
-        showList({ matchDataList, value, nowIndex, language });
     }
 
     return(
         <SearchDiv>
             <SearchBarDiv>
                 <SearchIcon> 🔍 </SearchIcon>
-                <SearchInput type = "text" placeholder = {language === 'kor' ? '매장 이름 혹은 테마로 검색해보세요' : 'Search by store name or theme'} id = "searchBar" onKeyUp = { handleKeyUp }/>
+                <SearchInput type = "text" id = "searchBar" ref = { inputRef } value = { inputValue }
+                    placeholder = {language === 'kor' ? '매장 이름 혹은 테마로 검색해보세요' : 'Search by store name or theme'}
+                    onChange = { handleChange } onCompositionEnd = { handleCompositionEnd } onKeyUp = { handleKeyUp }
+                />
             </SearchBarDiv>
-            <Autocomplete/>
+            <Autocomplete language = { language } matchDataList = { matchDataList } nowIndex = { nowIndex } onSelectStore = { selectStore }/>
         </SearchDiv>
     )
 }
