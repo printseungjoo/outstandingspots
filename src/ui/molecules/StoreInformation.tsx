@@ -15,6 +15,7 @@ const StoreInformationStyled = styled.div`
     flex-direction: column;
     align-items: center;
     text-align: left;
+    overflow-y: auto;
     pointer-events: auto;
 
     @media(max-width: 1024px) and (min-width: 768px) {
@@ -120,9 +121,40 @@ const OpeningHours = styled.p`
 
 const LongLine = styled.div`
     width: 100%;
-    height: 0.11vh;
+    height: 0.25vh;
     border-bottom: 0.5px solid black;
     margin-top: 0.4rem;
+`;
+
+const BoldText = styled.h5`
+    font-weight: bold;
+    color: black;
+    margin: 0.3rem 0;
+`
+
+const SUNYBenefitDiv = styled.div`
+    background-color: #F1F1FA;
+    border: 0.8px solid gray;
+    padding: 0.5rem 0.8rem;
+`;
+
+const SUNYBenefit = styled.p`
+    font-size: 0.85rem;
+    color: black;
+    margin: 0;
+    color: gray;
+`;
+
+const SUNYBenefitPlus = styled(SUNYBenefit)`
+    font-size: 0.6rem;
+    color: black;
+`;
+
+const Address = styled.p`
+    color: #8F8F8F;
+    font-size: 0.75rem;
+    margin: 0;
+    padding-bottom: 1rem;
 `;
 
 interface StoreInformationProps {
@@ -131,7 +163,8 @@ interface StoreInformationProps {
 }
 
 // 테마는 현재 dummy data로 DB 개편 이후 실데이터를 넣을 예정입니다.
-// 영업중 유무, 영업 시간은 dummy data로 DB 개편 이후 실데이터를 넣을 예정입니다.
+// 영업중 유무, 영업 시간은 현재 dummy data로 DB 개편 이후 실데이터를 넣을 예정입니다.
+// 주소는 현재 dummy data로 DB 개편 이후 실데이터를 넣을 예정입니다.
 export function StoreInformation({ store, language }: StoreInformationProps) {
     return (
         <StoreInformationStyled>
@@ -159,6 +192,24 @@ export function StoreInformation({ store, language }: StoreInformationProps) {
                     <OpeningHours> 11:00 - 22:00 </OpeningHours>
                 </StoreInfoSecondLineDiv>
                 <LongLine/>
+                <BoldText> 🎓 {language === 'eng' ? 'SUNY Benefit' : 'SUNY 혜택'}</BoldText>
+                <SUNYBenefitDiv>
+                    <SUNYBenefit>
+                        {language === 'eng' ? store.discount.eng : store.discount.kor}
+                    </SUNYBenefit>
+                    <SUNYBenefitPlus>
+                        {language === 'eng' ? '*You must bring your SUNY student ID card to receive the discount.' : '할인을 받기 위해서는 학생증을 필수 지참해야합니다.'}
+                    </SUNYBenefitPlus>
+                </SUNYBenefitDiv>
+                <BoldText> ✅ {language === 'eng' ? 'Additional precautions' : '추가 유의사항'} </BoldText>
+                <SUNYBenefitDiv>
+                    <SUNYBenefit>
+                        {language === 'eng' ? store.description.eng : store.description.kor}
+                    </SUNYBenefit>
+                </SUNYBenefitDiv>
+                <LongLine/>
+                <BoldText> 🚡{language === 'eng' ? 'Address' : '주소'} </BoldText>
+                <Address> 인천 연수구 송도과학로28번길 8, A동 1층 </Address>
             </StoreInfoDiv>
         </StoreInformationStyled>
     )
