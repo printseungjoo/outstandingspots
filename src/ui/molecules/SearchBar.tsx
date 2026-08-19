@@ -9,6 +9,7 @@ const SearchDiv = styled.div`
     display: flex;
     flex-direction: column;
     width: 50%;
+    pointer-events: none;
 `;
 
 const SearchBarDiv = styled.div`
@@ -18,7 +19,8 @@ const SearchBarDiv = styled.div`
     border: 1px solid #333;
     background-color: #FFFFFF99;
     border-radius: 2rem;
-    padding: 0.5rem;
+    padding: 0.25rem;
+    pointer-events: auto;
 `;
 
 const SearchIcon = styled.span`

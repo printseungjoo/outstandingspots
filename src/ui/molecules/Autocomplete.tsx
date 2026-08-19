@@ -4,7 +4,10 @@ import type Store from '../../types/Store';
 import type Language from '../../types/Language';
 
 const AutocompleteList = styled.div`
+    pointer-events: none;
+
     & > div {
+        pointer-events: auto;
         display: flex;
         justify-content: center;
         margin: 0 2rem;

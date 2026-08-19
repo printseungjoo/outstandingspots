@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import L from 'leaflet';
 
-import { Marker as LeafletMarker, useMap } from 'react-leaflet';
+import { Marker as LeafletMarker } from 'react-leaflet';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
@@ -20,17 +20,6 @@ interface MarkerProps {
     selectedCategory?: string[];
     selectedStore?: Store | null;
     stores?: Store[];
-}
-
-function MapUpdater({ selectedStore }: {selectedStore: Store | null}) {
-    const map = useMap()
-    useEffect(() => {
-        if (!selectedStore) return
-        map.setView([selectedStore.lat, selectedStore.lon], 18, {
-            animate: true,
-        })
-    }, [map, selectedStore])
-    return null
 }
 
 export function Marker({onSelectStore, selectedCategory = [], selectedStore, stores = []}: MarkerProps) {
@@ -52,12 +41,11 @@ export function Marker({onSelectStore, selectedCategory = [], selectedStore, sto
 
     return (
         <>
-            <MapUpdater selectedStore = { selectedStore || null } />
             {visibleStores.map((store) => (
                 <LeafletMarker key={ store._id } position={[store.lat, store.lon]} eventHandlers={{
                     click: () => {
                         onSelectStoreRef.current?.(store)
-                    },
+                    }
                 }}
                 >
                 </LeafletMarker>

@@ -32,11 +32,13 @@ const LanguageButtonsPlus = styled(LanguageButtons)`
     position: relative;
     z-index: 2;
     right: 0;
+    pointer-events: auto;
 `;
 
 const OptionGroupsPlus = styled(OptionGroups)`
     position: relative;
     z-index: 2;
+    pointer-events: auto;
 `;
 
 const StoreInformationTabPlus = styled(StoreInformationTab)`
@@ -51,6 +53,7 @@ const UpperContentDiv = styled.div`
     justify-content: space-between;
     align-items: flex-start;
     margin: 1rem 2rem;
+    pointer-events: none;
 `;
 
 const BottomContentDiv = styled.div`
