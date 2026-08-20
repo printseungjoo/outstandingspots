@@ -10,14 +10,15 @@ const OptionGroup = styled.div`
 interface OptionGroupsProps {
     className?: string;
     onOpenWebsiteInfo?: () => void;
-    onOpenStoreList?: () => void;
+    onMyLocation?: () => void;
 }
 
-export function OptionGroups({ className, onOpenWebsiteInfo, onOpenStoreList }: OptionGroupsProps) {
+export function OptionGroups({ className, onOpenWebsiteInfo, onMyLocation }: OptionGroupsProps) {
     return (
         <OptionGroup className={className}>
-            <Options optionName='❓' onClick = { onOpenWebsiteInfo } />
-            <Options optionName='📜' onClick = { onOpenStoreList }/>
+            <Options optionName = '⭐' />
+            <Options optionName = '👤' onClick = { onMyLocation } />
+            <Options optionName = '❓' onClick = { onOpenWebsiteInfo } />
         </OptionGroup>
     )
 }

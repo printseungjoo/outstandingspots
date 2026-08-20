@@ -89,6 +89,39 @@ const fadeOut = keyframes`
     }
 `;
 
+const LocationNotice = styled.div`
+    background-color: #e3e6ff;
+    color: #535FC1;
+    font-size: 1.2rem;
+    font-weight: bolder;
+    padding: 0.6vh 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0.05rem solid gray;
+
+    @media (max-width: 47.9375rem) {
+        font-size: 1rem;
+    }
+`;
+
+const SchoolReturnButton = styled.button`
+    background-color: #e3e6ff;
+    color: #535FC1;
+    font-size: 1.2rem;
+    font-weight: bolder;
+    padding: 0.6vh 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0.05rem solid gray;
+    cursor: pointer;
+
+    @media (max-width: 47.9375rem) {
+        font-size: 1rem;
+    }
+`;
+
 const SUCCESS_MESSAGE = '즐거운 이용 되세요! Enjoy the service!';
 
 const Loading = styled.div<{ $animate: boolean }>`
@@ -132,10 +165,34 @@ export function MainContent({ className }: MainContentProps) {
     const [stores, setStores] = useState<Store[]>([]);
     const [loadingState, setLoadingState] = useState<string>('매장 정보를 불러오는 중입니다 Loading store information');
     const [isLoadingVisible, setIsLoadingVisible] = useState(true);
+    const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+    const [isLocating, setIsLocating] = useState<boolean>(false);
 
     const handleSelectStore = useCallback((store: Store) => {
         setSelectedStore(store);
         setIsStoreListOpen(false);
+    }, []);
+
+    const handleMyLocation = useCallback(() => {
+        setIsLocating(true);
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                setUserLocation([pos.coords.latitude, pos.coords.longitude]);
+            },
+            (error) => {
+                console.error(error);
+                setIsLocating(false);
+            }
+        );
+    }, []);
+
+    const handleUserMoveEnd = useCallback(() => {
+        setIsLocating(false);
+    }, []);
+
+    const handleReturnToSchool = useCallback(() => {
+        setUserLocation(null);
+        setIsLocating(false);
     }, []);
 
     useEffect(() => {
@@ -162,15 +219,34 @@ export function MainContent({ className }: MainContentProps) {
     return (
         <MainContentStyled className = { className }>
             {selectedStore && (<StoreInformationTabPlus store = { selectedStore } onClose = {() => setSelectedStore(null)} language = { language } />)}
-            <MapPlus onSelectStore = { handleSelectStore } selectedCategory = { selectedCategory } selectedStore = { selectedStore } stores = { stores } />
+            <MapPlus
+                onSelectStore = { handleSelectStore }
+                selectedCategory = { selectedCategory }
+                selectedStore = { selectedStore }
+                stores = { stores }
+                userLocation = { userLocation }
+                language = { language }
+                onUserMoveEnd = { handleUserMoveEnd }
+                showSchoolReturn = { Boolean(userLocation) && !isLocating }
+            />
             <UpperContentDiv>
-                <OptionGroupsPlus onOpenWebsiteInfo = {() => setIsWebsiteInfoOpen(true)} onOpenStoreList = {() => setIsStoreListOpen(true)} />
+                <OptionGroupsPlus onOpenWebsiteInfo = {() => setIsWebsiteInfoOpen(true)} onMyLocation = { handleMyLocation } />
                 <SearchBar language = { language } stores = { stores } onSelectStore = { handleSelectStore } />
                 <LanguageButtonsPlus onChangeLanguage = { setLanguage } />
             </UpperContentDiv>
             {isWebsiteInfoOpen && (<WebsiteInformationTab onClose = {() => setIsWebsiteInfoOpen(false)} language = { language } />)}
             {isStoreListOpen && (<AllStoresTab onOpen = { handleSelectStore } onClose = {() => setIsStoreListOpen(false)} language = { language } stores = { stores } />)}
             <BottomContentDiv>
+                {isLocating && (
+                    <LocationNotice>
+                        {language === 'eng' ? 'Moving to your location' : '내 위치로 이동 중입니다'}
+                    </LocationNotice>
+                )}
+                {userLocation && !isLocating && (
+                    <SchoolReturnButton type = "button" onClick = { handleReturnToSchool }>
+                        {language === 'eng' ? 'Return to school' : '학교 위치로 이동'}
+                    </SchoolReturnButton>
+                )}
                 {isLoadingVisible && 
                     (<Loading $animate = { isSuccess }
                         onAnimationEnd={() => {
