@@ -46,6 +46,11 @@ const StoreInformationTabPlus = styled(StoreInformationTab)`
     z-index: 4;
 `;
 
+const WebsiteInformationTabPlus = styled(WebsiteInformationTab)`
+    position: absolute;
+    z-index: 3;
+`;
+
 const UpperContentDiv = styled.div`
     position: relative;
     z-index: 2;
@@ -176,9 +181,7 @@ export function MainContent({ className }: MainContentProps) {
     const handleMyLocation = useCallback(() => {
         setIsLocating(true);
         navigator.geolocation.getCurrentPosition(
-            (pos) => {
-                setUserLocation([pos.coords.latitude, pos.coords.longitude]);
-            },
+            (pos) => { setUserLocation([pos.coords.latitude, pos.coords.longitude]);},
             (error) => {
                 console.error(error);
                 setIsLocating(false);
@@ -219,14 +222,10 @@ export function MainContent({ className }: MainContentProps) {
     return (
         <MainContentStyled className = { className }>
             {selectedStore && (<StoreInformationTabPlus store = { selectedStore } onClose = {() => setSelectedStore(null)} language = { language } />)}
-            <MapPlus
-                onSelectStore = { handleSelectStore }
-                selectedCategory = { selectedCategory }
-                selectedStore = { selectedStore }
-                stores = { stores }
-                userLocation = { userLocation }
-                language = { language }
-                onUserMoveEnd = { handleUserMoveEnd }
+            {isWebsiteInfoOpen && (<WebsiteInformationTabPlus onClose = {() => setIsWebsiteInfoOpen(false)} language = { language } />)}
+            <MapPlus onSelectStore = { handleSelectStore } selectedCategory = { selectedCategory }
+                selectedStore = { selectedStore } stores = { stores } userLocation = { userLocation }
+                language = { language } onUserMoveEnd = { handleUserMoveEnd }
                 showSchoolReturn = { Boolean(userLocation) && !isLocating }
             />
             <UpperContentDiv>
@@ -234,7 +233,6 @@ export function MainContent({ className }: MainContentProps) {
                 <SearchBar language = { language } stores = { stores } onSelectStore = { handleSelectStore } />
                 <LanguageButtonsPlus onChangeLanguage = { setLanguage } />
             </UpperContentDiv>
-            {isWebsiteInfoOpen && (<WebsiteInformationTab onClose = {() => setIsWebsiteInfoOpen(false)} language = { language } />)}
             {isStoreListOpen && (<AllStoresTab onOpen = { handleSelectStore } onClose = {() => setIsStoreListOpen(false)} language = { language } stores = { stores } />)}
             <BottomContentDiv>
                 {isLocating && (

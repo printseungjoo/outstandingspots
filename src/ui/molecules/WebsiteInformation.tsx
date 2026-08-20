@@ -7,22 +7,17 @@ const LogoImage = styled.img`
 `;
 
 const WebsiteInformationStyled = styled.div`
-    width: 25%;
-    height: 80vh;
+    width: 92%;
+    height: 75vh;
     background-color: white;
     border: 1px solid black;
-    border-radius: 5%;
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    left: 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: left;
     overflow-y: auto;
     pointer-events: auto;
-    z-index: 3;
 
     @media(max-width: 1024px) and (min-width: 768px) {
         width: 50%;
@@ -37,18 +32,21 @@ const WebsiteInformationStyled = styled.div`
 
 const Title = styled.p`
     font-weight: bolder;
-    margin-bottom: 0;
+    padding: 0;
+    margin: 0;
 `;
 
 const Detail = styled.p`
     font-size: 0.8rem;
-    margin-top: 0.5vh;
     text-align: center;
-    margin-bottom: 0;
+    padding: 0.4rem 0;
+    margin: 0;
 `;
 
 const ContentPadding = styled.div`
-    padding: 1rem 1rem;
+    padding: 0.3rem 1rem 0 1rem;
+    margin: 0;
+    font-size: 0.85rem;
 `;
 
 const OptionButton = styled.a`
@@ -78,7 +76,19 @@ export function WebsiteInformation({ language }: WebsiteInformationProps) {
             </Title>
             <Detail>
                 <ContentPadding>
-                    {language === 'eng' ? 'Outstanding contracts with stores near SUNY Korea to offer discounts and benefits to SUNY Korea students. Find out the store information and benefits easily through Outstanding Spots!' : 'Outstanding은 한국뉴욕주립대학교 근처 매장들과 계약해 SUNY Korea(한국뉴욕주립대학교) 학생들에게 할인과 혜택을 제공하고 있습니다. Outstanding Spots를 통해 가까운 제휴 매장을 손쉽게 찾아보고 매장별 정보와 혜택을 확인해보세요!'}
+                    {language === 'eng' ? (
+                        <>
+                            Outstanding Spots is a web service for SUNY Korea students to find out the affiliate stores near SUNY Korea.
+                            <br />
+                            You can easily find out the store information and benefits through Outstanding Spots!
+                        </>
+                    ) : (
+                        <>
+                            Outstanding Spots는 한국뉴욕주립대학교 학생분들을 위한 제휴 매장 안내 웹서비스입니다.
+                            <br />
+                            학교와 제휴된 다양한 매장을 한눈에 확인하고, 학생들에게 제공되는 할인과 특별 혜택을 간편하게 찾아보세요!
+                        </>
+                    )}
                 </ContentPadding>
             </Detail>
             <OptionButton href = 'https://form.naver.com/response/6ZkQLf7FKUMSGLv4rgprCw' target = "_blank" rel="noopener noreferrer">

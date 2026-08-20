@@ -5,43 +5,55 @@ import { WebsiteInformation } from '../molecules/WebsiteInformation';
 import type Language from '../../types/Language';
 
 const WebsiteInformationTabStyled = styled.div`
-    position: fixed;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 100%;
-    height: 84vh;
+    position: relative;
+    width: 25%;
+    height: 79vh;
     pointer-events: none;
-    z-index: 3;
+    left: 2rem;
+    padding-right: 1rem;
+`;
+
+const WebsiteInformationDiv = styled.div`
+    width: 100%;
+    height: 100%;
+    gap: 0;
+    display: flex;
+    align-items: center;
+`;
+
+const ExitDiv = styled.div`
+    position: relative;
+    z-index: 4;
+    display: flex;
+    align-items: flex-start;
+    height: 98%;
+    justify-content: flex-end;
+    width: 100%;
 `;
 
 const ExitsPlus = styled(Exits)`
-    z-index: 3;
-    position: absolute;
-    left: calc(25% + 1rem);
-    margin-top: 0.5rem;
+    z-index: 4;
+    position: relative;
     width: 1.5rem;
     height: 1.5rem;
     pointer-events: auto;
-
-    @media(max-width: 1024px) and (min-width: 768px) {
-        left: calc(50% + 1rem);
-    }
-
-    @media(max-width: 767px) {
-        left: calc(90% + 0.5rem);
-    }
 `;
 
 interface WebsiteInformationTabProps {
+    className?: string;
     onClose?: () => void;
     language: Language;
 }
 
-export function WebsiteInformationTab({ onClose, language }: WebsiteInformationTabProps) {
+export function WebsiteInformationTab({ className, onClose, language }: WebsiteInformationTabProps) {
     return(
-        <WebsiteInformationTabStyled>
-            <WebsiteInformation language = { language }/>
-            <ExitsPlus onClick={ onClose }/>
+        <WebsiteInformationTabStyled className = { className }>
+            <WebsiteInformationDiv>
+                <WebsiteInformation language = { language }/>
+                <ExitDiv>
+                    <ExitsPlus onClick = { onClose }/>
+                </ExitDiv>
+            </WebsiteInformationDiv>
         </WebsiteInformationTabStyled>
     )
 }
