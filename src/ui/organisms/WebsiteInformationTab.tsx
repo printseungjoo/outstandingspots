@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
-import { Exits } from '../atoms/Exits';
 import { WebsiteInformation } from '../molecules/WebsiteInformation';
 import type Language from '../../types/Language';
+import { ExitContainer } from '../molecules/ExitContainer';
 
 const WebsiteInformationTabStyled = styled.div`
     position: relative;
@@ -21,24 +21,6 @@ const WebsiteInformationDiv = styled.div`
     align-items: center;
 `;
 
-const ExitDiv = styled.div`
-    position: relative;
-    z-index: 4;
-    display: flex;
-    align-items: flex-start;
-    height: 98%;
-    justify-content: flex-end;
-    width: 100%;
-`;
-
-const ExitsPlus = styled(Exits)`
-    z-index: 4;
-    position: relative;
-    width: 1.5rem;
-    height: 1.5rem;
-    pointer-events: auto;
-`;
-
 interface WebsiteInformationTabProps {
     className?: string;
     onClose?: () => void;
@@ -50,9 +32,7 @@ export function WebsiteInformationTab({ className, onClose, language }: WebsiteI
         <WebsiteInformationTabStyled className = { className }>
             <WebsiteInformationDiv>
                 <WebsiteInformation language = { language }/>
-                <ExitDiv>
-                    <ExitsPlus onClick = { onClose }/>
-                </ExitDiv>
+                <ExitContainer onClose = { onClose ?? (() => {})} />
             </WebsiteInformationDiv>
         </WebsiteInformationTabStyled>
     )
