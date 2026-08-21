@@ -1,5 +1,7 @@
 import styled from '@emotion/styled';
 
+import { ToBeContinuedAlert } from '../atoms/toBeContinuedAlert';
+
 const NavBarDiv = styled.div`
     z-index: 2;
     width: 100%;
@@ -64,10 +66,10 @@ export function NavBar() {
         <NavBarDiv>
             <nav id = "navbar">
                 <NavUl>
-                    <NavLi> <a href = "/my"> <Icon src = '/myPageIcon.png' alt = 'My page icon'/> <NavSpan> My Page </NavSpan> </a> </NavLi>
+                    <NavLi onClick = { ToBeContinuedAlert }> <a href = "/my"> <Icon src = '/myPageIcon.png' alt = 'My page icon'/> <NavSpan> My Page </NavSpan> </a> </NavLi>
                     <NavLi> <a href = "/"> <Icon src = '/mapPageIcon.png' alt = 'Map page icon'/> <NavSpan> Map Page </NavSpan> </a> </NavLi>
-                    <NavLi> <a href = "/toBeContinued"> <Icon src = '/toBeContinuedIcon.png' alt = 'To be continued icon'/> <NavSpan> To be continued </NavSpan> </a> </NavLi>
-                    <NavLi> <a href = "/store"> <Icon src = '/storePageIcon.png' alt = 'Store page icon'/> <NavSpan> Store Page </NavSpan> </a> </NavLi>
+                    <NavLi onClick = { ToBeContinuedAlert }> <a href = "/toBeContinued"> <Icon src = '/toBeContinuedIcon.png' alt = 'To be continued icon'/> <NavSpan> To be continued </NavSpan> </a> </NavLi>
+                    <NavLi onClick = { ToBeContinuedAlert }> <a href = "/store"> <Icon src = '/storePageIcon.png' alt = 'Store page icon'/> <NavSpan> Store Page </NavSpan> </a> </NavLi>
                 </NavUl>
             </nav>
         </NavBarDiv>

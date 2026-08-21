@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { CategoryButtons } from './CategoryButtons';
 import type Language from '../../types/Language';   
 import type Category from '../../types/Category';
+import { OpenCategoryButton } from './OpenCategoryButton';
 
 const AllCategory = styled.div`
     display: flex;
@@ -40,7 +41,7 @@ interface AllCategoriesProps {
 export function AllCategories({ className, onRemoveCategory, onSelectCategory, language, selectedCategory, categories }: AllCategoriesProps) {
     return (
         <AllCategory className = { className }>
-                <CategoryButtons onRemoveCategory = { onRemoveCategory } onSelectCategory = { onSelectCategory } key = "open" categoryNameProp = { language === 'eng' ? "📢open" : "📢영업중" } language = { language } categoryKoreanName = { "📢영업중" } selectedCategory = { selectedCategory }/>
+                <OpenCategoryButton onRemoveCategory = { onRemoveCategory } key = "open" categoryNameProp = { language === 'eng' ? "📢open" : "📢영업중" } language = { language } categoryKoreanName = { "📢영업중" } selectedCategory = { selectedCategory } />
                 {categories.map((category) => (
                 <CategoryButtons onRemoveCategory = { onRemoveCategory } onSelectCategory = { onSelectCategory } key = { category._id } categoryNameProp = { language === 'eng' ? category.name.eng : category.name.kor } language = { language } categoryKoreanName = { category.name.kor } selectedCategory = { selectedCategory }/>
             ))}

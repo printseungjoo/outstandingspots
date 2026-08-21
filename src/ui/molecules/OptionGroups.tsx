@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
 import { Options } from '../atoms/Options';
+import { ToBeContinuedAlert } from '../atoms/toBeContinuedAlert';
 
 const OptionGroup = styled.div`
     display: flex;
@@ -16,7 +17,7 @@ interface OptionGroupsProps {
 export function OptionGroups({ className, onOpenWebsiteInfo, onMyLocation }: OptionGroupsProps) {
     return (
         <OptionGroup className={className}>
-            <Options optionName = '⭐' />
+            <Options optionName = '⭐' onClick = { ToBeContinuedAlert } />
             <Options optionName = '👤' onClick = { onMyLocation } />
             <Options optionName = '❓' onClick = { onOpenWebsiteInfo } />
         </OptionGroup>
