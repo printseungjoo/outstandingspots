@@ -4,6 +4,7 @@ import { Photos } from '../atoms/Photos';
 import type Store from '../../types/Store';
 import { NaverMaps } from '../atoms/NaverMaps';
 import type Language from '../../types/Language';
+import { OpenOrNot } from '../atoms/OpenOrNot';
 
 const StoreInformationStyled = styled.div`
     width: 92%;
@@ -114,17 +115,6 @@ const ThemeName = styled.p`
     }
 `;
 
-const OpenOrNot = styled.p`
-    font-weight: bold;
-    color: #A2C489;
-    margin: 0;
-    font-size: 0.9rem;
-
-    @media (max-width: 767px) {
-        font-size: 0.8rem;
-    }
-`;
-
 const OpeningHours = styled.p`
     margin: 0;
     font-size: 0.9rem;
@@ -214,7 +204,7 @@ export function StoreInformation({ store, language }: StoreInformationProps) {
                     </ThemeName>
                 </StoreInfoSecondLineDiv>
                 <StoreInfoSecondLineDiv>
-                    <OpenOrNot> 영업 중 </OpenOrNot>
+                    <OpenOrNot openTime = { store.openTime } closeTime = { store.closeTime } language = { language } />
                     <OpeningHours> {store.openTime} - {store.closeTime} </OpeningHours>
                 </StoreInfoSecondLineDiv>
                 <LongLine/>
