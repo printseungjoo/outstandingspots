@@ -10,6 +10,11 @@ const Photo = styled.div`
     border: 1px solid black;
     margin-top: 1.5rem;
     overflow: hidden;
+
+    @media (max-width: 767px) {
+        height: 16vh;
+        margin-top: 0.8rem;
+    }
 `;
 
 const ImgStyled = styled.img`

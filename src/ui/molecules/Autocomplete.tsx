@@ -17,6 +17,10 @@ const AutocompleteList = styled.div`
         background-color: white;
         opacity: 0.75;
         cursor: pointer;
+
+        @media (max-width: 767px) {
+            margin: 0 0.4rem;
+        }
     }
 
     & > div.active {

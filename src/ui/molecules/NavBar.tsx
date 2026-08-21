@@ -32,8 +32,30 @@ const NavLi = styled.li`
     }
 
     a {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
         color: black;
         text-decoration: none;
+    }
+`;
+
+const Icon = styled.img`
+    width: 1rem;
+    height: 1rem;
+    display: block;
+
+    @media (max-width: 767px) {
+        width: 1.7rem;
+        height: 1.7rem;
+    }
+`;
+
+const NavSpan = styled.span`
+    display: block;
+
+    @media (max-width: 767px) {
+        display: none;
     }
 `;
 
@@ -42,10 +64,10 @@ export function NavBar() {
         <NavBarDiv>
             <nav id = "navbar">
                 <NavUl>
-                    <NavLi> <a href = "/my"> My Page </a> </NavLi>
-                    <NavLi> <a href = "/"> Map Page </a> </NavLi>
-                    <NavLi> <a href = "/toBeContinued"> To be continued </a> </NavLi>
-                    <NavLi> <a href = "/store"> Store Page </a> </NavLi>
+                    <NavLi> <a href = "/my"> <Icon src = '/myPageIcon.png' alt = 'My page icon'/> <NavSpan> My Page </NavSpan> </a> </NavLi>
+                    <NavLi> <a href = "/"> <Icon src = '/mapPageIcon.png' alt = 'Map page icon'/> <NavSpan> Map Page </NavSpan> </a> </NavLi>
+                    <NavLi> <a href = "/toBeContinued"> <Icon src = '/toBeContinuedIcon.png' alt = 'To be continued icon'/> <NavSpan> To be continued </NavSpan> </a> </NavLi>
+                    <NavLi> <a href = "/store"> <Icon src = '/storePageIcon.png' alt = 'Store page icon'/> <NavSpan> Store Page </NavSpan> </a> </NavLi>
                 </NavUl>
             </nav>
         </NavBarDiv>

@@ -4,6 +4,11 @@ import type Language from '../../types/Language';
 
 const LogoImage = styled.img`
     margin-top: 3vh;
+
+    @media (max-width: 767px) {
+        margin-top: 2vh;
+        max-width: 70%;
+    }
 `;
 
 const WebsiteInformationStyled = styled.div`
@@ -19,14 +24,11 @@ const WebsiteInformationStyled = styled.div`
     overflow-y: auto;
     pointer-events: auto;
 
-    @media(max-width: 1024px) and (min-width: 768px) {
-        width: 50%;
-    }
-
-    @media(max-width: 767px) {
-        width: 90%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+    @media (max-width: 767px) {
+        width: 92%;
+        height: 96%;
+        left: 0;
+        transform: none;
     }
 `;
 
@@ -34,6 +36,10 @@ const Title = styled.p`
     font-weight: bolder;
     padding: 0;
     margin: 0;
+
+    @media (max-width: 767px) {
+        font-size: 1.1rem;
+    }
 `;
 
 const Detail = styled.p`
@@ -41,12 +47,22 @@ const Detail = styled.p`
     text-align: center;
     padding: 0.4rem 0;
     margin: 0;
+
+    @media (max-width: 767px) {
+        font-size: 0.75rem;
+        padding: 0.25rem 0;
+    }
 `;
 
 const ContentPadding = styled.div`
     padding: 0.3rem 1rem 0 1rem;
     margin: 0;
     font-size: 0.85rem;
+
+    @media (max-width: 767px) {
+        padding: 0.2rem 0.7rem 0 0.7rem;
+        font-size: 0.75rem;
+    }
 `;
 
 const OptionButton = styled.a`
@@ -61,6 +77,12 @@ const OptionButton = styled.a`
     justify-content: center;
     align-items: center;
     color: black;
+
+    @media (max-width: 767px) {
+        height: 4.5vh;
+        font-size: 0.65rem;
+        margin-top: 1.2vh;
+    }
 `;
 
 interface WebsiteInformationProps {

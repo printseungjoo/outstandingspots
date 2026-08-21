@@ -12,6 +12,20 @@ const StoreInformationTabStyled = styled.div`
     pointer-events: none;
     left: 2rem;
     padding-right: 1rem;
+
+    @media (max-width: 1024px) and (min-width: 768px) {
+        width: 48%;
+        left: 1.5rem;
+        padding-right: 0.75rem;
+    }
+
+    @media (max-width: 767px) {
+        width: calc(100% - 1.2rem);
+        left: 0.6rem;
+        height: 100%;
+        margin-left: 0.1rem;
+        padding-right: 1.3rem;
+    }
 `;
 
 const StoreInformationDiv = styled.div`

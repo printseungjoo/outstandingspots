@@ -11,6 +11,12 @@ const SearchDiv = styled.div`
     flex-direction: column;
     width: 50%;
     pointer-events: none;
+
+    @media (max-width: 767px) {
+        order: -1;
+        width: 100%;
+        flex: 1 0 100%;
+    }
 `;
 
 const SearchBarDiv = styled.div`

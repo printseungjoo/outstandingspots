@@ -18,14 +18,11 @@ const StoreInformationStyled = styled.div`
     overflow-y: auto;
     pointer-events: auto;
 
-    @media(max-width: 1024px) and (min-width: 768px) {
-        width: 50%;
-    }
-
-    @media(max-width: 767px) {
-        width: 90%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+    @media (max-width: 767px) {
+        width: 92%;
+        height: 96%;
+        left: 0;
+        transform: none;
     }
 `;
 
@@ -43,6 +40,10 @@ const StoreNameMap = styled.p`
     font-size: 1.3rem;
     margin: 0;
     line-height: 1.3;
+
+    @media (max-width: 767px) {
+        font-size: 1.1rem;
+    }
 `;
 
 const BranchName = styled.p`
@@ -55,6 +56,10 @@ const BranchName = styled.p`
         content: '·';
         margin: 0 0.25rem;
         color: #8F8F8F;
+    }
+
+    @media (max-width: 767px) {
+        font-size: 0.8rem;
     }
 `;
 
@@ -86,6 +91,11 @@ const LikeButton = styled.button`
     border: 0.3px solid gray;
     border-radius: 50%;
     cursor: pointer;
+
+    @media (max-width: 767px) {
+        width: 1.7rem;
+        height: 1.7rem;
+    }
 `;
 
 const StoreInfoSecondLineDiv = styled.div`
@@ -98,6 +108,10 @@ const ThemeName = styled.p`
     color: #8F8F8F;
     margin: 0;
     font-size: 0.9rem;
+
+    @media (max-width: 767px) {
+        font-size: 0.8rem;
+    }
 `;
 
 const OpenOrNot = styled.p`
@@ -105,6 +119,10 @@ const OpenOrNot = styled.p`
     color: #A2C489;
     margin: 0;
     font-size: 0.9rem;
+
+    @media (max-width: 767px) {
+        font-size: 0.8rem;
+    }
 `;
 
 const OpeningHours = styled.p`
@@ -115,6 +133,10 @@ const OpeningHours = styled.p`
     &::before {
         content: '|';
         margin-left: 0.38rem;
+    }
+
+    @media (max-width: 767px) {
+        font-size: 0.8rem;
     }
 `;
 
@@ -129,6 +151,10 @@ const BoldText = styled.h5`
     font-weight: bold;
     color: black;
     margin: 0.3rem 0;
+
+    @media (max-width: 767px) {
+        font-size: 0.85rem;
+    }
 `
 
 const SUNYBenefitDiv = styled.div`
@@ -142,6 +168,10 @@ const SUNYBenefit = styled.p`
     color: black;
     margin: 0;
     color: gray;
+
+    @media (max-width: 767px) {
+        font-size: 0.75rem;
+    }
 `;
 
 const SUNYBenefitPlus = styled(SUNYBenefit)`

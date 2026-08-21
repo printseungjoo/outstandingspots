@@ -18,6 +18,11 @@ const ExitsPlus = styled(Exits)`
     width: 1.5rem;
     height: 1.5rem;
     pointer-events: auto;
+
+    @media (max-width: 767px) {
+        width: 1.3rem;
+        height: 1.3rem;
+    }
 `;
 
 interface ExitDivProps {

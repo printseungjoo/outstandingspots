@@ -33,12 +33,29 @@ const LanguageButtonsPlus = styled(LanguageButtons)`
     z-index: 2;
     right: 0;
     pointer-events: auto;
+
+    @media (max-width: 767px) {
+        scale: 0.8;
+    }
 `;
 
 const OptionGroupsPlus = styled(OptionGroups)`
     position: relative;
     z-index: 2;
     pointer-events: auto;
+
+    @media (max-width: 767px) {
+        flex-direction: row;
+        align-items: center;
+        gap: 0.5rem;
+
+        button {
+            margin-bottom: 0;
+            width: 2.8rem;
+            height: 2.8rem;
+            font-size: 1.2rem;
+        }
+    }
 `;
 
 const StoreInformationTabPlus = styled(StoreInformationTab)`
@@ -59,6 +76,13 @@ const UpperContentDiv = styled.div`
     align-items: flex-start;
     margin: 1rem 2rem;
     pointer-events: none;
+
+    @media (max-width: 767px) {
+        flex-wrap: wrap;
+        align-items: center;
+        margin: 0.6rem 0.6rem 0;
+        gap: 0.5rem 0;
+    }
 `;
 
 const BottomContentDiv = styled.div`
@@ -75,6 +99,11 @@ const BottomContentDiv = styled.div`
     pointer-events: none;
     > * {
         pointer-events: auto;
+    }
+
+    @media (max-width: 767px) {
+        bottom: 0;
+        padding-bottom: 0.25rem;
     }
 `;
 

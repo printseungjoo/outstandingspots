@@ -18,6 +18,12 @@ const MapWrapper = styled.div`
         height: 100%;
     }
 
+    @media (max-width: 767px) {
+        .leaflet-top.leaflet-left {
+            top: 7.5rem;
+        }
+    }
+
     .user-location {
         display: flex;
         flex-direction: column;
