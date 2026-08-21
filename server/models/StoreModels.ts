@@ -8,13 +8,11 @@ const storeSchema = new mongoose.Schema({
     category: {
         kor: {
             type: String,
-            required: true,
-            unique: true
+            required: true
         },
         eng: {
             type: String,
-            required: true,
-            unique: true
+            required: true
         }
     },
     name: {
@@ -60,6 +58,34 @@ const storeSchema = new mongoose.Schema({
         }
     },
     description: {
+        kor: {
+            type: String,
+            required: true
+        },
+        eng: {
+            type: String,
+            required: true
+        }
+    },
+    openTime: {
+        type: String,
+        required: true
+    },
+    closeTime: {
+        type: String,
+        required: true
+    },
+    theme: {
+        kor: {
+            type: String,
+            required: true
+        },
+        eng: {
+            type: String,
+            required: true
+        }
+    },
+    address: {
         kor: {
             type: String,
             required: true

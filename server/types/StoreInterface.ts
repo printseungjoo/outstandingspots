@@ -24,4 +24,14 @@ export interface StoreInterface {
         kor: string;
         eng: string;
     };
+    openTime: string;
+    closeTime: string;
+    theme: {
+        kor: string;
+        eng: string;
+    };
+    address: {
+        kor: string;
+        eng: string;
+    };
 }
