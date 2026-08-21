@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { Categories } from '../atoms/Categories';
 import { Exits } from '../atoms/Exits';
 import type Language from '../../types/Language';
-import { ToBeContinuedAlert } from '../atoms/toBeContinuedAlert';
+import { ToBeContinuedAlert } from '../atoms/ToBeContinuedAlert';
 
 const CategoryButton = styled.div`
     position: relative;

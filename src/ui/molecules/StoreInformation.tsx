@@ -191,9 +191,6 @@ interface StoreInformationProps {
     language: Language;
 }
 
-// 테마는 현재 dummy data로 DB 개편 이후 실데이터를 넣을 예정입니다.
-// 영업중 유무, 영업 시간은 현재 dummy data로 DB 개편 이후 실데이터를 넣을 예정입니다.
-// 주소는 현재 dummy data로 DB 개편 이후 실데이터를 넣을 예정입니다.
 export function StoreInformation({ store, language }: StoreInformationProps) {
     return (
         <StoreInformationStyled>
@@ -213,12 +210,12 @@ export function StoreInformation({ store, language }: StoreInformationProps) {
                         {language === 'eng' ? store.branch.eng : store.branch.kor}
                     </BranchName>
                     <ThemeName>
-                        인도 음식
+                        {language === 'eng' ? store.theme?.eng : store.theme?.kor}
                     </ThemeName>
                 </StoreInfoSecondLineDiv>
                 <StoreInfoSecondLineDiv>
                     <OpenOrNot> 영업 중 </OpenOrNot>
-                    <OpeningHours> 11:00 - 22:00 </OpeningHours>
+                    <OpeningHours> {store.openTime} - {store.closeTime} </OpeningHours>
                 </StoreInfoSecondLineDiv>
                 <LongLine/>
                 <BoldText> 🎓 {language === 'eng' ? 'SUNY Benefit' : 'SUNY 혜택'}</BoldText>
@@ -238,7 +235,7 @@ export function StoreInformation({ store, language }: StoreInformationProps) {
                 </SUNYBenefitDiv>
                 <LongLine/>
                 <BoldText> 🚡{language === 'eng' ? 'Address' : '주소'} </BoldText>
-                <Address> 인천 연수구 송도과학로28번길 8, A동 1층 </Address>
+                <Address> {language === 'eng' ? store.address?.eng : store.address?.kor} </Address>
             </StoreInfoDiv>
         </StoreInformationStyled>
     )

@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 import { Options } from '../atoms/Options';
-import { ToBeContinuedAlert } from '../atoms/toBeContinuedAlert';
+import { ToBeContinuedAlert } from '../atoms/ToBeContinuedAlert';
 
 const OptionGroup = styled.div`
     display: flex;

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { ToBeContinuedAlert } from '../atoms/toBeContinuedAlert';
+import { ToBeContinuedAlert } from '../atoms/ToBeContinuedAlert';
 
 const NavBarDiv = styled.div`
     z-index: 2;
