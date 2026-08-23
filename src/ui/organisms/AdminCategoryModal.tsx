@@ -1,11 +1,11 @@
-import styled from '@emotion/styled';
+import styled from 'styled-components';
 import { useState } from 'react';
 
 const Overlay = styled.div`
     position: fixed;
     width: 100%;
     height: 100vh;
-    background-color: rgba(0,0,0,0.4);
+    background-color: #00000040;
     top: 0;
     left: 0;
     z-index: 2;

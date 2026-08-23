@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from 'styled-components';
 
 import { Photos } from '../atoms/Photos';
 import type Store from '../../types/Store';

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from 'styled-components';
 
 import { StoreInformation } from '../molecules/StoreInformation';
 import type Store from '../../types/Store';

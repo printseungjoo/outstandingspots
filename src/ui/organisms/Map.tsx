@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react';
-import styled from '@emotion/styled';
+import styled from 'styled-components';
 import L from 'leaflet';
 import { MapContainer, TileLayer, useMap, Marker as LeafletMarker } from 'react-leaflet';
 

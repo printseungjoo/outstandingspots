@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from 'styled-components';
 import { useState, useEffect } from 'react';
 
 import type Store from '../../types/Store';
@@ -12,12 +12,12 @@ const AdminStoresStyled = styled.div`
     overflow-y: scroll;
 `;
 
-const StoresStyled = styled.button<{isSelected : boolean}>`
+const StoresStyled = styled.button<{ $isSelected : boolean }>`
     width: 100%;
     border: 0.5px solid black;
     border-radius: 0;
     padding: 0.8rem;
-    background-color: ${({isSelected}) => (isSelected ? '#E3E6FF' : 'white')};
+    background-color: ${({ $isSelected }) => ($isSelected ? '#E3E6FF' : 'white')};
 `;
 
 const StoreTopLeft = styled.div`
@@ -85,7 +85,7 @@ export function AdminStores({ onChangeLanguage }: AdminStoresProps) {
     return (
         <AdminStoresStyled>
             {stores.map((store) => (
-                <StoresStyled key={ store._id } onClick = {() => setChecked(store._id)} isSelected = {checked === store._id}>
+                <StoresStyled key={ store._id } onClick = {() => setChecked(store._id)} $isSelected = {checked === store._id}>
                     <StoreTop>
                         <StoreTopLeft>
                             <StoreName>

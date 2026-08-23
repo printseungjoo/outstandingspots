@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from 'styled-components';
 
 import { Header } from '../atoms/Header';
 import { MainContent } from '../organisms/MainContent';

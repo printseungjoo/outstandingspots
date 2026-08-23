@@ -1,9 +1,9 @@
-import styled from '@emotion/styled';
+import styled from 'styled-components';
 
-const Category = styled.button<{clicked: boolean}>`
+const Category = styled.button<{ $clicked: boolean }>`
     border-radius: 0;
     border: 1px solid black;
-    background-color: ${({clicked}) => clicked?'#E3E6FF':'white'};
+    background-color: ${({ $clicked }) => $clicked?'#E3E6FF':'white'};
     padding: 0.3rem 0.6rem;
 `;
 
@@ -15,7 +15,7 @@ interface CategoryProps {
 
 export function Categories({ categoryName, clicked, onClick }: CategoryProps) {
     return (
-        <Category clicked = { clicked } onClick = {() => { onClick?.(); }} >
+        <Category $clicked = { clicked } onClick = {() => { onClick?.(); }} >
             { categoryName }
         </Category>
     )

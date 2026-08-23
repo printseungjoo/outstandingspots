@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from 'styled-components';
 
 import { Options } from '../atoms/Options';
 import { ToBeContinuedAlert } from '../atoms/ToBeContinuedAlert';

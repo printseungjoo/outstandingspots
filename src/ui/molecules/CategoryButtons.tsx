@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from 'styled-components';
 
 import { Categories } from '../atoms/Categories';
 import { Exits } from '../atoms/Exits';

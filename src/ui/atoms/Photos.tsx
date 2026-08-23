@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from 'styled-components';
 
 const Photo = styled.div`
     display: flex;
@@ -31,7 +31,7 @@ interface PhotosProps {
 export function Photos({ photoSrc, storeAltName }: PhotosProps) {
     return(
         <Photo>
-            <ImgStyled src = {photoSrc} alt = {storeAltName}>
+            <ImgStyled src = { photoSrc } alt = { storeAltName }>
             </ImgStyled>
         </Photo>
     )

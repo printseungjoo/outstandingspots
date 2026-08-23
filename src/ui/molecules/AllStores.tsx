@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from 'styled-components';
 import { useMemo } from 'react';
 
 import type Store from '../../types/Store';

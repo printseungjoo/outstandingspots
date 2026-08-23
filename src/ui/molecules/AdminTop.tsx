@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from 'styled-components';
 
 import { LanguageButtons } from './LanguageButtons';
 import { ToggleButton } from '../atoms/ToggleButton';

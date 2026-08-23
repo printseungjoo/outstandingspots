@@ -1,5 +1,4 @@
-import styled from '@emotion/styled';
-import { css, keyframes } from '@emotion/react';
+import styled, { css, keyframes } from 'styled-components';
 import { useCallback, useEffect, useState } from 'react';
 
 import { AllCategories } from '../molecules/AllCategories';
