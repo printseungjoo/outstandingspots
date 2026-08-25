@@ -2,7 +2,6 @@ import styled, { css, keyframes } from 'styled-components';
 import { useCallback, useEffect, useState } from 'react';
 
 import { AllCategories } from '../molecules/AllCategories';
-import { LanguageButtons } from '../molecules/LanguageButtons';
 import { OptionGroups } from '../molecules/OptionGroups';
 import { Map } from './Map';
 import { StoreInformationTab } from '../organisms/StoreInformationTab';
@@ -27,23 +26,15 @@ const MapPlus = styled(Map)`
     z-index: 1;
 `;
 
-const LanguageButtonsPlus = styled(LanguageButtons)`
-    position: relative;
-    z-index: 2;
-    right: 0;
-    pointer-events: auto;
-
-    @media (max-width: 767px) {
-        scale: 0.8;
-    }
-`;
-
 const OptionGroupsPlus = styled(OptionGroups)`
-    position: relative;
+    position: absolute;
+    left: 0;
     z-index: 2;
     pointer-events: auto;
 
     @media (max-width: 767px) {
+        position: relative;
+        left: auto;
         flex-direction: row;
         align-items: center;
         gap: 0.5rem;
@@ -71,7 +62,7 @@ const UpperContentDiv = styled.div`
     position: relative;
     z-index: 2;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: flex-start;
     margin: 1rem 2rem;
     pointer-events: none;
@@ -79,6 +70,7 @@ const UpperContentDiv = styled.div`
     @media (max-width: 767px) {
         flex-wrap: wrap;
         align-items: center;
+        justify-content: space-between;
         margin: 0.6rem 0.6rem 0;
         gap: 0.5rem 0;
     }
@@ -184,16 +176,16 @@ interface MainContentProps {
     className?: string;
     photoSrc?: string;
     storeKorName?: string;
+    language: Language;
 }
 
 const baseUrl = import.meta.env.VITE_API_URL;
 
-export function MainContent({ className }: MainContentProps) {
+export function MainContent({ className, language }: MainContentProps) {
     const [selectedStore, setSelectedStore] = useState<Store | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
     const [isWebsiteInfoOpen, setIsWebsiteInfoOpen] = useState<boolean>(false);
     const [isStoreListOpen, setIsStoreListOpen] = useState<boolean>(false);
-    const [language, setLanguage] = useState<Language>('kor');
     const [categories, setCategories] = useState<Category[]>([]);
     const [stores, setStores] = useState<Store[]>([]);
     const [loadingState, setLoadingState] = useState<string>('매장 정보를 불러오는 중입니다 Loading store information');
@@ -259,7 +251,6 @@ export function MainContent({ className }: MainContentProps) {
             <UpperContentDiv>
                 <OptionGroupsPlus onOpenWebsiteInfo = {() => setIsWebsiteInfoOpen(true)} onMyLocation = { handleMyLocation } />
                 <SearchBar language = { language } stores = { stores } onSelectStore = { handleSelectStore } />
-                <LanguageButtonsPlus onChangeLanguage = { setLanguage } />
             </UpperContentDiv>
             {isStoreListOpen && (<AllStoresTab onOpen = { handleSelectStore } onClose = {() => setIsStoreListOpen(false)} language = { language } stores = { stores } />)}
             <BottomContentDiv>

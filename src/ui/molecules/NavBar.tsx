@@ -10,6 +10,7 @@ const NavBarDiv = styled.div`
     border-top: 1px solid #333;
     border-bottom: 1px solid #333;
     box-sizing: border-box;
+    display: none;
 `;
 
 const NavUl = styled.ul`
