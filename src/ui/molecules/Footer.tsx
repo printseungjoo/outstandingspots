@@ -12,6 +12,10 @@ const FooterStyled = styled.div`
     justify-content: space-between;
     align-items: center;
     padding: 0 1rem;
+
+    @media (max-width: 767px) {
+        justify-content: center;
+    }
 `;
 
 interface FooterProps {

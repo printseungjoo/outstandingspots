@@ -11,6 +11,10 @@ const FooterRightTextStyled = styled.button`
     background-color: transparent;
     border: none;
     cursor: pointer;
+
+    @media (max-width: 767px) {
+        display: none;
+    }
 `;
 
 const FileIcon = styled.img`

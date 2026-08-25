@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 
 import { HeaderTitle } from '../molecules/HeaderTitle';
 import type Language from '../../types/Language';
-import { NavButton } from '../atoms/NavButton';
+import { NavBar } from '../atoms/NavBar';
 import { LanguageButtons } from '../molecules/LanguageButtons';
 
 const HeaderStyled = styled.div`
@@ -24,18 +24,26 @@ const HeaderLeftDiv = styled.div`
     gap: 1.5rem;
 `;
 
-const NavButtons = styled.div`
+const NavBars = styled.div`
     display: flex;
     gap: 1.5rem;
     padding: 0;
     margin: 0;
     align-items: stretch;
+
+    @media (max-width: 767px) {
+        display: none;
+    }
 `;
 
 const HeaderRightDiv = styled.div`
     display: flex;
     align-items: center;
     gap: 1.5rem;
+
+    @media (max-width: 767px) {
+        display: none;
+    }
 `;
 
 const LanguageButtonsPlus = styled(LanguageButtons)`
@@ -50,7 +58,6 @@ const LanguageButtonsPlus = styled(LanguageButtons)`
     }
 `;
 
-
 interface HeaderProps {
     language: Language;
     onChangeLanguage: (language: Language) => void;
@@ -63,11 +70,11 @@ export function Header({ language, onChangeLanguage }: HeaderProps) {
         <HeaderStyled>
             <HeaderLeftDiv>
                 <HeaderTitle language = { language } />
-                <NavButtons>
-                    <NavButton navName = {language === 'eng' ? 'Map' : '지도'} clicked = { pathname === '/' } link = "/" />
-                    <NavButton navName = {language === 'eng' ? 'Stores' : '전체 매장'} clicked = { pathname === '/stores' } link = "/stores" />
-                    <NavButton navName = {language === 'eng' ? 'My page' : '마이페이지'} clicked = { pathname === '/myPage' } link = "/myPage" />
-                </NavButtons>
+                <NavBars>
+                    <NavBar navName = {language === 'eng' ? 'Map' : '지도'} clicked = { pathname === '/' } link = "/" />
+                    <NavBar navName = {language === 'eng' ? 'Stores' : '전체 매장'} clicked = { pathname === '/stores' } link = "/stores" />
+                    <NavBar navName = {language === 'eng' ? 'My page' : '마이페이지'} clicked = { pathname === '/myPage' } link = "/myPage" />
+                </NavBars>
             </HeaderLeftDiv>
             <HeaderRightDiv>
                 <LanguageButtonsPlus onChangeLanguage = { onChangeLanguage } />

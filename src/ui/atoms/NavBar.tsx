@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-const NavButtonStyled = styled(Link)`
+const NavBarStyled = styled(Link)`
     height: 100%;
     display: flex;
     align-items: center;
@@ -26,22 +26,22 @@ const NavButtonStyled = styled(Link)`
     }
 `;
 
-const NavButtonText = styled.p<{ $clicked: boolean }>`
+const NavBarText = styled.p<{ $clicked: boolean }>`
     font-weight: bold;
     margin: 0;
     color: ${({ $clicked }) => $clicked ? '#7965EA' : 'black'};
 `;
 
-interface NavButtonProps {
+interface NavBarProps {
     navName: string;
     clicked: boolean;
     link: string;
 }
 
-export function NavButton({ navName, clicked, link }: NavButtonProps) {
+export function NavBar({ navName, clicked, link }: NavBarProps) {
     return(
-        <NavButtonStyled to = { link }>
-            <NavButtonText $clicked = { clicked }> { navName } </NavButtonText>
-        </NavButtonStyled>
+        <NavBarStyled to = { link }>
+            <NavBarText $clicked = { clicked }> { navName } </NavBarText>
+        </NavBarStyled>
     )
 }

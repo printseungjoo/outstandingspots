@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import { Header } from '../organisms/Header';
 import { MainContent } from '../organisms/MainContent';
-import { NavBar } from '../molecules/NavBar';
+import { MobileNavBar } from '../molecules/MobileNavBar';
 import type Language from '../../types/Language';
 import { Footer } from '../molecules/Footer';
 
@@ -20,8 +20,8 @@ export function FullMainScreen() {
     return(
         <Screen>
             <Header language = { language } onChangeLanguage = { setLanguage } />
-            <MainContent language = { language } />
-            <NavBar/>
+            <MainContent language = { language } onChangeLanguage = { setLanguage } />
+            <MobileNavBar/>
             <Footer language = { language } />
         </Screen>
     )

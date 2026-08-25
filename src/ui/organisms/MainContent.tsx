@@ -12,6 +12,7 @@ import fetchJson from '../../lib/fetchJson';
 import type Language from '../../types/Language';
 import type Category from '../../types/Category';
 import { SearchBar } from '../molecules/SearchBar';
+import { LanguageButtons } from '../molecules/LanguageButtons';
 
 const MainContentStyled = styled.div`
     position: relative;
@@ -73,6 +74,19 @@ const UpperContentDiv = styled.div`
         justify-content: space-between;
         margin: 0.6rem 0.6rem 0;
         gap: 0.5rem 0;
+    }
+`;
+
+const LanguageButtonsPlus = styled(LanguageButtons)`
+    position: relative;
+    z-index: 2;
+    right: 0;
+    pointer-events: auto;
+    display: none;
+
+    @media (max-width: 767px) {
+        scale: 0.8;
+        display: block;
     }
 `;
 
@@ -177,11 +191,12 @@ interface MainContentProps {
     photoSrc?: string;
     storeKorName?: string;
     language: Language;
+    onChangeLanguage: (language: Language) => void;
 }
 
 const baseUrl = import.meta.env.VITE_API_URL;
 
-export function MainContent({ className, language }: MainContentProps) {
+export function MainContent({ className, language, onChangeLanguage }: MainContentProps) {
     const [selectedStore, setSelectedStore] = useState<Store | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
     const [isWebsiteInfoOpen, setIsWebsiteInfoOpen] = useState<boolean>(false);
@@ -251,6 +266,7 @@ export function MainContent({ className, language }: MainContentProps) {
             <UpperContentDiv>
                 <OptionGroupsPlus onOpenWebsiteInfo = {() => setIsWebsiteInfoOpen(true)} onMyLocation = { handleMyLocation } />
                 <SearchBar language = { language } stores = { stores } onSelectStore = { handleSelectStore } />
+                <LanguageButtonsPlus onChangeLanguage = { onChangeLanguage } />
             </UpperContentDiv>
             {isStoreListOpen && (<AllStoresTab onOpen = { handleSelectStore } onClose = {() => setIsStoreListOpen(false)} language = { language } stores = { stores } />)}
             <BottomContentDiv>
