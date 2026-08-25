@@ -5,6 +5,7 @@ import { Header } from '../organisms/Header';
 import { MainContent } from '../organisms/MainContent';
 import { NavBar } from '../molecules/NavBar';
 import type Language from '../../types/Language';
+import { Footer } from '../molecules/Footer';
 
 const Screen = styled.div`
     height: 100dvh;
@@ -21,6 +22,7 @@ export function FullMainScreen() {
             <Header language = { language } onChangeLanguage = { setLanguage } />
             <MainContent language = { language } />
             <NavBar/>
+            <Footer language = { language } />
         </Screen>
     )
 }
