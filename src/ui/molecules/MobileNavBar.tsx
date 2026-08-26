@@ -1,3 +1,4 @@
+import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { ToBeContinuedAlert } from '../atoms/ToBeContinuedAlert';
@@ -63,15 +64,20 @@ const Icon = styled.img`
 `;
 
 export function MobileNavBar() {
+    const { pathname } = useLocation();
+    const mapIcon = pathname === '/' ? '/clickedMapPageIcon.png' : '/mapPageIcon.png';
+
     return(
         <MobileNavBarDiv>
             <nav id = "navbar">
                 <NavUl>
                     <NavLi onClick = { ToBeContinuedAlert }> <a href = "/my"> <Icon src = '/myPageIcon.png' alt = 'My page icon'/> </a> </NavLi>
-                    <NavLi> <a href = "/"> <Icon src = '/mapPageIcon.png' alt = 'Map page icon'/> </a> </NavLi>
+                    <NavLi>
+                        <Link to = "/"> <Icon src = { mapIcon } alt = 'Map page icon'/> </Link>
+                    </NavLi>
                     <NavLi onClick = { ToBeContinuedAlert }> <a href = "/store"> <Icon src = '/storePageIcon.png' alt = 'Store page icon'/> </a> </NavLi>
                 </NavUl>
             </nav>
         </MobileNavBarDiv>
-    )    
+    )
 }
