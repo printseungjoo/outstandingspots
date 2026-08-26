@@ -113,10 +113,13 @@ export function SearchBar({ language, stores, onSelectStore }: SearchBarProps) {
 
     const handleKeyUp = (event: KeyboardEvent<HTMLInputElement>) => {
         const value = event.currentTarget.value.trim();
+        const lowerCaseValue = value.toLowerCase();
         const nextMatches = value
             ? stores.filter((store) => {
-                const label = (language === 'eng' ? store.name.eng : store.name.kor).toLowerCase();
-                return label.includes(value.toLowerCase());
+                const name = (language === 'eng' ? store.name.eng : store.name.kor).toLowerCase();
+                const themeKor = store.theme?.kor?.toLowerCase() ?? '';
+                const themeEng = store.theme?.eng?.toLowerCase() ?? '';
+                return name.includes(lowerCaseValue) || themeKor.includes(lowerCaseValue) || themeEng.includes(lowerCaseValue);
             }) : [];
 
         switch(event.keyCode) {
