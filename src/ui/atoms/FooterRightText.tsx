@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 import type Language from '../../types/Language';
+import { ToBeContinuedAlert } from './ToBeContinuedAlert';
 
 const FooterRightTextStyled = styled.button`
     display: flex;
@@ -35,7 +36,7 @@ export function FooterRightText({ language }: FooterRightTextProps) {
     return(
         <FooterRightTextStyled>
             <FileIcon src = '/file.png' alt = 'file' />
-            <Text> {language === 'eng' ? 'Web guide (PDF)' : '웹 사용 설명서 (PDF)'} </Text>
+            <Text onClick = {() => ToBeContinuedAlert()}> {language === 'eng' ? 'Web guide (PDF)' : '웹 사용 설명서 (PDF)'} </Text>
         </FooterRightTextStyled>
     )
 }

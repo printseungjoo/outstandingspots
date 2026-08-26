@@ -5,6 +5,7 @@ import { HeaderTitle } from '../molecules/HeaderTitle';
 import type Language from '../../types/Language';
 import { NavBar } from '../atoms/NavBar';
 import { LanguageButtons } from '../molecules/LanguageButtons';
+import { ToBeContinuedAlert } from '../atoms/ToBeContinuedAlert';
 
 const HeaderStyled = styled.div`
     width: 100%;
@@ -71,9 +72,11 @@ export function Header({ language, onChangeLanguage }: HeaderProps) {
             <HeaderLeftDiv>
                 <HeaderTitle language = { language } />
                 <NavBars>
-                    <NavBar navName = {language === 'eng' ? 'Map' : '지도'} clicked = { pathname === '/' } link = "/" />
-                    <NavBar navName = {language === 'eng' ? 'Stores' : '전체 매장'} clicked = { pathname === '/stores' } link = "/stores" />
-                    <NavBar navName = {language === 'eng' ? 'My page' : '마이페이지'} clicked = { pathname === '/myPage' } link = "/myPage" />
+                    <NavBar navName = {language === 'eng' ? 'Map' : '지도'} clicked = { pathname === '/' } link = "/" onClick = {() => {}} />
+                    {/* <NavBar navName = {language === 'eng' ? 'Stores' : '전체 매장'} clicked = { pathname === '/stores' } link = "/stores" />
+                    <NavBar navName = {language === 'eng' ? 'My page' : '마이페이지'} clicked = { pathname === '/myPage' } link = "/myPage" /> */}
+                    <NavBar navName = {language === 'eng' ? 'Stores' : '전체 매장'} clicked = { pathname === '' } link = "/" onClick = {() => ToBeContinuedAlert()} />
+                    <NavBar navName = {language === 'eng' ? 'My page' : '마이페이지'} clicked = { pathname === '' } link = "/" onClick = {() => ToBeContinuedAlert()} />
                 </NavBars>
             </HeaderLeftDiv>
             <HeaderRightDiv>

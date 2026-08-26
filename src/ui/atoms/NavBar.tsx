@@ -36,11 +36,12 @@ interface NavBarProps {
     navName: string;
     clicked: boolean;
     link: string;
+    onClick: () => void;
 }
 
-export function NavBar({ navName, clicked, link }: NavBarProps) {
+export function NavBar({ navName, clicked, link, onClick }: NavBarProps) {
     return(
-        <NavBarStyled to = { link }>
+        <NavBarStyled to = { link } onClick = { onClick }>
             <NavBarText $clicked = { clicked }> { navName } </NavBarText>
         </NavBarStyled>
     )
