@@ -276,7 +276,7 @@ export function MainContent({ className, language, onChangeLanguage }: MainConte
             <UpperContentDiv>
                 <OptionGroupsPlus onOpenWebsiteInfo = {() => setIsWebsiteInfoOpen(true)} onMyLocation = { handleMyLocation } />
                 <SearchBar language = { language } stores = { stores } onSelectStore = { handleSelectStore } />
-                <LanguageButtonsPlus onChangeLanguage = { onChangeLanguage } />
+                <LanguageButtonsPlus language = { language } onChangeLanguage = { onChangeLanguage } />
             </UpperContentDiv>
             {isStoreListOpen && (<AllStoresTab onOpen = { handleSelectStore } onClose = {() => setIsStoreListOpen(false)} language = { language } stores = { stores } />)}
             <BottomContentDiv>

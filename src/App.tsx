@@ -10,6 +10,7 @@ import { Header } from './ui/organisms/Header';
 import { Footer } from './ui/molecules/Footer';
 import type Language from './types/Language';
 import { LoginPage } from './ui/templates/LoginPage';
+import { LanguageProvider } from './contexts/LanguageContext';
 
 const AppLayout = styled.div`
   height: 100%;
@@ -27,6 +28,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <LanguageProvider language = { language } setLanguage = { setLanguage }>
       <AppLayout>
         <Header language = { language } onChangeLanguage = { setLanguage } />
         <RoutesArea>
@@ -37,6 +39,7 @@ function App() {
         </RoutesArea>
         <Footer language = { language } />
       </AppLayout>
+      </LanguageProvider>
     </BrowserRouter>
   )
 } 

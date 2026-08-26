@@ -79,7 +79,7 @@ export function Header({ language, onChangeLanguage }: HeaderProps) {
                 </NavBars>
             </HeaderLeftDiv>
             <HeaderRightDiv>
-                <LanguageButtonsPlus onChangeLanguage = { onChangeLanguage } />
+                <LanguageButtonsPlus language = { language } onChangeLanguage = { onChangeLanguage } />
             </HeaderRightDiv>
         </HeaderStyled>
     )

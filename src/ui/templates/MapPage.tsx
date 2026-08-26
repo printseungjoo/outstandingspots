@@ -1,9 +1,8 @@
 import styled from 'styled-components';
-import { useState } from 'react';
 
 import { MainContent } from '../organisms/MainContent';
 import { MobileNavBar } from '../molecules/MobileNavBar';
-import type Language from '../../types/Language';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const MapPageStyled = styled.div`
     flex: 1;
@@ -15,7 +14,7 @@ const MapPageStyled = styled.div`
 `;
 
 export function MapPage() {
-    const [language, setLanguage] = useState<Language>('kor');
+    const { language, setLanguage } = useLanguage();
 
     return(
         <MapPageStyled>
