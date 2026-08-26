@@ -6,7 +6,8 @@ import type Language from '../../types/Language';
 
 const FooterStyled = styled.div`
     background-color: #FAF9FE;
-    height: 3rem;
+    height: 6vh;
+    flex-shrink: 0;
     border-top: 1.5px solid black;
     display: flex;
     justify-content: space-between;

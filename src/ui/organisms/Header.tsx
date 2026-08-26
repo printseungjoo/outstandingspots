@@ -73,10 +73,9 @@ export function Header({ language, onChangeLanguage }: HeaderProps) {
                 <HeaderTitle language = { language } />
                 <NavBars>
                     <NavBar navName = {language === 'eng' ? 'Map' : '지도'} clicked = { pathname === '/' } link = "/" onClick = {() => {}} />
-                    {/* <NavBar navName = {language === 'eng' ? 'Stores' : '전체 매장'} clicked = { pathname === '/stores' } link = "/stores" />
-                    <NavBar navName = {language === 'eng' ? 'My page' : '마이페이지'} clicked = { pathname === '/myPage' } link = "/myPage" /> */}
+                    {/* <NavBar navName = {language === 'eng' ? 'Stores' : '전체 매장'} clicked = { pathname === '/stores' } link = "/stores" /> */}
+                    <NavBar navName = {language === 'eng' ? 'My page' : '마이페이지'} clicked = { pathname === '/login' } link = "/login" onClick = {() => {}} />
                     <NavBar navName = {language === 'eng' ? 'Stores' : '전체 매장'} clicked = { pathname === '' } link = "/" onClick = {() => ToBeContinuedAlert()} />
-                    <NavBar navName = {language === 'eng' ? 'My page' : '마이페이지'} clicked = { pathname === '' } link = "/" onClick = {() => ToBeContinuedAlert()} />
                 </NavBars>
             </HeaderLeftDiv>
             <HeaderRightDiv>
