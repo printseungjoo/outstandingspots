@@ -5,6 +5,7 @@ import type Store from '../../types/Store';
 import { NaverMaps } from '../atoms/NaverMaps';
 import type Language from '../../types/Language';
 import { OpenOrNot } from '../atoms/OpenOrNot';
+import { ToBeContinuedAlert } from '../atoms/ToBeContinuedAlert';
 
 const StoreInformationStyled = styled.div`
     width: 92%;
@@ -193,7 +194,7 @@ export function StoreInformation({ store, language }: StoreInformationProps) {
                             <NaverMaps storeNaverMap = { store.naverMap }/>
                         </StoreNameMap>
                     </StoreNameMapDiv>
-                    <LikeButton/>
+                    <LikeButton onClick = {() => ToBeContinuedAlert()}/>
                 </StoreInfoFirstLineDiv>
                 <StoreInfoSecondLineDiv>
                     <BranchName>
