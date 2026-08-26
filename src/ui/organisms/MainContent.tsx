@@ -182,7 +182,17 @@ const Loading = styled.div<{ $animate: boolean }>`
         `}
 
     @media (max-width: 47.9375rem) {
-        font-size: 1rem;
+        height: auto;
+        width: fit-content;
+        max-width: calc(100% - 3rem);
+        margin: 0 1.5rem;
+        padding: 0.9rem 1.5rem;
+        font-size: 0.95rem;
+        line-height: 1.55;
+        display: block;
+        text-align: center;
+        white-space: pre-line;
+        box-sizing: border-box;
     }
 `;
 
