@@ -71,11 +71,13 @@ export function MobileNavBar() {
         <MobileNavBarDiv>
             <nav id = "navbar">
                 <NavUl>
-                    <NavLi onClick = { ToBeContinuedAlert }> <a href = "/my"> <Icon src = '/myPageIcon.png' alt = 'My page icon'/> </a> </NavLi>
+                    {/* <NavLi onClick = { ToBeContinuedAlert }> <a href = "/my"> <Icon src = '/myPageIcon.png' alt = 'My page icon'/> </a> </NavLi> */}
+                    <NavLi onClick = { ToBeContinuedAlert }> <a href = "/"> <Icon src = '/myPageIcon.png' alt = 'My page icon'/> </a> </NavLi>
                     <NavLi>
                         <Link to = "/"> <Icon src = { mapIcon } alt = 'Map page icon'/> </Link>
                     </NavLi>
-                    <NavLi onClick = { ToBeContinuedAlert }> <a href = "/store"> <Icon src = '/storePageIcon.png' alt = 'Store page icon'/> </a> </NavLi>
+                    {/* <NavLi onClick = { ToBeContinuedAlert }> <a href = "/store"> <Icon src = '/storePageIcon.png' alt = 'Store page icon'/> </a> </NavLi> */}
+                    <NavLi onClick = { ToBeContinuedAlert }> <a href = "/"> <Icon src = '/storePageIcon.png' alt = 'Store page icon'/> </a> </NavLi>
                 </NavUl>
             </nav>
         </MobileNavBarDiv>
