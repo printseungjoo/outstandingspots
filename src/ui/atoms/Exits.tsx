@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from 'styled-components';
 
 const Exit = styled.button`
     border-radius: 50%;
@@ -22,7 +22,7 @@ interface ExitProps {
 
 export function Exits({ className, onClick }: ExitProps) {
     return (
-        <Exit className={className} onClick={onClick}>
+        <Exit className = { className } onClick = { onClick }>
             X
         </Exit>
     )

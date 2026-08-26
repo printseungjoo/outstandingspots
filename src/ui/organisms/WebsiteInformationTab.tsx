@@ -1,47 +1,53 @@
-import styled from '@emotion/styled';
+import styled from 'styled-components';
 
-import { Exits } from '../atoms/Exits';
 import { WebsiteInformation } from '../molecules/WebsiteInformation';
 import type Language from '../../types/Language';
+import { ExitContainer } from '../molecules/ExitContainer';
 
 const WebsiteInformationTabStyled = styled.div`
-    position: fixed;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 100%;
-    height: 84vh;
+    position: relative;
+    width: 25%;
+    height: 79vh;
     pointer-events: none;
-    z-index: 3;
+    left: 2rem;
+    padding-right: 1rem;
+
+    @media (max-width: 1024px) and (min-width: 768px) {
+        width: 48%;
+        left: 1.5rem;
+        padding-right: 0.75rem;
+    }
+
+    @media (max-width: 767px) {
+        width: calc(100% - 1.2rem);
+        left: 0.6rem;
+        height: 100%;
+        margin-left: 0.1rem;
+        padding-right: 1.3rem;
+    }
 `;
 
-const ExitsPlus = styled(Exits)`
-    z-index: 3;
-    position: absolute;
-    left: calc(25% + 1rem);
-    margin-top: 0.5rem;
-    width: 1.5rem;
-    height: 1.5rem;
-    pointer-events: auto;
-
-    @media(max-width: 1024px) and (min-width: 768px) {
-        left: calc(50% + 1rem);
-    }
-
-    @media(max-width: 767px) {
-        left: calc(90% + 0.5rem);
-    }
+const WebsiteInformationDiv = styled.div`
+    width: 100%;
+    height: 100%;
+    gap: 0;
+    display: flex;
+    align-items: center;
 `;
 
 interface WebsiteInformationTabProps {
+    className?: string;
     onClose?: () => void;
     language: Language;
 }
 
-export function WebsiteInformationTab({ onClose, language }: WebsiteInformationTabProps) {
+export function WebsiteInformationTab({ className, onClose, language }: WebsiteInformationTabProps) {
     return(
-        <WebsiteInformationTabStyled>
-            <WebsiteInformation language = { language }/>
-            <ExitsPlus onClick={ onClose }/>
+        <WebsiteInformationTabStyled className = { className }>
+            <WebsiteInformationDiv>
+                <WebsiteInformation language = { language }/>
+                <ExitContainer onClose = { onClose ?? (() => {})} />
+            </WebsiteInformationDiv>
         </WebsiteInformationTabStyled>
     )
 }

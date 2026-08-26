@@ -1,7 +1,11 @@
-import styled from '@emotion/styled';
+import styled from 'styled-components';
+import { useState } from 'react';
 
-import { Header } from '../atoms/Header';
+import { Header } from '../organisms/Header';
 import { MainContent } from '../organisms/MainContent';
+import { MobileNavBar } from '../molecules/MobileNavBar';
+import type Language from '../../types/Language';
+import { Footer } from '../molecules/Footer';
 
 const Screen = styled.div`
     height: 100dvh;
@@ -10,17 +14,15 @@ const Screen = styled.div`
     overflow: hidden;
 `;
 
-const HeaderPlus = styled(Header)`
-    font-size: 1.6rem;
-    font-weight: bolder;
-`;
-
 export function FullMainScreen() {
+    const [language, setLanguage] = useState<Language>('kor');
+
     return(
         <Screen>
-            <HeaderPlus content = "Outstanding Spots" onClick = {() => window.location.reload()}/>
-            <MainContent/>
-            <Header content = "Only for SUNY Korea students"/>
+            <Header language = { language } onChangeLanguage = { setLanguage } />
+            <MainContent language = { language } onChangeLanguage = { setLanguage } />
+            <MobileNavBar/>
+            <Footer language = { language } />
         </Screen>
     )
 }

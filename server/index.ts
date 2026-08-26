@@ -74,7 +74,7 @@ app.get("/stores", async (_req: Request, res: Response) => {
         if (storesCache && now - storesCacheTime < STORES_CACHE_DURATION) {
             return res.json(storesCache);
         }
-        const stores = await storeModel.find({}, 'photo category name branch naverMap lat lon discount description').lean();
+        const stores = await storeModel.find({}, 'photo category name branch naverMap lat lon discount description openTime closeTime theme address').lean();
         storesCache = stores.map((store) => ({
             _id: String(store._id),
             photo: store.photo,
@@ -101,6 +101,16 @@ app.get("/stores", async (_req: Request, res: Response) => {
                 kor: store.description?.kor ?? '',
                 eng: store.description?.eng ?? '',
             },
+            openTime: store.openTime ?? '',
+            closeTime: store.closeTime ?? '',
+            theme: {
+                kor: store.theme?.kor ?? '',
+                eng: store.theme?.eng ?? '',
+            },
+            address: {
+                kor: store.address?.kor ?? '',
+                eng: store.address?.eng ?? '',
+            }
         }));
         storesCacheTime = now;
         res.json(storesCache);

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from 'styled-components';
 
 const Option = styled.button`
     margin-bottom: 1.2rem;
