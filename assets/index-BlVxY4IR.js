@@ -937,7 +937,7 @@ Please change the parent <Route path="${K}"> to <Route path="${K==="/"?"*":`${K}
         width: 1.7rem;
         height: 1.7rem;
     }
-`;function Qx(){const{pathname:o}=Yn(),f=o==="/"?"/clickedMapPageIcon.png":"/mapPageIcon.png";return D.jsx(Vx,{children:D.jsx("nav",{id:"navbar",children:D.jsxs(Xx,{children:[D.jsxs(oh,{onClick:wa,children:[" ",D.jsxs("a",{href:"/my",children:[" ",D.jsx(rh,{src:"/myPageIcon.png",alt:"My page icon"})," "]})," "]}),D.jsx(oh,{children:D.jsxs(Nu,{to:"/",children:[" ",D.jsx(rh,{src:f,alt:"Map page icon"})," "]})}),D.jsxs(oh,{onClick:wa,children:[" ",D.jsxs("a",{href:"/store",children:[" ",D.jsx(rh,{src:"/storePageIcon.png",alt:"Store page icon"})," "]})," "]})]})})})}const Kx=et.div`
+`;function Qx(){const{pathname:o}=Yn(),f=o==="/"?"/clickedMapPageIcon.png":"/mapPageIcon.png";return D.jsx(Vx,{children:D.jsx("nav",{id:"navbar",children:D.jsxs(Xx,{children:[D.jsxs(oh,{onClick:wa,children:[" ",D.jsxs("a",{href:"/",children:[" ",D.jsx(rh,{src:"/myPageIcon.png",alt:"My page icon"})," "]})," "]}),D.jsx(oh,{children:D.jsxs(Nu,{to:"/",children:[" ",D.jsx(rh,{src:f,alt:"Map page icon"})," "]})}),D.jsxs(oh,{onClick:wa,children:[" ",D.jsxs("a",{href:"/",children:[" ",D.jsx(rh,{src:"/storePageIcon.png",alt:"Store page icon"})," "]})," "]})]})})})}const Kx=et.div`
     display: flex;
     align-items: center;
     gap: 0.5rem;
