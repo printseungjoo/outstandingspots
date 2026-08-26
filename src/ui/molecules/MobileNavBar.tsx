@@ -42,8 +42,12 @@ const NavLi = styled.li`
         display: inline-flex;
         align-items: center;
         gap: 0.25rem;
-        color: black;
         text-decoration: none;
+
+        &, &:link, &:visited, &:hover, &:active {
+            color: black;
+            text-decoration: none;
+        }
     }
 `;
 
@@ -58,22 +62,14 @@ const Icon = styled.img`
     }
 `;
 
-const NavSpan = styled.span`
-    display: block;
-
-    @media (max-width: 767px) {
-        display: none;
-    }
-`;
-
 export function MobileNavBar() {
     return(
         <MobileNavBarDiv>
             <nav id = "navbar">
                 <NavUl>
-                    <NavLi onClick = { ToBeContinuedAlert }> <a href = "/my"> <Icon src = '/myPageIcon.png' alt = 'My page icon'/> <NavSpan> My Page </NavSpan> </a> </NavLi>
-                    <NavLi> <a href = "/"> <Icon src = '/mapPageIcon.png' alt = 'Map page icon'/> <NavSpan> Map Page </NavSpan> </a> </NavLi>
-                    <NavLi onClick = { ToBeContinuedAlert }> <a href = "/store"> <Icon src = '/storePageIcon.png' alt = 'Store page icon'/> <NavSpan> Store Page </NavSpan> </a> </NavLi>
+                    <NavLi onClick = { ToBeContinuedAlert }> <a href = "/my"> <Icon src = '/myPageIcon.png' alt = 'My page icon'/> </a> </NavLi>
+                    <NavLi> <a href = "/"> <Icon src = '/mapPageIcon.png' alt = 'Map page icon'/> </a> </NavLi>
+                    <NavLi onClick = { ToBeContinuedAlert }> <a href = "/store"> <Icon src = '/storePageIcon.png' alt = 'Store page icon'/> </a> </NavLi>
                 </NavUl>
             </nav>
         </MobileNavBarDiv>

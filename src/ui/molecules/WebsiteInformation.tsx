@@ -77,6 +77,11 @@ const OptionButton = styled.a`
     justify-content: center;
     align-items: center;
     color: black;
+    
+    &, &:link, &:visited, &:hover, &:active {
+        color: black;
+        text-decoration: none;
+    }
 
     @media (max-width: 767px) {
         height: 4.5vh;
