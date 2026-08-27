@@ -14,11 +14,15 @@ const LoginButtonStyled = styled.button`
     justify-content: center;
 `;
 
-export function LoginButton() {
+interface LoginButtonProps {
+    onClick?: () => void;
+}
+
+export function LoginButton({ onClick }: LoginButtonProps) {
     const { language } = useLanguage();
     
     return(
-        <LoginButtonStyled>
+        <LoginButtonStyled type = "button" onClick = { onClick }>
             {language === 'eng' ? 'Login' : '로그인'}
         </LoginButtonStyled>
     )

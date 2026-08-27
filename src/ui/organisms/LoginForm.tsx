@@ -1,9 +1,11 @@
 import styled from "styled-components";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { LoginId } from "../atoms/LoginId";
-import { LoginPassword } from "../atoms/LoginPassword";
+import { LoginIdPassword } from "../atoms/LoginIdPassword";
 import { LoginButton } from "../atoms/LoginButton";
 import { SignUpButton } from "../atoms/SignUpButton";
+import { useAdminAuth } from "../../contexts/AdminAuthContext";
 
 const LoginFormStyled = styled.div`
     width: 25%;
@@ -56,17 +58,28 @@ const BlackThinLine = styled.div`
 interface LoginFormProps {
     who: string;
     onlyForWho: string;
+    loginRole: string;
 }
 
-export function LoginForm({ who,onlyForWho }: LoginFormProps) {
+export function LoginForm({ who,onlyForWho, loginRole }: LoginFormProps) {
+    const { loginAdmin } = useAdminAuth();
+    const navigate = useNavigate();
+    const [isAdmin, setIsAdmin] = useState<boolean[]>([false, false]);
+
+    const handleLogin = () => {
+        if (loginRole === 'store' && isAdmin[0] && isAdmin[1]) {
+            loginAdmin();
+            navigate('/admin');
+        }
+    };
+
     return(
         <LoginFormStyled>
             <ColoredMyPageIcon src = '/coloredMyPageIcon.png' alt = 'coloredMyPageIcon'/>
             <BoldText> { who } </BoldText>
             <LoginDiv>
-                <LoginId />
-                <LoginPassword />
-                <LoginButton />
+                <LoginIdPassword loginRole = { loginRole } onAdminCheckChange = { setIsAdmin }/>
+                <LoginButton onClick = { handleLogin } />
                 <BlackThinLine />
                 <SignUpButton />
             </LoginDiv>

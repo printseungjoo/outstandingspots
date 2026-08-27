@@ -31,9 +31,9 @@ export function LoginPage() {
     
     return(
         <LoginPageStyled>
-            <LoginForm who = {language === 'eng' ? 'Student Login' : '학생 로그인'} onlyForWho = {language === 'eng' ? 'Only for SUNY Korea students' : '한국뉴욕주립대학교 학생만 가능합니다.'} />
+            <LoginForm who = {language === 'eng' ? 'Student Login' : '학생 로그인'} onlyForWho = {language === 'eng' ? 'Only for SUNY Korea students' : '한국뉴욕주립대학교 학생만 가능합니다.'} loginRole = 'student'/>
             <LoginBackgroundImage src = '/loginBackgroundImage.png' alt = 'loginBackgroundImage' />
-            <LoginForm who = {language === 'eng' ? 'Store Login' : '매장 로그인'} onlyForWho = {language === 'eng' ? 'Only for pre-contracted stores' : '사전에 계약된 매장 직원만 가능합니다.'} />
+            <LoginForm who = {language === 'eng' ? 'Store Login' : '매장 로그인'} onlyForWho = {language === 'eng' ? 'Only for pre-contracted stores' : '사전에 계약된 매장 직원만 가능합니다.'} loginRole = 'store' />
         </LoginPageStyled>
     )
 }

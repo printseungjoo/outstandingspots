@@ -11,6 +11,9 @@ import { Footer } from './ui/molecules/Footer';
 import type Language from './types/Language';
 import { LoginPage } from './ui/templates/LoginPage';
 import { LanguageProvider } from './contexts/LanguageContext';
+import { AdminAuthProvider } from './contexts/AdminAuthContext';
+import { AdminPage } from './ui/templates/AdminPage';
+import { ProtectedAdminRoute } from './ui/atoms/ProtectedAdminRoute';
 
 const AppLayout = styled.div`
   height: 100%;
@@ -29,19 +32,26 @@ function App() {
   return (
     <BrowserRouter>
       <LanguageProvider language = { language } setLanguage = { setLanguage }>
-      <AppLayout>
-        <Header language = { language } onChangeLanguage = { setLanguage } />
-        <RoutesArea>
-          <Routes>
-            <Route path = "/" element = {<MapPage />} />
-            <Route path = "/login" element = {<LoginPage />} />
-          </Routes>
-        </RoutesArea>
-        <Footer language = { language } />
-      </AppLayout>
+        <AdminAuthProvider>
+          <AppLayout>
+            <Header language = { language } onChangeLanguage = { setLanguage } />
+            <RoutesArea>
+              <Routes>
+                <Route path = "/" element = {<MapPage />} />
+                <Route path = "/login" element = {<LoginPage />} />
+                <Route path = "/admin" element = {
+                  <ProtectedAdminRoute>
+                    <AdminPage />
+                  </ProtectedAdminRoute>
+                } />
+              </Routes>
+            </RoutesArea>
+            <Footer language = { language } />
+          </AppLayout>
+        </AdminAuthProvider>
       </LanguageProvider>
     </BrowserRouter>
   )
-} 
+}
 
 export default App
