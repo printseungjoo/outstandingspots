@@ -26,7 +26,7 @@ const PurpleText = styled.span`
 export function FooterLeftText() {
     return(
         <FooterLeftTextStyled>
-            <MortarboardIcon src = '/mortarboard.png' alt = 'mortarboard' />
+            <MortarboardIcon src = '/mortarboardIcon.png' alt = 'mortarboard icon' />
             <BlackText> Only for <PurpleText> SUNY Korea </PurpleText> students </BlackText>
         </FooterLeftTextStyled>
     )

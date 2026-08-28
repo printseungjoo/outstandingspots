@@ -9,6 +9,6 @@ export const byPrefixAndName: Record<string, Record<string, IconDefinition>> = {
         lock: faLock
     },
     far: {
-        eye: faEye
+        eye: faEye,
     }
 };

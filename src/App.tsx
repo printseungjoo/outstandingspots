@@ -39,7 +39,7 @@ function App() {
               <Routes>
                 <Route path = "/" element = {<MapPage />} />
                 <Route path = "/login" element = {<LoginPage />} />
-                <Route path = "/admin" element = {
+                <Route path = "/admin/*" element = {
                   <ProtectedAdminRoute>
                     <AdminPage />
                   </ProtectedAdminRoute>

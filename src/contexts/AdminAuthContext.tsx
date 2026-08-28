@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 interface AdminAuthContextValue {
     isAdmin: boolean;
     loginAdmin: () => void;
+    logoutAdmin: () => void;
 }
 
 const AdminAuthContext = createContext<AdminAuthContextValue | null>(null);
@@ -15,8 +16,12 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
         setIsAdmin(true);
     };
 
+    const logoutAdmin = () => {
+        setIsAdmin(false);
+    };
+
     return (
-        <AdminAuthContext.Provider value = {{ isAdmin, loginAdmin }}>
+        <AdminAuthContext.Provider value = {{ isAdmin, loginAdmin, logoutAdmin }}>
             {children}
         </AdminAuthContext.Provider>
     )
