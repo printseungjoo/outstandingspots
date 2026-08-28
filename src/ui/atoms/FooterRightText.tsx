@@ -26,6 +26,7 @@ const FileIcon = styled.img`
 const Text = styled.p`
     color: black;
     font-size: 0.9rem;
+    margin: 0;
 `;
 
 interface FooterRightTextProps {

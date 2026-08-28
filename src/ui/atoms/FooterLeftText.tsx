@@ -15,6 +15,7 @@ const BlackText = styled.p`
     font-weight: bold;
     color: black;
     font-size: 0.9rem;
+    margin: 0;
 `;
 
 const PurpleText = styled.span`

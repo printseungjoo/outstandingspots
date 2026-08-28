@@ -6,13 +6,14 @@ import type Language from '../../types/Language';
 
 const FooterStyled = styled.div`
     background-color: #FAF9FE;
-    height: 6vh;
+    min-height: 3rem;
     flex-shrink: 0;
+    box-sizing: border-box;
     border-top: 1.5px solid black;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 1rem;
+    padding: 0.55rem 1rem;
 
     @media (max-width: 767px) {
         justify-content: center;

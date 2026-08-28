@@ -25,7 +25,9 @@ const AppLayout = styled.div`
 `;
 
 const RoutesArea = styled.div`
-  height: 86vh;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 `;
 
 function App() {
