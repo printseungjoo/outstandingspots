@@ -1,5 +1,5 @@
 import styled, { css, keyframes } from 'styled-components';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { AllCategories } from '../molecules/AllCategories';
 import { OptionGroups } from '../molecules/OptionGroups';
@@ -8,11 +8,10 @@ import { StoreInformationTab } from '../organisms/StoreInformationTab';
 import type Store from '../../types/Store';
 import { WebsiteInformationTab } from './WebsiteInformationTab';
 import { AllStoresTab } from './AllStoresTab';
-import fetchJson from '../../lib/fetchJson';
 import type Language from '../../types/Language';
-import type Category from '../../types/Category';
 import { SearchBar } from '../molecules/SearchBar';
 import { LanguageButtons } from '../molecules/LanguageButtons';
+import { SUCCESS_MESSAGE, useStores } from '../../contexts/StoresContext';
 
 const MainContentStyled = styled.div`
     position: relative;
@@ -161,8 +160,6 @@ const SchoolReturnButton = styled.button`
     }
 `;
 
-const SUCCESS_MESSAGE = '즐거운 이용 되세요! Enjoy the service!';
-
 const Loading = styled.div<{ $animate: boolean }>`
     background-color: #e3e6ff;
     color: #535FC1;
@@ -204,16 +201,13 @@ interface MainContentProps {
     onChangeLanguage: (language: Language) => void;
 }
 
-const baseUrl = import.meta.env.VITE_API_URL;
-
 export function MainContent({ className, language, onChangeLanguage }: MainContentProps) {
+    const { stores, categories, loadingState } = useStores();
+    
     const [selectedStore, setSelectedStore] = useState<Store | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
     const [isWebsiteInfoOpen, setIsWebsiteInfoOpen] = useState<boolean>(false);
     const [isStoreListOpen, setIsStoreListOpen] = useState<boolean>(false);
-    const [categories, setCategories] = useState<Category[]>([]);
-    const [stores, setStores] = useState<Store[]>([]);
-    const [loadingState, setLoadingState] = useState<string>('매장 정보를 불러오는 중입니다 Loading store information');
     const [isLoadingVisible, setIsLoadingVisible] = useState(true);
     const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
     const [isLocating, setIsLocating] = useState<boolean>(false);
@@ -242,25 +236,6 @@ export function MainContent({ className, language, onChangeLanguage }: MainConte
         setUserLocation(null);
         setIsLocating(false);
     }, []);
-
-    useEffect(() => {
-        const controller = new AbortController();
-        Promise.all([
-            fetchJson<Category[]>(`${baseUrl}/categories`, { signal: controller.signal }),
-            fetchJson<Store[]>(`${baseUrl}/stores`, { signal: controller.signal })
-        ])
-        .then(([categoriesData, storesData]) => {
-            setCategories(categoriesData);
-            setStores(storesData);
-            setLoadingState(SUCCESS_MESSAGE);
-        })
-        .catch((error) => {
-            if (controller.signal.aborted) return;
-            console.error(error);
-            setLoadingState('다시 시도해주세요 Try again');
-        })
-        return () => controller.abort();
-    }, [])
 
     const isSuccess = loadingState === SUCCESS_MESSAGE;
 
