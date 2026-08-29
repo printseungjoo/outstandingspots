@@ -1,7 +1,7 @@
-import styled from "styled-components";
-import { Outlet } from "react-router-dom";
+import styled from 'styled-components';
+import { Outlet } from 'react-router-dom';
 
-import { AdminNav } from "../molecules/AdminNav";
+import { AdminNav } from '../molecules/AdminNav';
 
 const AdminPageStyled = styled.div`
     width: 100%;

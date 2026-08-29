@@ -13,6 +13,7 @@ import { LoginPage } from './ui/templates/LoginPage';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { AdminAuthProvider } from './contexts/AdminAuthContext';
 import { StoresProvider } from './contexts/StoresContext';
+import { CategoryProvider } from './contexts/CategoryContext';
 import { AdminPage } from './ui/templates/AdminPage';
 import { ProtectedAdminRoute } from './ui/atoms/ProtectedAdminRoute';
 import { AdminStoreManagementTab } from './ui/organisms/AdminStoreManagementTab';
@@ -38,25 +39,27 @@ function App() {
       <LanguageProvider language = { language } setLanguage = { setLanguage }>
         <AdminAuthProvider>
           <StoresProvider>
-            <AppLayout>
-              <Header language = { language } onChangeLanguage = { setLanguage } />
-              <RoutesArea>
-                <Routes>
-                  <Route path = "/" element = {<MapPage />} />
-                  <Route path = "/login" element = {<LoginPage />} />
-                  <Route path = "/admin" element = {
-                    <ProtectedAdminRoute>
-                      <AdminPage />
-                    </ProtectedAdminRoute>
-                  }>
-                    <Route index element = {<AdminStoreManagementTab />} />
-                    <Route path = "owners" element = { null } />
-                    <Route path = "changes" element = { null } />
-                  </Route>
-                </Routes>
-              </RoutesArea>
-              <Footer language = { language } />
-            </AppLayout>
+            <CategoryProvider>
+              <AppLayout>
+                <Header language = { language } onChangeLanguage = { setLanguage } />
+                <RoutesArea>
+                  <Routes>
+                    <Route path = "/" element = {<MapPage />} />
+                    <Route path = "/login" element = {<LoginPage />} />
+                    <Route path = "/admin" element = {
+                      <ProtectedAdminRoute>
+                        <AdminPage />
+                      </ProtectedAdminRoute>
+                    }>
+                      <Route index element = {<AdminStoreManagementTab />} />
+                      <Route path = "owners" element = { null } />
+                      <Route path = "changes" element = { null } />
+                    </Route>
+                  </Routes>
+                </RoutesArea>
+                <Footer language = { language } />
+              </AppLayout>
+            </CategoryProvider>
           </StoresProvider>
         </AdminAuthProvider>
       </LanguageProvider>

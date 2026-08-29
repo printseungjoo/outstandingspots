@@ -1,7 +1,7 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
-import { LoginForm } from "../organisms/LoginForm";
-import { useLanguage } from "../../contexts/LanguageContext";
+import { LoginForm } from '../organisms/LoginForm';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const LoginPageStyled = styled.div`
     position: relative;

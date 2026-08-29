@@ -1,8 +1,8 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import styled from "styled-components";
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
-import { useLanguage } from "../../contexts/LanguageContext";
-import { useAdminAuth } from "../../contexts/AdminAuthContext";
+import { useLanguage } from '../../contexts/LanguageContext';
+import { useAdminAuth } from '../../contexts/AdminAuthContext';
 
 const AdminNavStyled = styled.div`
     width: 13%;

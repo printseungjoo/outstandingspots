@@ -1,9 +1,9 @@
-import styled from "styled-components";
-import { byPrefixAndName } from "../../icon/icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import styled from 'styled-components';
+import { byPrefixAndName } from '../../icon/icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useState } from 'react';
 
-import { useLanguage } from "../../contexts/LanguageContext";
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const LoginIdStyled = styled.div`
     width: 100%;

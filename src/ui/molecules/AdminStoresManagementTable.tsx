@@ -1,8 +1,8 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
-import { useLanguage } from "../../contexts/LanguageContext";
-import { useStores } from "../../contexts/StoresContext";
-import { ToBeContinuedAlert } from "../atoms/ToBeContinuedAlert";
+import { useLanguage } from '../../contexts/LanguageContext';
+import type Store from '../../types/Store';
+import { ToBeContinuedAlert } from '../atoms/ToBeContinuedAlert';
 
 const TableWrap = styled.div`
     width: 100%;
@@ -70,20 +70,23 @@ const ActionButton = styled.button`
     }
 `;
 
-export function AdminStoresManagementTable() {
+interface AdminStoresManagementTableProps {
+    stores: Store[];
+}
+
+export function AdminStoresManagementTable({ stores }: AdminStoresManagementTableProps) {
     const { language } = useLanguage();
-    const { stores } = useStores();
 
     return(
         <TableWrap>
             <Table>
                 <thead>
                     <tr>
-                        <PhotoTh>{language === 'eng' ? 'Photo' : '사진'}</PhotoTh>
-                        <Th>{language === 'eng' ? 'Name' : '이름'}</Th>
-                        <Th>{language === 'eng' ? 'Theme' : '테마'}</Th>
-                        <Th>{language === 'eng' ? 'Discount' : '할인'}</Th>
-                        <ActionTh>{language === 'eng' ? 'Actions' : '관리'}</ActionTh>
+                        <PhotoTh> {language === 'eng' ? 'Photo' : '사진'} </PhotoTh>
+                        <Th> {language === 'eng' ? 'Name' : '이름'} </Th>
+                        <Th> {language === 'eng' ? 'Theme' : '테마'} </Th>
+                        <Th> {language === 'eng' ? 'Discount' : '할인'} </Th>
+                        <ActionTh> {language === 'eng' ? 'Actions' : '관리'} </ActionTh>
                     </tr>
                 </thead>
                 <tbody>
@@ -92,9 +95,9 @@ export function AdminStoresManagementTable() {
                             <Td>
                                 <StorePhoto src = { store.photo } alt = { language === 'eng' ? store.name.eng : store.name.kor } />
                             </Td>
-                            <Td>{language === 'eng' ? `${store.name.eng} ${store.branch.eng}` : `${store.name.kor} ${store.branch.kor}`}</Td>
-                            <Td>{language === 'eng' ? store.theme?.eng : store.theme?.kor}</Td>
-                            <Td>{language === 'eng' ? store.discount.eng : store.discount.kor}</Td>
+                            <Td> {language === 'eng' ? `${store.name.eng} ${store.branch.eng}` : `${store.name.kor} ${store.branch.kor}`} </Td>
+                            <Td> {language === 'eng' ? store.theme?.eng : store.theme?.kor} </Td>
+                            <Td> {language === 'eng' ? store.discount.eng : store.discount.kor} </Td>
                             <Td>
                                 <ActionButton type = "button" onClick = { ToBeContinuedAlert }>
                                     {language === 'eng' ? 'Edit' : '수정'}

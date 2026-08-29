@@ -1,6 +1,6 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
-import { useLanguage } from "../../contexts/LanguageContext";
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const LoginButtonStyled = styled.button`
     width: 100%;

@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 import { useRef, useState } from 'react';
 import type { ChangeEvent, KeyboardEvent } from 'react';
 

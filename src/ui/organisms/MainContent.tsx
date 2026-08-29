@@ -12,6 +12,7 @@ import type Language from '../../types/Language';
 import { SearchBar } from '../molecules/SearchBar';
 import { LanguageButtons } from '../molecules/LanguageButtons';
 import { SUCCESS_MESSAGE, useStores } from '../../contexts/StoresContext';
+import { useCategories } from '../../contexts/CategoryContext';
 
 const MainContentStyled = styled.div`
     position: relative;
@@ -202,7 +203,8 @@ interface MainContentProps {
 }
 
 export function MainContent({ className, language, onChangeLanguage }: MainContentProps) {
-    const { stores, categories, loadingState } = useStores();
+    const { stores, loadingState } = useStores();
+    const { categories } = useCategories();
     
     const [selectedStore, setSelectedStore] = useState<Store | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
