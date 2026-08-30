@@ -17,6 +17,7 @@ import { CategoryProvider } from './contexts/CategoryContext';
 import { AdminPage } from './ui/templates/AdminPage';
 import { ProtectedAdminRoute } from './ui/atoms/ProtectedAdminRoute';
 import { AdminStoreManagementTab } from './ui/organisms/AdminStoreManagementTab';
+import { AdminStoreAddTab } from './ui/organisms/AdminStoreAddTab';
 
 const AppLayout = styled.div`
   height: 100%;
@@ -52,6 +53,7 @@ function App() {
                       </ProtectedAdminRoute>
                     }>
                       <Route index element = {<AdminStoreManagementTab />} />
+                      <Route path = "store/add" element = {<AdminStoreAddTab />} />
                       <Route path = "owners" element = { null } />
                       <Route path = "changes" element = { null } />
                     </Route>
