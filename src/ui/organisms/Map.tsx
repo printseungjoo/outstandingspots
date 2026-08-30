@@ -85,7 +85,7 @@ interface MapUpdaterProps {
     onUserMoveEnd?: () => void
 }
 
-function MapUpdater({ selectedStore, userLocation, onUserMoveEnd,}: MapUpdaterProps) {
+function MapUpdater({ selectedStore, userLocation, onUserMoveEnd }: MapUpdaterProps) {
     const map = useMap()
     const isFirstRender = useRef(true)
     const isFirstUserLocation = useRef(true)

@@ -8,13 +8,15 @@ const TitleField = styled.div`
     width: 100%;
     display: flex;
     justify-content: space-between;
+    flex-shrink: 0;
 `;
 
-const AdminStoreAddInputStyled = styled.div`
+const AdminStoreAddTextareaStyled = styled.div`
     width: 100%;
     display: flex;
     flex-direction: column;
-    flex-shrink: 0;
+    flex: 1;
+    min-height: 0;
 `;
 
 const Title = styled.p`
@@ -32,17 +34,21 @@ const CheckLabel = styled.label`
     color: black;
 `;
 
-const InputField = styled.div`
+const TextareaField = styled.div`
     width: 100%;
     display: flex;
     justify-content: space-between;
+    flex: 1;
+    min-height: 0;
 `;
 
-const LanguageInputField = styled.div`
+const LanguageTextareaField = styled.div`
     width: 48%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     color: gray;
+    min-height: 0;
 `;
 
 const LanguageText = styled.p`
@@ -52,16 +58,19 @@ const LanguageText = styled.p`
     font-size: 0.85rem;
 `;
 
-const InputForm = styled.input`
+const TextareaForm = styled.textarea`
     width: 100%;
+    flex: 1;
+    min-height: 2.5rem;
     box-sizing: border-box;
     border: 0.5px solid gray;
     border-radius: 0.25rem;
     color: gray;
     padding: 0.3rem 0.3rem;
+    resize: none;
 `;
 
-interface AdminStoreAddInputProps {
+interface AdminStoreAddTextareaProps {
     engTitle: string;
     korTitle: string;
     engPlaceholder: string;
@@ -72,8 +81,8 @@ interface AdminStoreAddInputProps {
     korAutoText?: string;
 }
 
-export function AdminStoreAddInput({ engTitle, korTitle, engPlaceholder = '', korPlaceholder = '',
-    engLabel, korLabel, engAutoText = '', korAutoText = '' }: AdminStoreAddInputProps) { 
+export function AdminStoreAddTextarea({ engTitle, korTitle, engPlaceholder = '', korPlaceholder = '',
+    engLabel, korLabel, engAutoText = '', korAutoText = '' }: AdminStoreAddTextareaProps) { 
     const { language } = useLanguage();
     const [korValue, setKorValue] = useState('');
     const [engValue, setEngValue] = useState('');
@@ -95,7 +104,7 @@ export function AdminStoreAddInput({ engTitle, korTitle, engPlaceholder = '', ko
     }
 
     return(
-        <AdminStoreAddInputStyled>
+        <AdminStoreAddTextareaStyled>
             <TitleField>
                 <Title> {language === 'eng' ? engTitle : korTitle} </Title>
                 {showCheckbox && (
@@ -105,20 +114,20 @@ export function AdminStoreAddInput({ engTitle, korTitle, engPlaceholder = '', ko
                     </CheckLabel>
                 )}
             </TitleField>
-            <InputField>
-                <LanguageInputField>
+            <TextareaField>
+                <LanguageTextareaField>
                     <LanguageText> {language === 'eng' ? 'Korean' : '한국어'} </LanguageText>
-                    <InputForm type = 'text' value = { korValue }
+                    <TextareaForm value = { korValue }
                         onChange = {(e) => setKorValue(e.target.value)}
                         placeholder = { `${examplePrefix} ${korPlaceholder}` } />
-                </LanguageInputField>
-                <LanguageInputField>
+                </LanguageTextareaField>
+                <LanguageTextareaField>
                     <LanguageText> {language === 'eng' ? 'English' : '영어'} </LanguageText>
-                    <InputForm type = 'text' value = { engValue }
+                    <TextareaForm value = { engValue }
                         onChange = {(e) => setEngValue(e.target.value)}
                         placeholder = { `${examplePrefix} ${engPlaceholder}` } />
-                </LanguageInputField>
-            </InputField>
-        </AdminStoreAddInputStyled>
+                </LanguageTextareaField>
+            </TextareaField>
+        </AdminStoreAddTextareaStyled>
     )
 }

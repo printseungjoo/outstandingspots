@@ -9,7 +9,7 @@ const UploadImageStyled = styled.div`
     flex-direction: column;
     align-items: center;
     width: 100%;
-    height: 100%;
+    flex-shrink: 0;
 `;
 
 const TitleDiv = styled.div`
@@ -30,17 +30,21 @@ const ImageFileInput = styled.input`
 
 const VisibleImageFileInput = styled.label`
     display: flex;
-    flex: 0 0 auto;
+    flex-shrink: 0;
     justify-content: center;
     align-items: center;
     width: 100%;
     height: auto;
     aspect-ratio: calc((25vw * 0.92 * 0.90) / 20vh);
-    border: 1px solid black;
+    border: 0.5px solid gray;
     overflow: hidden;
     cursor: pointer;
     box-sizing: border-box;
     color: gray;
+
+    @media (max-width: 767px) {
+        aspect-ratio: calc((100vw * 0.92 * 0.90) / 16vh);
+    }
 `;
 
 const PreviewImg = styled.img`
@@ -51,7 +55,7 @@ const PreviewImg = styled.img`
 
 export function UploadImage() {
     const { language } = useLanguage();
-    
+
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const boxRef = useRef<HTMLLabelElement>(null);
 
