@@ -15,7 +15,7 @@ const UploadImageStyled = styled.div`
 const TitleDiv = styled.div`
     display: flex;
     justify-content: flex-start;
-    width: 70%;
+    width: 100%;
 `;
 
 const Title = styled.p`
@@ -33,7 +33,7 @@ const VisibleImageFileInput = styled.label`
     flex: 0 0 auto;
     justify-content: center;
     align-items: center;
-    width: 70%;
+    width: 100%;
     height: auto;
     aspect-ratio: calc((25vw * 0.92 * 0.90) / 20vh);
     border: 1px solid black;
@@ -51,6 +51,7 @@ const PreviewImg = styled.img`
 
 export function UploadImage() {
     const { language } = useLanguage();
+    
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const boxRef = useRef<HTMLLabelElement>(null);
 
