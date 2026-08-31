@@ -70,13 +70,16 @@ interface AdminStoreAddInputProps {
     korLabel?: string;
     engAutoText?: string;
     korAutoText?: string;
+    korValue: string;
+    engValue: string;
+    onChangeKor: (value: string) => void;
+    onChangeEng: (value: string) => void;
 }
 
 export function AdminStoreAddInput({ engTitle, korTitle, engPlaceholder = '', korPlaceholder = '',
-    engLabel, korLabel, engAutoText = '', korAutoText = '' }: AdminStoreAddInputProps) { 
+    engLabel, korLabel, engAutoText = '', korAutoText = '',
+    korValue, engValue, onChangeKor, onChangeEng }: AdminStoreAddInputProps) { 
     const { language } = useLanguage();
-    const [korValue, setKorValue] = useState('');
-    const [engValue, setEngValue] = useState('');
     const [isChecked, setIsChecked] = useState(false);
 
     const examplePrefix = language === 'eng' ? 'Ex)' : '예)';
@@ -86,12 +89,12 @@ export function AdminStoreAddInput({ engTitle, korTitle, engPlaceholder = '', ko
         const nextChecked = e.target.checked;
         setIsChecked(nextChecked);
         if (nextChecked) {
-            setKorValue(korAutoText);
-            setEngValue(engAutoText);
+            onChangeKor(korAutoText);
+            onChangeEng(engAutoText);
             return;
         }
-        setKorValue('');
-        setEngValue('');
+        onChangeKor('');
+        onChangeEng('');
     }
 
     return(
@@ -108,14 +111,12 @@ export function AdminStoreAddInput({ engTitle, korTitle, engPlaceholder = '', ko
             <InputField>
                 <LanguageInputField>
                     <LanguageText> {language === 'eng' ? 'Korean' : '한국어'} </LanguageText>
-                    <InputForm type = 'text' value = { korValue }
-                        onChange = {(e) => setKorValue(e.target.value)}
+                    <InputForm type = 'text' value = { korValue } onChange = {(e) => onChangeKor(e.target.value)}
                         placeholder = { `${examplePrefix} ${korPlaceholder}` } />
                 </LanguageInputField>
                 <LanguageInputField>
                     <LanguageText> {language === 'eng' ? 'English' : '영어'} </LanguageText>
-                    <InputForm type = 'text' value = { engValue }
-                        onChange = {(e) => setEngValue(e.target.value)}
+                    <InputForm type = 'text' value = { engValue } onChange = {(e) => onChangeEng(e.target.value)}
                         placeholder = { `${examplePrefix} ${engPlaceholder}` } />
                 </LanguageInputField>
             </InputField>

@@ -9,6 +9,7 @@ export const SUCCESS_MESSAGE = '즐거운 이용 되세요!\nEnjoy the service!'
 interface StoresContextValue {
     stores: Store[];
     loadingState: string;
+    addStore: (store: Store) => void;
 }
 
 const StoresContext = createContext<StoresContextValue | null>(null);
@@ -34,8 +35,12 @@ export function StoresProvider({ children }: { children: ReactNode }) {
         return () => controller.abort();
     }, []);
 
+    const addStore = (store: Store) => {
+        setStores((prev) => [...prev, store]);
+    };
+
     return (
-        <StoresContext.Provider value = {{ stores, loadingState }}>
+        <StoresContext.Provider value = {{ stores, loadingState, addStore }}>
             {children}
         </StoresContext.Provider>
     );

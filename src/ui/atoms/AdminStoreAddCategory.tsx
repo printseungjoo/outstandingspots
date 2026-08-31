@@ -51,7 +51,7 @@ export function AdminStoreAddCategory({ selectedCategory, onChangeSelectedCatego
             <Text> {language === 'eng' ? 'Store category' : '카테고리'} </Text>
             <SearchDiv>
                 <Select value = { selectedCategory } onChange = {(e) => onChangeSelectedCategory(e.target.value)}>
-                    <option value = 'all'> {language === 'eng' ? 'All' : '전체'} </option>
+                    <option value = ''> {language === 'eng' ? 'Select category' : '카테고리 선택'} </option>
                     {categories.map((category) => (
                         <option key = { category._id } value = { category.name.kor }>
                             {language === 'eng' ? category.name.eng : category.name.kor}

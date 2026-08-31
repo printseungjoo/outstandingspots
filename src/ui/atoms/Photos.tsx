@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 
+import { resolvePhotoUrl } from '../../lib/storesApi';
+
 const Photo = styled.div`
     display: flex;
     flex: 0 0 auto;
@@ -31,7 +33,7 @@ interface PhotosProps {
 export function Photos({ photoSrc, storeAltName }: PhotosProps) {
     return(
         <Photo>
-            <ImgStyled src = { photoSrc } alt = { storeAltName }>
+            <ImgStyled src = { resolvePhotoUrl(photoSrc) } alt = { storeAltName }>
             </ImgStyled>
         </Photo>
     )

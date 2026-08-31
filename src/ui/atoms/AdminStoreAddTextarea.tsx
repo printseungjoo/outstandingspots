@@ -79,13 +79,16 @@ interface AdminStoreAddTextareaProps {
     korLabel?: string;
     engAutoText?: string;
     korAutoText?: string;
+    korValue: string;
+    engValue: string;
+    onChangeKor: (value: string) => void;
+    onChangeEng: (value: string) => void;
 }
 
 export function AdminStoreAddTextarea({ engTitle, korTitle, engPlaceholder = '', korPlaceholder = '',
-    engLabel, korLabel, engAutoText = '', korAutoText = '' }: AdminStoreAddTextareaProps) { 
+    engLabel, korLabel, engAutoText = '', korAutoText = '',
+    korValue, engValue, onChangeKor, onChangeEng }: AdminStoreAddTextareaProps) { 
     const { language } = useLanguage();
-    const [korValue, setKorValue] = useState('');
-    const [engValue, setEngValue] = useState('');
     const [isChecked, setIsChecked] = useState(false);
 
     const examplePrefix = language === 'eng' ? 'Ex)' : '예)';
@@ -95,12 +98,12 @@ export function AdminStoreAddTextarea({ engTitle, korTitle, engPlaceholder = '',
         const nextChecked = e.target.checked;
         setIsChecked(nextChecked);
         if (nextChecked) {
-            setKorValue(korAutoText);
-            setEngValue(engAutoText);
+            onChangeKor(korAutoText);
+            onChangeEng(engAutoText);
             return;
         }
-        setKorValue('');
-        setEngValue('');
+        onChangeKor('');
+        onChangeEng('');
     }
 
     return(
@@ -117,14 +120,12 @@ export function AdminStoreAddTextarea({ engTitle, korTitle, engPlaceholder = '',
             <TextareaField>
                 <LanguageTextareaField>
                     <LanguageText> {language === 'eng' ? 'Korean' : '한국어'} </LanguageText>
-                    <TextareaForm value = { korValue }
-                        onChange = {(e) => setKorValue(e.target.value)}
+                    <TextareaForm value = { korValue } onChange = {(e) => onChangeKor(e.target.value)}
                         placeholder = { `${examplePrefix} ${korPlaceholder}` } />
                 </LanguageTextareaField>
                 <LanguageTextareaField>
                     <LanguageText> {language === 'eng' ? 'English' : '영어'} </LanguageText>
-                    <TextareaForm value = { engValue }
-                        onChange = {(e) => setEngValue(e.target.value)}
+                    <TextareaForm value = { engValue } onChange = {(e) => onChangeEng(e.target.value)}
                         placeholder = { `${examplePrefix} ${engPlaceholder}` } />
                 </LanguageTextareaField>
             </TextareaField>

@@ -53,7 +53,11 @@ const PreviewImg = styled.img`
     object-fit: contain;
 `;
 
-export function UploadImage() {
+interface UploadImageProps {
+    onChangePhoto: (blob: Blob | null) => void;
+}
+
+export function UploadImage({ onChangePhoto }: UploadImageProps) {
     const { language } = useLanguage();
 
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -99,6 +103,7 @@ export function UploadImage() {
 
     async function handleChange(e: ChangeEvent<HTMLInputElement>) {
         const blob = await adjustImage(e.target.files?.[0]);
+        onChangePhoto(blob);
         if (!blob) return;
         const nextUrl = URL.createObjectURL(blob);
         setPreviewUrl((prev) => {

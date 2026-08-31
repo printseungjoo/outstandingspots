@@ -28,3 +28,4 @@ storybook-static
   
 .env
 .vercel
+server/uploads

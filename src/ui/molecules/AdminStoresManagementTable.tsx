@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 import { useLanguage } from '../../contexts/LanguageContext';
 import type Store from '../../types/Store';
+import { resolvePhotoUrl } from '../../lib/storesApi';
 import { ToBeContinuedAlert } from '../atoms/ToBeContinuedAlert';
 
 const TableWrap = styled.div`
@@ -93,7 +94,7 @@ export function AdminStoresManagementTable({ stores }: AdminStoresManagementTabl
                     {stores.map((store) => (
                         <tr key = { store._id }>
                             <Td>
-                                <StorePhoto src = { store.photo } alt = { language === 'eng' ? store.name.eng : store.name.kor } />
+                                <StorePhoto src = { resolvePhotoUrl(store.photo) } alt = { language === 'eng' ? store.name.eng : store.name.kor } />
                             </Td>
                             <Td> {language === 'eng' ? `${store.name.eng} ${store.branch.eng}` : `${store.name.kor} ${store.branch.kor}`} </Td>
                             <Td> {language === 'eng' ? store.theme?.eng : store.theme?.kor} </Td>

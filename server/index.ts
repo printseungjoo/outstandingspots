@@ -2,6 +2,9 @@ import express from 'express';
 import type { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import fs from 'fs';
+import path from 'path';
+import crypto from 'crypto';
 
 import { connectDB } from './config/ConnectDB';
 import categoryModel from './models/CategoryModels';
@@ -35,7 +38,73 @@ app.use(
 
 app.use(express.json());
 
+const photosDir = path.join(process.cwd(), 'uploads');
+fs.mkdirSync(photosDir, { recursive: true });
+app.use('/photos', express.static(photosDir, {
+    setHeaders(res) {
+        res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+    },
+}));
+
 connectDB();
+
+type LocalizedFields = { kor?: string; eng?: string; } | null;
+
+function toStoreResponse(store: {
+    _id?: unknown;
+    photo?: string | null;
+    category?: LocalizedFields;
+    name?: LocalizedFields;
+    branch?: LocalizedFields;
+    naverMap?: string | null;
+    lat?: number | null;
+    lon?: number | null;
+    discount?: LocalizedFields;
+    description?: LocalizedFields;
+    openTime?: string | null;
+    closeTime?: string | null;
+    theme?: LocalizedFields;
+    address?: LocalizedFields;
+}): StoreInterface {
+    return {
+        _id: String(store._id),
+        photo: store.photo ?? '',
+        category: {
+            kor: store.category?.kor ?? '',
+            eng: store.category?.eng ?? '',
+        },
+        name: {
+            kor: store.name?.kor ?? '',
+            eng: store.name?.eng ?? '',
+        },
+        branch: {
+            kor: store.branch?.kor ?? '',
+            eng: store.branch?.eng ?? '',
+        },
+        naverMap: store.naverMap ?? '',
+        lat: store.lat ?? 0,
+        lon: store.lon ?? 0,
+        discount: {
+            kor: store.discount?.kor ?? '',
+            eng: store.discount?.eng ?? '',
+        },
+        description: {
+            kor: store.description?.kor ?? '',
+            eng: store.description?.eng ?? '',
+        },
+        openTime: store.openTime ?? '',
+        closeTime: store.closeTime ?? '',
+        theme: {
+            kor: store.theme?.kor ?? '',
+            eng: store.theme?.eng ?? '',
+        },
+        address: {
+            kor: store.address?.kor ?? '',
+            eng: store.address?.eng ?? '',
+        },
+    };
+}
 
 let categoriesCache: CategoryInterface[] | null = null;
 let categoriesCacheTime = 0;
@@ -75,48 +144,44 @@ app.get("/stores", async (_req: Request, res: Response) => {
             return res.json(storesCache);
         }
         const stores = await storeModel.find({}, 'photo category name branch naverMap lat lon discount description openTime closeTime theme address').lean();
-        storesCache = stores.map((store) => ({
-            _id: String(store._id),
-            photo: store.photo,
-            category: {
-                kor: store.category?.kor ?? '',
-                eng: store.category?.eng ?? '',
-            },
-            name: {
-                kor: store.name?.kor ?? '',
-                eng: store.name?.eng ?? '',
-            },
-            branch: {
-                kor: store.branch?.kor ?? '',
-                eng: store.branch?.eng ?? '',
-            },
-            naverMap: store.naverMap,
-            lat: store.lat,
-            lon: store.lon,
-            discount: {
-                kor: store.discount?.kor ?? '',
-                eng: store.discount?.eng ?? '',
-            },
-            description: {
-                kor: store.description?.kor ?? '',
-                eng: store.description?.eng ?? '',
-            },
-            openTime: store.openTime ?? '',
-            closeTime: store.closeTime ?? '',
-            theme: {
-                kor: store.theme?.kor ?? '',
-                eng: store.theme?.eng ?? '',
-            },
-            address: {
-                kor: store.address?.kor ?? '',
-                eng: store.address?.eng ?? '',
-            }
-        }));
+        storesCache = stores.map((store) => toStoreResponse(store));
         storesCacheTime = now;
         res.json(storesCache);
     } catch (error) {
         console.error("stores를 가져오는 데에 오류가 발생했습니다:", error);
         res.status(500).json({ error: "stores fetch를 실패하였습니다." });
+    }
+});
+
+app.post('/photos', express.raw({
+    type: (req) => (req.headers['content-type'] ?? '').startsWith('image/'),
+    limit: '8mb',
+}), async (req: Request, res: Response) => {
+    try {
+        if (!Buffer.isBuffer(req.body) || req.body.length === 0) {
+            return res.status(400).json({ error: '이미지가 없습니다.' });
+        }
+        const mime = req.headers['content-type'] ?? 'image/png';
+        const ext = mime.includes('jpeg') || mime.includes('jpg') ? 'jpg'
+            : mime.includes('webp') ? 'webp' : 'png';
+        const filename = `${crypto.randomUUID()}.${ext}`;
+        await fs.promises.writeFile(path.join(photosDir, filename), req.body);
+        res.status(201).json({ photo: `/photos/${filename}` });
+    } catch (error) {
+        console.error('이미지 업로드에 오류가 발생했습니다:', error);
+        res.status(500).json({ error: '이미지 업로드에 실패하였습니다.' });
+    }
+});
+
+app.post('/stores', async (req: Request, res: Response) => {
+    try {
+        const created = await storeModel.create(req.body);
+        storesCache = null;
+        storesCacheTime = 0;
+        res.status(201).json(toStoreResponse(created.toObject()));
+    } catch (error) {
+        console.error('stores 생성에 오류가 발생했습니다:', error);
+        res.status(400).json({ error: 'stores 생성에 실패하였습니다.' });
     }
 });
 
