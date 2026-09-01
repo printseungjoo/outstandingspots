@@ -188,9 +188,30 @@ export function AdminStoreAddTab() {
     const { categories } = useCategories();
     const { addStore } = useStores();
     const photoBlobRef = useRef<Blob | null>(null);
+    const [hasPhoto, setHasPhoto] = useState(false);
     const [form, setForm] = useState<StoreAddForm>(initialForm);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isGeocoding, setIsGeocoding] = useState(false);
+
+    const lat = Number(form.lat);
+    const lon = Number(form.lon);
+    const canSave = Boolean(
+        hasPhoto &&
+        categories.find((item) => item.name.kor === form.categoryKor) &&
+        isLocalizedFilled(form.name) &&
+        isLocalizedFilled(form.branch) &&
+        isLocalizedFilled(form.theme) &&
+        isLocalizedFilled(form.discount) &&
+        isLocalizedFilled(form.description) &&
+        isFilled(form.naverMap) &&
+        isFilled(form.address) &&
+        isFilled(form.openTime) &&
+        isFilled(form.closeTime) &&
+        isFilled(form.lat) &&
+        isFilled(form.lon) &&
+        Number.isFinite(lat) &&
+        Number.isFinite(lon)
+    );
 
     function setField<K extends 'categoryKor' | 'naverMap' | 'address' | 'openTime' | 'closeTime' | 'lat' | 'lon'>(
         key: K,
@@ -213,7 +234,6 @@ export function AdminStoreAddTab() {
             return;
         }
         if (isGeocoding) return;
-
         setIsGeocoding(true);
         try {
             const { lat, lon } = await geocodeAddress(address);
@@ -231,32 +251,10 @@ export function AdminStoreAddTab() {
     }
 
     async function handleSave() {
-        if (isSubmitting) return;
-
+        if (isSubmitting || !canSave) return;
         const category = categories.find((item) => item.name.kor === form.categoryKor);
-        const lat = Number(form.lat);
-        const lon = Number(form.lon);
         const photoBlob = photoBlobRef.current;
-
-        if (
-            !photoBlob ||
-            !category ||
-            !isLocalizedFilled(form.name) ||
-            !isLocalizedFilled(form.branch) ||
-            !isLocalizedFilled(form.theme) ||
-            !isLocalizedFilled(form.discount) ||
-            !isLocalizedFilled(form.description) ||
-            !isFilled(form.naverMap) ||
-            !isFilled(form.address) ||
-            !isFilled(form.openTime) ||
-            !isFilled(form.closeTime) ||
-            !Number.isFinite(lat) ||
-            !Number.isFinite(lon)
-        ) {
-            alert(language === 'eng' ? 'Please fill in all fields.' : '모든 항목을 입력해 주세요.');
-            return;
-        }
-
+        if (!category || !photoBlob) return;
         setIsSubmitting(true);
         try {
             const photo = await uploadStorePhoto(photoBlob);
@@ -275,10 +273,11 @@ export function AdminStoreAddTab() {
                 },
                 openTime: form.openTime,
                 closeTime: form.closeTime,
-                lat,
-                lon,
+                lat: Number(form.lat),
+                lon: Number(form.lon)
             });
             addStore(created);
+            alert(language === 'eng' ? 'Successfully saved.' : '저장이 완료되었습니다.');
             navigate('/admin');
         } catch (error) {
             console.error(error);
@@ -293,7 +292,10 @@ export function AdminStoreAddTab() {
             <FormRow>
                 <AdminStoreAddLeftRight>
                     <AddFormColumn>
-                        <UploadImage onChangePhoto = {(blob) => { photoBlobRef.current = blob; }} />
+                        <UploadImage onChangePhoto = {(blob) => {
+                            photoBlobRef.current = blob;
+                            setHasPhoto(Boolean(blob));
+                        }} />
                         <AdminStoreAddCategory selectedCategory = { form.categoryKor }
                             onChangeSelectedCategory = {(value) => setField('categoryKor', value)} />
                         <AdminStoreAddInput engTitle = 'Store name' korTitle = '매장 이름'
@@ -369,7 +371,7 @@ export function AdminStoreAddTab() {
                                 onClick = {() => navigate('/admin')}>
                                 {language === 'eng' ? 'Cancel' : '취소'}
                             </CancelButton>
-                            <SubmitButton type = 'button' disabled = { isSubmitting } onClick = { handleSave }>
+                            <SubmitButton type = 'button' disabled = { isSubmitting || !canSave } onClick = { handleSave }>
                                 {language === 'eng' ? 'Save' : '저장'}
                             </SubmitButton>
                         </CancelSubmitButtons>

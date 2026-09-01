@@ -15,21 +15,24 @@ const StoreInformationStyled = styled.div`
     position: absolute;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
     text-align: left;
     overflow-y: auto;
     pointer-events: auto;
+    box-sizing: border-box;
+    padding: 0 5%;
 
     @media (max-width: 767px) {
         width: 92%;
         height: 96%;
         left: 0;
         transform: none;
+        padding: 0 5%;
     }
 `;
 
 const StoreInfoDiv = styled.div`
-    width: 90%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 0.15rem;

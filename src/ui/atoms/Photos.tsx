@@ -7,14 +7,15 @@ const Photo = styled.div`
     flex: 0 0 auto;
     justify-content: center;
     align-items: center;
-    width: 90%;
-    height: 20vh;
-    border: 1px solid black;
+    width: 100%;
+    height: auto;
+    aspect-ratio: calc((25vw * 0.92 * 0.90) / 20vh);
     margin-top: 1.5rem;
     overflow: hidden;
+    box-sizing: border-box;
 
     @media (max-width: 767px) {
-        height: 16vh;
+        aspect-ratio: calc((100vw * 0.92 * 0.90) / 16vh);
         margin-top: 0.8rem;
     }
 `;
