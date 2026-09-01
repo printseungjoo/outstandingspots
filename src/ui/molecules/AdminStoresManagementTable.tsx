@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../contexts/LanguageContext';
 import type Store from '../../types/Store';
 import { resolvePhotoUrl } from '../../lib/storesApi';
-import { ToBeContinuedAlert } from '../atoms/ToBeContinuedAlert';
+import { useStores } from '../../contexts/StoresContext';
 
 const TableWrap = styled.div`
     width: 100%;
@@ -79,6 +79,17 @@ interface AdminStoresManagementTableProps {
 export function AdminStoresManagementTable({ stores }: AdminStoresManagementTableProps) {
     const { language } = useLanguage();
     const navigate = useNavigate();
+    const { deleteStore } = useStores();
+
+    async function handleDelete(store: Store) {
+        try {
+            await deleteStore(store);
+            alert(language === 'eng' ? 'Successfully deleted.' : '매장이 삭제되었습니다.');
+        } catch (error) {
+            console.error(error);
+            alert(language === 'eng' ? 'Failed to delete the store.' : '매장 삭제에 실패했습니다.');
+        }
+    }
 
     return(
         <TableWrap>
@@ -105,7 +116,7 @@ export function AdminStoresManagementTable({ stores }: AdminStoresManagementTabl
                                 <ActionButton type = "button" onClick = {() => navigate(`/admin/store/edit/${store._id}`)}>
                                     {language === 'eng' ? 'Edit' : '수정'}
                                 </ActionButton>
-                                <ActionButton type = "button" onClick = { ToBeContinuedAlert }>
+                                <ActionButton type = "button" onClick = {() => { void handleDelete(store); }}>
                                     {language === 'eng' ? 'Delete' : '삭제'}
                                 </ActionButton>
                             </Td>

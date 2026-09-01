@@ -214,6 +214,21 @@ app.patch('/stores/:id', async (req: Request, res: Response) => {
     }
 });
 
+app.delete('/stores/:id', async (req: Request, res: Response) => {
+    try {
+        const deleted = await storeModel.findByIdAndDelete(req.params.id).lean();
+        if (!deleted) {
+            return res.status(404).json({ error: 'stores를 찾을 수 없습니다.' });
+        }
+        storesCache = null;
+        storesCacheTime = 0;
+        res.json({ _id: String(deleted._id) });
+    } catch (error) {
+        console.error('stores 삭제에 오류가 발생했습니다:', error);
+        res.status(400).json({ error: 'stores 삭제에 실패하였습니다.' });
+    }
+});
+
 app.listen(PORT, () => {
     console.log('Server가 실행 중입니다.');
 });

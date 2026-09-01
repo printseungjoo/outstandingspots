@@ -41,3 +41,9 @@ export async function patchStore(storeId: string, store: Partial<Omit<Store, '_i
         body: JSON.stringify(store),
     });
 }
+
+export async function deleteStore(storeId: string) {
+    return fetchJson<void>(`${baseUrl}/stores/${storeId}`, {
+        method: 'DELETE',
+    });
+}
