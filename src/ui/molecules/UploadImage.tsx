@@ -55,17 +55,22 @@ const PreviewImg = styled.img`
 
 interface UploadImageProps {
     onChangePhoto: (blob: Blob | null) => void;
+    initialPreviewUrl?: string;
 }
 
-export function UploadImage({ onChangePhoto }: UploadImageProps) {
+export function UploadImage({ onChangePhoto, initialPreviewUrl }: UploadImageProps) {
     const { language } = useLanguage();
 
-    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(initialPreviewUrl ?? null);
     const boxRef = useRef<HTMLLabelElement>(null);
 
     useEffect(() => {
+        setPreviewUrl(initialPreviewUrl ?? null);
+    }, [initialPreviewUrl]);
+
+    useEffect(() => {
         return () => {
-            if (previewUrl) {
+            if (previewUrl?.startsWith('blob:')) {
                 URL.revokeObjectURL(previewUrl);
             }
         };
@@ -107,7 +112,7 @@ export function UploadImage({ onChangePhoto }: UploadImageProps) {
         if (!blob) return;
         const nextUrl = URL.createObjectURL(blob);
         setPreviewUrl((prev) => {
-            if (prev) {
+            if (prev?.startsWith('blob:')) {
                 URL.revokeObjectURL(prev);
             }
             return nextUrl;

@@ -185,6 +185,35 @@ app.post('/stores', async (req: Request, res: Response) => {
     }
 });
 
+app.patch('/stores/:id', async (req: Request, res: Response) => {
+    try {
+        const allowed = [
+            'photo', 'category', 'name', 'branch', 'naverMap', 'lat', 'lon',
+            'discount', 'description', 'openTime', 'closeTime', 'theme', 'address'
+        ] as const;
+        const $set: Record<string, unknown> = {};
+        for (const key of allowed) {
+            if (req.body?.[key] !== undefined) {
+                $set[key] = req.body[key];
+            }
+        }
+        const updated = await storeModel.findByIdAndUpdate(
+            req.params.id,
+            { $set },
+            { new: true, runValidators: true },
+        ).lean();
+        if (!updated) {
+            return res.status(404).json({ error: 'stores를 찾을 수 없습니다.' });
+        }
+        storesCache = null;
+        storesCacheTime = 0;
+        res.json(toStoreResponse(updated));
+    } catch (error) {
+        console.error('stores 수정에 오류가 발생했습니다:', error);
+        res.status(400).json({ error: 'stores 수정에 실패하였습니다.' });
+    }
+});
+
 app.listen(PORT, () => {
     console.log('Server가 실행 중입니다.');
 });

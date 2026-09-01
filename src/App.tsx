@@ -54,6 +54,7 @@ function App() {
                     }>
                       <Route index element = {<AdminStoreManagementTab />} />
                       <Route path = "store/add" element = {<AdminStoreAddTab />} />
+                      <Route path = "store/edit/:storeId" element = {<AdminStoreAddTab />} />
                       <Route path = "owners" element = { null } />
                       <Route path = "changes" element = { null } />
                     </Route>

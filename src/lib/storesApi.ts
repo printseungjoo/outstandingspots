@@ -31,3 +31,13 @@ export async function createStore(store: Omit<Store, '_id'>) {
         body: JSON.stringify(store),
     });
 }
+
+export async function patchStore(storeId: string, store: Partial<Omit<Store, '_id'>>) {
+    return fetchJson<Store>(`${baseUrl}/stores/${storeId}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(store),
+    });
+}

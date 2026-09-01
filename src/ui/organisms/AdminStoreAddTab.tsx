@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { UploadImage } from '../molecules/UploadImage';
 import { AdminStoreAddInput } from '../atoms/AdminStoreAddInput';
@@ -10,9 +10,10 @@ import { AdminStoreAddCategory } from '../atoms/AdminStoreAddCategory';
 import { AdminStoreAddLatLon } from '../atoms/AdminStoreAddLatLon';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useCategories } from '../../contexts/CategoryContext';
-import { useStores } from '../../contexts/StoresContext';
-import { createStore, uploadStorePhoto } from '../../lib/storesApi';
+import { SUCCESS_MESSAGE, useStores } from '../../contexts/StoresContext';
+import { createStore, patchStore, resolvePhotoUrl, uploadStorePhoto } from '../../lib/storesApi';
 import { geocodeAddress } from '../../lib/geocodeAddress';
+import type Store from '../../types/Store';
 
 const AdminStoreAddTabStyled = styled.div`
     width: 100%;
@@ -182,16 +183,98 @@ function isLocalizedFilled(value: Localized) {
     return isFilled(value.kor) && isFilled(value.eng);
 }
 
+function isLocalizedEqual(left: Localized, right: Localized) {
+    return left.kor === right.kor && left.eng === right.eng;
+}
+
+function storeToForm(store: Store): StoreAddForm {
+    return {
+        categoryKor: store.category.kor,
+        name: { kor: store.name.kor, eng: store.name.eng },
+        branch: { kor: store.branch.kor, eng: store.branch.eng },
+        theme: { kor: store.theme?.kor ?? '', eng: store.theme?.eng ?? '' },
+        discount: { kor: store.discount.kor, eng: store.discount.eng },
+        description: { kor: store.description.kor, eng: store.description.eng },
+        naverMap: store.naverMap,
+        address: store.address?.kor || store.address?.eng || '',
+        openTime: store.openTime,
+        closeTime: store.closeTime,
+        lat: String(store.lat),
+        lon: String(store.lon),
+    };
+}
+
+function buildStorePatch(original: Store, form: StoreAddForm, category: Store['category'], photo?: string) {
+    const patch: Partial<Omit<Store, '_id'>> = {};
+    if (photo !== undefined) {
+        patch.photo = photo;
+    }
+    if (!isLocalizedEqual(category, original.category)) {
+        patch.category = category;
+    }
+    if (!isLocalizedEqual(form.name, original.name)) {
+        patch.name = form.name;
+    }
+    if (!isLocalizedEqual(form.branch, original.branch)) {
+        patch.branch = form.branch;
+    }
+    if (!isLocalizedEqual(form.theme, { kor: original.theme?.kor ?? '', eng: original.theme?.eng ?? '' })) {
+        patch.theme = form.theme;
+    }
+    if (!isLocalizedEqual(form.discount, original.discount)) {
+        patch.discount = form.discount;
+    }
+    if (!isLocalizedEqual(form.description, original.description)) {
+        patch.description = form.description;
+    }
+    if (form.naverMap.trim() !== (original.naverMap ?? '')) {
+        patch.naverMap = form.naverMap.trim();
+    }
+    const nextAddress = form.address.trim();
+    const originalAddressDisplay = original.address?.kor || original.address?.eng || '';
+    if (nextAddress !== originalAddressDisplay) {
+        patch.address = { kor: nextAddress, eng: nextAddress };
+    }
+    if (form.openTime !== original.openTime) {
+        patch.openTime = form.openTime;
+    }
+    if (form.closeTime !== original.closeTime) {
+        patch.closeTime = form.closeTime;
+    }
+    if (form.lat.trim() !== String(original.lat)) {
+        patch.lat = Number(form.lat);
+    }
+    if (form.lon.trim() !== String(original.lon)) {
+        patch.lon = Number(form.lon);
+    }
+    return patch;
+}
+
 export function AdminStoreAddTab() {
     const navigate = useNavigate();
+    const { storeId } = useParams();
     const { language } = useLanguage();
     const { categories } = useCategories();
-    const { addStore } = useStores();
+    const { stores, loadingState, addStore, updateStore } = useStores();
+    const editingStore = stores.find((store) => store._id === storeId);
+    const isEdit = Boolean(storeId);
     const photoBlobRef = useRef<Blob | null>(null);
     const [hasPhoto, setHasPhoto] = useState(false);
     const [form, setForm] = useState<StoreAddForm>(initialForm);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isGeocoding, setIsGeocoding] = useState(false);
+
+    useEffect(() => {
+        if (!storeId) return;
+        if (loadingState !== SUCCESS_MESSAGE) return;
+        if (!editingStore) {
+            navigate('/admin');
+            return;
+        }
+        setForm(storeToForm(editingStore));
+        setHasPhoto(Boolean(editingStore.photo));
+        photoBlobRef.current = null;
+    }, [storeId, editingStore, loadingState, navigate]);
 
     const lat = Number(form.lat);
     const lon = Number(form.lon);
@@ -253,10 +336,30 @@ export function AdminStoreAddTab() {
     async function handleSave() {
         if (isSubmitting || !canSave) return;
         const category = categories.find((item) => item.name.kor === form.categoryKor);
-        const photoBlob = photoBlobRef.current;
-        if (!category || !photoBlob) return;
+        if (!category) return;
+        if (isEdit) {
+            if (!editingStore || !storeId) return;
+        } else if (!photoBlobRef.current) {
+            return;
+        }
         setIsSubmitting(true);
         try {
+            if (isEdit && editingStore && storeId) {
+                let photo: string | undefined;
+                if (photoBlobRef.current) {
+                    photo = await uploadStorePhoto(photoBlobRef.current);
+                }
+                const patch = buildStorePatch(editingStore, form, category.name, photo);
+                if (Object.keys(patch).length > 0) {
+                    const updated = await patchStore(storeId, patch);
+                    updateStore(updated);
+                }
+                alert(language === 'eng' ? 'Successfully edited.' : '수정이 성공되었습니다.');
+                navigate('/admin');
+                return;
+            }
+            const photoBlob = photoBlobRef.current;
+            if (!photoBlob) return;
             const photo = await uploadStorePhoto(photoBlob);
             const created = await createStore({
                 photo,
@@ -292,10 +395,12 @@ export function AdminStoreAddTab() {
             <FormRow>
                 <AdminStoreAddLeftRight>
                     <AddFormColumn>
-                        <UploadImage onChangePhoto = {(blob) => {
-                            photoBlobRef.current = blob;
-                            setHasPhoto(Boolean(blob));
-                        }} />
+                        <UploadImage
+                            initialPreviewUrl = { isEdit && editingStore?.photo ? resolvePhotoUrl(editingStore.photo) : undefined }
+                            onChangePhoto = {(blob) => {
+                                photoBlobRef.current = blob;
+                                setHasPhoto(Boolean(blob) || Boolean(isEdit && editingStore?.photo));
+                            }} />
                         <AdminStoreAddCategory selectedCategory = { form.categoryKor }
                             onChangeSelectedCategory = {(value) => setField('categoryKor', value)} />
                         <AdminStoreAddInput engTitle = 'Store name' korTitle = '매장 이름'

@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 import { useLanguage } from '../../contexts/LanguageContext';
 import type Store from '../../types/Store';
@@ -77,6 +78,7 @@ interface AdminStoresManagementTableProps {
 
 export function AdminStoresManagementTable({ stores }: AdminStoresManagementTableProps) {
     const { language } = useLanguage();
+    const navigate = useNavigate();
 
     return(
         <TableWrap>
@@ -100,7 +102,7 @@ export function AdminStoresManagementTable({ stores }: AdminStoresManagementTabl
                             <Td> {language === 'eng' ? store.theme?.eng : store.theme?.kor} </Td>
                             <Td> {language === 'eng' ? store.discount.eng : store.discount.kor} </Td>
                             <Td>
-                                <ActionButton type = "button" onClick = { ToBeContinuedAlert }>
+                                <ActionButton type = "button" onClick = {() => navigate(`/admin/store/edit/${store._id}`)}>
                                     {language === 'eng' ? 'Edit' : '수정'}
                                 </ActionButton>
                                 <ActionButton type = "button" onClick = { ToBeContinuedAlert }>

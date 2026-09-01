@@ -10,6 +10,7 @@ interface StoresContextValue {
     stores: Store[];
     loadingState: string;
     addStore: (store: Store) => void;
+    updateStore: (store: Store) => void;
 }
 
 const StoresContext = createContext<StoresContextValue | null>(null);
@@ -39,8 +40,12 @@ export function StoresProvider({ children }: { children: ReactNode }) {
         setStores((prev) => [...prev, store]);
     };
 
+    const updateStore = (store: Store) => {
+        setStores((prev) => prev.map((item) => (item._id === store._id ? store : item)));
+    };
+
     return (
-        <StoresContext.Provider value = {{ stores, loadingState, addStore }}>
+        <StoresContext.Provider value = {{ stores, loadingState, addStore, updateStore }}>
             {children}
         </StoresContext.Provider>
     );
