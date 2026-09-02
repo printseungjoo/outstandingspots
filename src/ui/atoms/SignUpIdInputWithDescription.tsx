@@ -51,16 +51,19 @@ interface SignUpIdInputWithDescriptionProps {
     korPlaceholder: string;
     engDescription?: string;
     korDescription?: string;
+    value?: string;
+    onChange?: (value: string) => void;
 }
 
-export function SignUpIdInputWithDescription({ engTitle, korTitle, engPlaceholder, korPlaceholder, engDescription, korDescription }: SignUpIdInputWithDescriptionProps) {
+export function SignUpIdInputWithDescription({ engTitle, korTitle, engPlaceholder, korPlaceholder, engDescription, korDescription, value, onChange }: SignUpIdInputWithDescriptionProps) {
     const { language } = useLanguage();
 
     return(
         <SignUpIdInputWithDescriptionStyled>
             <Title> { language === 'eng' ? engTitle : korTitle } </Title>
             <InputField>
-                <Input type = "text" placeholder = { language === 'eng' ? engPlaceholder : korPlaceholder } />
+                <Input type = "text" value = { value } placeholder = { language === 'eng' ? engPlaceholder : korPlaceholder }
+                    onChange = {(e) => onChange?.(e.target.value)} />
                 <Description> { language === 'eng' ? engDescription : korDescription } </Description>
             </InputField>
         </SignUpIdInputWithDescriptionStyled>

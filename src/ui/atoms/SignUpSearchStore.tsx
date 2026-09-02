@@ -21,6 +21,7 @@ const Title = styled.p`
     margin: 0;
     flex-shrink: 0;
     text-align: left;
+    margin-bottom: 1rem;
 `;
 
 const InputFieldDiv = styled.div`
@@ -102,7 +103,16 @@ const SearchBarPlus = styled(SearchBar)`
     }
 `;
 
-export function SignUpSearchStore() {
+const Description = styled.p`
+    font-size: 0.75rem;
+    color: gray;
+    margin: 0;
+    flex-shrink: 0;
+    text-align: left;
+    margin-left: 0.2rem;
+`;
+
+export function SignUpSearchStore({ onSelectStore }: { onSelectStore?: (storeId: string) => void }) {
     const { language } = useLanguage();
     const { stores } = useStores();
 
@@ -111,8 +121,11 @@ export function SignUpSearchStore() {
             <Title> { language === 'eng' ? 'Store' : '가게 선택' } </Title>
             <InputFieldDiv>
                 <InputField>
-                    <SearchBarPlus language = { language } stores = { stores } engPlaceholder = 'Search your store.' korPlaceholder = '가게 이름을 검색해주세요.'/> 
+                    <SearchBarPlus language = { language } stores = { stores }
+                        onSelectStore = {(store) => onSelectStore?.(store._id)}
+                        engPlaceholder = 'Search your store.' korPlaceholder = '가게 이름을 검색해주세요.'/> 
                 </InputField>
+                <Description>{'\u00A0'}</Description>
             </InputFieldDiv>
         </SignUpSearchStoreStyled>
     )

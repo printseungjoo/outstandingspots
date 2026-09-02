@@ -1,11 +1,14 @@
 import styled from 'styled-components';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { useLanguage } from '../../contexts/LanguageContext';
 import { SignUpInput } from '../atoms/SignUpInput';
-import { SignUpInputWithButton } from '../atoms/SignUpInputWithButton';
 import { SignUpSearchStore } from '../atoms/SignUpSearchStore';
 import { SignUpIdInputWithDescription } from '../atoms/SignUpIdInputWithDescription';
 import { SignUpPasswordInputWithDescription } from '../atoms/SignUpPasswordInputWithDescription';
+import { PhoneVerification, convertPhoneToE164 } from '../organisms/PhoneVerification';
+import { signupOwner } from '../../lib/ownersApi';
 
 const StoreSignUpPageStyled = styled.div`
     width: 100%;
@@ -75,7 +78,7 @@ const RightDiv = styled.div`
     justify-content: center;
     align-items: center;
     background-color: #DBD8F7;
-    gap: 1rem;
+    gap: 0.3rem;
 `;
 
 const SignUpIdPasswordDiv = styled.div`
@@ -98,15 +101,53 @@ const SignUpButton = styled.button`
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-top: 0.5rem;
 
-    &:active, &:focus, &:focus-visible {
-        outline: none;
-        box-shadow: none;
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
     }
 `;
 
 export function StoreSignUpPage() {
     const { language } = useLanguage();
+    const navigate = useNavigate();
+    const [name, setName] = useState('');
+    const [phone, setPhone] = useState('');
+    const [phoneToken, setPhoneToken] = useState('');
+    const [storeId, setStoreId] = useState('');
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [passwordCheck, setPasswordCheck] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    async function handleSubmit() {
+        if (isSubmitting) return;
+        if (!name.trim() || !phone.trim() || !username.trim() || !password || !storeId) {
+            alert(language === 'eng' ? 'Please fill in all fields.' : '모든 항목을 입력해 주세요.');
+            return;
+        }
+        if (!phoneToken) {
+            alert(language === 'eng' ? 'Please verify your phone number.' : '전화번호 인증을 완료해 주세요.');
+            return;
+        }
+        if (password !== passwordCheck) {
+            alert(language === 'eng' ? 'Passwords do not match.' : '비밀번호가 일치하지 않습니다.');
+            return;
+        }
+        setIsSubmitting(true);
+        try {
+            await signupOwner({ name: name.trim(), phone: convertPhoneToE164(phone),
+                username: username.trim(), password, storeId }, phoneToken);
+            alert(language === 'eng' ? 'Sign up completed.' : '회원가입이 완료되었습니다.');
+            navigate('/login');
+        } catch (error) {
+            console.error(error);
+            alert(language === 'eng' ? 'Failed to sign up.' : '회원가입에 실패했습니다.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    }
 
     return(
         <StoreSignUpPageStyled>
@@ -120,16 +161,21 @@ export function StoreSignUpPage() {
                     <Description> { language === 'eng' ? 'pre-contracted store can sign up.' : '회원가입 가능합니다.' } </Description>
                 </LeftDiv>
                 <RightDiv>
-                    <SignUpInput engTitle = 'Name' korTitle = '성함' engPlaceholder = 'Enter your full name.' korPlaceholder = '사장님 실명을 입력해주세요.' />
-                    <SignUpInputWithButton engTitle = 'Phone' korTitle = '전화번호' engPlaceholder = 'Enter only numbers.' korPlaceholder = '- 없이 숫자만 입력해주세요.' engButtonText = 'Verify' korButtonText = '인증하기' />
-                    <SignUpInputWithButton engTitle = 'Code' korTitle = '인증번호' engPlaceholder = 'Enter verification code.' korPlaceholder = '문자로 받은 인증번호를 입력해주세요.' engButtonText = 'Submit' korButtonText = '제출하기' />
-                    <SignUpSearchStore />
+                    <SignUpInput engTitle = 'Name' korTitle = '성함' engPlaceholder = 'Enter your full name.' korPlaceholder = '사장님 실명을 입력해주세요.'
+                        value = { name } onChange = { setName } />
+                    <PhoneVerification phone = { phone } onPhoneChange = {(value) => { setPhone(value); setPhoneToken(''); }} onVerified = { setPhoneToken } />
+                    <SignUpSearchStore onSelectStore = { setStoreId } />
                     <SignUpIdPasswordDiv>
-                        <SignUpIdInputWithDescription engTitle = 'ID' korTitle = '아이디' engPlaceholder = 'Enter your id.' korPlaceholder = '아이디를 입력해주세요.' engDescription = '4-20 characters including number, lowercase eng letter' korDescription = '영문 소문자, 숫자 포함 4-20자' />
-                        <SignUpPasswordInputWithDescription engTitle = 'Password' korTitle = '비밀번호' engPlaceholder = 'Enter your password.' korPlaceholder = '비밀번호를 입력해주세요.' engDescription = '8-20 characters including number, eng letter' korDescription = '영문자, 숫자 포함 8-20자' />
-                        <SignUpPasswordInputWithDescription engTitle = 'Check' korTitle = '비밀번호 확인' engPlaceholder = 'Enter your password again.' korPlaceholder = '비밀번호를 다시 입력해주세요.' engDescription = 'The passwords you entered do not match.' korDescription = '입력한 비밀번호가 일치하지 않습니다.' />
+                        <SignUpIdInputWithDescription engTitle = 'ID' korTitle = '아이디' engPlaceholder = 'Enter your id.' korPlaceholder = '아이디를 입력해주세요.' engDescription = '4-20 characters including number, lowercase eng letter' korDescription = '영문 소문자, 숫자 포함 4-20자'
+                            value = { username } onChange = { setUsername } />
+                        <SignUpPasswordInputWithDescription engTitle = 'Password' korTitle = '비밀번호' engPlaceholder = 'Enter your password.' korPlaceholder = '비밀번호를 입력해주세요.' engDescription = '8-20 characters including number, eng letter' korDescription = '영문자, 숫자 포함 8-20자'
+                            value = { password } onChange = { setPassword } />
+                        <SignUpPasswordInputWithDescription engTitle = 'Check' korTitle = '비밀번호 확인' engPlaceholder = 'Enter your password again.' korPlaceholder = '비밀번호를 다시 입력해주세요.' engDescription = 'The passwords you entered do not match.' korDescription = '입력한 비밀번호가 일치하지 않습니다.'
+                            value = { passwordCheck } onChange = { setPasswordCheck } />
                     </SignUpIdPasswordDiv>
-                    <SignUpButton> { language === 'eng' ? 'Submit' : '제출' } </SignUpButton>
+                    <SignUpButton type = "button" disabled = { isSubmitting } onClick = {() => { void handleSubmit(); }}>
+                        { language === 'eng' ? 'Submit' : '제출' }
+                    </SignUpButton>
                 </RightDiv>
             </StoreSignUpField>
         </StoreSignUpPageStyled>

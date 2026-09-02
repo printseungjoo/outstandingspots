@@ -81,9 +81,11 @@ interface SignUpPasswordInputWithDescriptionProps {
     korPlaceholder: string;
     engDescription?: string;
     korDescription?: string;
+    value?: string;
+    onChange?: (value: string) => void;
 }
 
-export function SignUpPasswordInputWithDescription({ engTitle, korTitle, engPlaceholder, korPlaceholder, engDescription, korDescription }: SignUpPasswordInputWithDescriptionProps) {
+export function SignUpPasswordInputWithDescription({ engTitle, korTitle, engPlaceholder, korPlaceholder, engDescription, korDescription, value, onChange }: SignUpPasswordInputWithDescriptionProps) {
     const { language } = useLanguage();
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
@@ -92,7 +94,9 @@ export function SignUpPasswordInputWithDescription({ engTitle, korTitle, engPlac
             <Title> { language === 'eng' ? engTitle : korTitle } </Title>
             <InputField>
                 <SignUpPasswordStyled>
-                    <Input type = { showPassword ? 'text' : 'password' } placeholder = {language === 'eng' ? engPlaceholder : korPlaceholder} />
+                    <Input type = { showPassword ? 'text' : 'password' } value = { value }
+                        placeholder = {language === 'eng' ? engPlaceholder : korPlaceholder}
+                        onChange = {(e) => onChange?.(e.target.value)} />
                     <ToggleIcon icon = {byPrefixAndName.far['eye']} onClick = {() => setShowPassword((visible) => !visible)} />
                 </SignUpPasswordStyled>
                 <Description> { language === 'eng' ? engDescription : korDescription } </Description>

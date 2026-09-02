@@ -19,6 +19,7 @@ const Title = styled.p`
     margin: 0;
     flex-shrink: 0;
     text-align: left;
+    margin-bottom: 1rem;
 `;
 
 const InputField = styled.div`
@@ -34,21 +35,34 @@ const Input = styled.input`
     padding: 0.5rem;
 `;
 
+const Description = styled.p`
+    font-size: 0.75rem;
+    color: gray;
+    margin: 0;
+    flex-shrink: 0;
+    text-align: left;
+    margin-left: 0.2rem;
+`;
+
 interface SignUpInputProps {
     engTitle: string;
     korTitle: string;
     engPlaceholder: string;
     korPlaceholder: string;
+    value?: string;
+    onChange?: (value: string) => void;
 }
 
-export function SignUpInput({ engTitle, korTitle, engPlaceholder, korPlaceholder }: SignUpInputProps) {
+export function SignUpInput({ engTitle, korTitle, engPlaceholder, korPlaceholder, value, onChange }: SignUpInputProps) {
     const { language } = useLanguage();
 
     return(
         <SignUpInputStyled>
             <Title> { language === 'eng' ? engTitle : korTitle } </Title>
             <InputField>
-                <Input type = "text" placeholder = { language === 'eng' ? engPlaceholder : korPlaceholder } />
+                <Input type = "text" value = { value } placeholder = { language === 'eng' ? engPlaceholder : korPlaceholder }
+                    onChange = {(e) => onChange?.(e.target.value)} />
+                <Description>{'\u00A0'}</Description>
             </InputField>
         </SignUpInputStyled>
     )
