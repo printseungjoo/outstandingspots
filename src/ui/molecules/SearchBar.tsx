@@ -62,9 +62,12 @@ interface SearchBarProps {
     language: Language;
     stores: Store[];
     onSelectStore?: (store: Store) => void;
+    engPlaceholder: string;
+    korPlaceholder: string;
+    className?: string;
 }
 
-export function SearchBar({ language, stores, onSelectStore }: SearchBarProps) {
+export function SearchBar({ language, stores, onSelectStore, engPlaceholder, korPlaceholder, className }: SearchBarProps) {
     const [matchDataList, setMatchDataList] = useState<Store[]>([]);
     const [nowIndex, setNowIndex] = useState(0);
     const [inputValue, setInputValue] = useState('');
@@ -146,11 +149,11 @@ export function SearchBar({ language, stores, onSelectStore }: SearchBarProps) {
     }
 
     return(
-        <SearchDiv>
+        <SearchDiv className = { className }>
             <SearchBarDiv>
                 <SearchIcon> 🔍 </SearchIcon>
                 <SearchInput type = "text" id = "searchBar" ref = { inputRef } value = { inputValue }
-                    placeholder = {language === 'kor' ? '매장 이름 혹은 테마로 검색해보세요' : 'Search by store name or theme'}
+                    placeholder = { language === 'eng' ? engPlaceholder : korPlaceholder }
                     onChange = { handleChange } onCompositionEnd = { handleCompositionEnd } onKeyUp = { handleKeyUp }
                 />
             </SearchBarDiv>

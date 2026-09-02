@@ -81,7 +81,7 @@ export function LoginForm({ who,onlyForWho, loginRole }: LoginFormProps) {
                 <LoginIdPassword loginRole = { loginRole } onAdminCheckChange = { setIsAdmin }/>
                 <LoginButton onClick = { handleLogin } />
                 <BlackThinLine />
-                <SignUpButton />
+                <SignUpButton onClick = {() => navigate(loginRole === 'student' ? '/signup/student' : '/signup/store')} />
             </LoginDiv>
             <OnlyText> { onlyForWho } </OnlyText>
         </LoginFormStyled>

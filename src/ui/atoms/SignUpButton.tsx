@@ -15,11 +15,15 @@ const LoginButtonStyled = styled.button`
     justify-content: center;
 `;
 
-export function SignUpButton() {
+interface SignUpButtonProps {
+    onClick?: () => void;
+}
+
+export function SignUpButton({ onClick }: SignUpButtonProps) {
     const { language } = useLanguage();
 
     return(
-        <LoginButtonStyled>
+        <LoginButtonStyled type = "button" onClick = { onClick }>
             {language === 'eng' ? 'Sign Up' : '회원가입'}
         </LoginButtonStyled>
     )

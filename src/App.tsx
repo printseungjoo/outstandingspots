@@ -18,6 +18,7 @@ import { AdminPage } from './ui/templates/AdminPage';
 import { ProtectedAdminRoute } from './ui/atoms/ProtectedAdminRoute';
 import { AdminStoreManagementTab } from './ui/organisms/AdminStoreManagementTab';
 import { AdminStoreAddTab } from './ui/organisms/AdminStoreAddTab';
+import { StoreSignUpPage } from './ui/molecules/StoreSignUpPage';
 
 const AppLayout = styled.div`
   height: 100%;
@@ -47,6 +48,7 @@ function App() {
                   <Routes>
                     <Route path = "/" element = {<MapPage />} />
                     <Route path = "/login" element = {<LoginPage />} />
+                    <Route path = "/signup/store" element = {<StoreSignUpPage />} />
                     <Route path = "/admin" element = {
                       <ProtectedAdminRoute>
                         <AdminPage />

@@ -252,7 +252,7 @@ export function MainContent({ className, language, onChangeLanguage }: MainConte
             />
             <UpperContentDiv>
                 <OptionGroupsPlus onOpenWebsiteInfo = {() => setIsWebsiteInfoOpen(true)} onMyLocation = { handleMyLocation } />
-                <SearchBar language = { language } stores = { stores } onSelectStore = { handleSelectStore } />
+                <SearchBar language = { language } stores = { stores } onSelectStore = { handleSelectStore } engPlaceholder = 'Search by store name or theme.' korPlaceholder = '매장 이름 혹은 테마로 검색해보세요.'/>
                 <LanguageButtonsPlus language = { language } onChangeLanguage = { onChangeLanguage } />
             </UpperContentDiv>
             {isStoreListOpen && (<AllStoresTab onOpen = { handleSelectStore } onClose = {() => setIsStoreListOpen(false)} language = { language } stores = { stores } />)}
