@@ -119,6 +119,18 @@ function toOwnerStatus(status: string | null | undefined): OwnerStatus {
     return 'pending';
 }
 
+function joinStoreName(name?: string | null, branch?: string | null) {
+    const storeName = (name ?? '').trim();
+    const branchName = (branch ?? '').trim();
+    if (!branchName) {
+        return storeName;
+    }
+    if (storeName.endsWith(branchName)) {
+        return storeName;
+    }
+    return `${storeName} ${branchName}`.trim();
+}
+
 function toOwnerResponse(owner: {
     _id?: unknown;
     name?: string | null;
@@ -128,6 +140,7 @@ function toOwnerResponse(owner: {
     phoneVerified?: boolean | null;
     firebaseUid?: string | null;
     status?: string | null;
+    createdAt?: Date | string | null;
 }): OwnerInterface {
     return {
         _id: String(owner._id),
@@ -137,7 +150,37 @@ function toOwnerResponse(owner: {
         id: owner.id ?? '',
         phoneVerified: owner.phoneVerified ?? false,
         firebaseUid: owner.firebaseUid || undefined,
-        status: toOwnerStatus(owner.status)
+        status: toOwnerStatus(owner.status),
+        createdAt: owner.createdAt ? new Date(owner.createdAt).toISOString() : undefined,
+    };
+}
+
+type PopulatedStore = {
+    _id?: unknown;
+    name?: { kor?: string | null; eng?: string | null } | null;
+    branch?: { kor?: string | null; eng?: string | null } | null;
+};
+
+function toOwnerAdminResponse(owner: {
+    _id?: unknown;
+    name?: string | null;
+    phone?: string | null;
+    storeId?: unknown;
+    id?: string | null;
+    phoneVerified?: boolean | null;
+    firebaseUid?: string | null;
+    status?: string | null;
+    createdAt?: Date | string | null;
+}): OwnerInterface {
+    const store = owner.storeId && typeof owner.storeId === 'object' && 'name' in owner.storeId
+        ? owner.storeId as PopulatedStore : null;
+    const storeId = store?._id ?? owner.storeId;
+    return {
+        ...toOwnerResponse({ ...owner, storeId }),
+        storeName: {
+            kor: joinStoreName(store?.name?.kor, store?.branch?.kor),
+            eng: joinStoreName(store?.name?.eng, store?.branch?.eng)
+        }
     };
 }
 
@@ -293,6 +336,40 @@ app.delete('/stores/:id', async (req: Request, res: Response) => {
     } catch (error) {
         console.error('stores 삭제에 오류가 발생했습니다:', error);
         res.status(400).json({ error: 'stores 삭제에 실패하였습니다.' });
+    }
+});
+
+app.get('/owners', async (_req: Request, res: Response) => {
+    try {
+        const owners = await ownerModel.find({}, '-password')
+            .populate('storeId', 'name branch')
+            .sort({ createdAt: -1 })
+            .lean();
+        res.json(owners.map((owner) => toOwnerAdminResponse(owner)));
+    } catch (error) {
+        console.error('owners를 가져오는 데에 오류가 발생했습니다:', error);
+        res.status(500).json({ error: 'owners fetch를 실패하였습니다.' });
+    }
+});
+
+app.patch('/owners/:id', async (req: Request, res: Response) => {
+    try {
+        const status = typeof req.body?.status === 'string' ? req.body.status : '';
+        if (status !== 'pending' && status !== 'approved' && status !== 'rejected') {
+            return res.status(400).json({ error: 'status가 올바르지 않습니다.' });
+        }
+        const updated = await ownerModel.findByIdAndUpdate(
+            req.params.id,
+            { $set: { status } },
+            { new: true, runValidators: true },
+        ).select('-password').populate('storeId', 'name branch').lean();
+        if (!updated) {
+            return res.status(404).json({ error: 'owners를 찾을 수 없습니다.' });
+        }
+        res.json(toOwnerAdminResponse(updated));
+    } catch (error) {
+        console.error('owners 수정에 오류가 발생했습니다:', error);
+        res.status(400).json({ error: 'owners 수정에 실패하였습니다.' });
     }
 });
 

@@ -1,3 +1,7 @@
+import fetchJson from './fetchJson';
+import type Owner from '../types/Owner';
+import type { OwnerStatus } from '../types/Owner';
+
 const baseUrl = (import.meta.env.VITE_API_URL as string | undefined) ?? '';
 
 export type OwnerSignupBody = {
@@ -22,4 +26,18 @@ export async function signupOwner(owner: OwnerSignupBody, firebasePhoneToken: st
         throw new Error(typeof data.error === 'string' ? data.error : `HTTP ${response.status}`);
     }
     return data;
+}
+
+export async function fetchOwners() {
+    return fetchJson<Owner[]>(`${baseUrl}/owners`);
+}
+
+export async function patchOwnerStatus(ownerId: string, status: OwnerStatus) {
+    return fetchJson<Owner>(`${baseUrl}/owners/${ownerId}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status }),
+    });
 }

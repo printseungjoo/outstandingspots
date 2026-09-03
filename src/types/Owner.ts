@@ -1,7 +1,7 @@
 export type OwnerStatus = 'pending' | 'approved' | 'rejected';
 
-export interface OwnerInterface {
-    _id?: string;
+export default interface Owner {
+    _id: string;
     name: string;
     phone: string;
     storeId: string;

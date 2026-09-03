@@ -18,6 +18,7 @@ import { AdminPage } from './ui/templates/AdminPage';
 import { ProtectedAdminRoute } from './ui/atoms/ProtectedAdminRoute';
 import { AdminStoreManagementTab } from './ui/organisms/AdminStoreManagementTab';
 import { AdminStoreAddTab } from './ui/organisms/AdminStoreAddTab';
+import { AdminOwnersManagementTab } from './ui/organisms/AdminOwnersManagementTab';
 import { StoreSignUpPage } from './ui/molecules/StoreSignUpPage';
 
 const AppLayout = styled.div`
@@ -57,7 +58,7 @@ function App() {
                       <Route index element = {<AdminStoreManagementTab />} />
                       <Route path = "store/add" element = {<AdminStoreAddTab />} />
                       <Route path = "store/edit/:storeId" element = {<AdminStoreAddTab />} />
-                      <Route path = "owners" element = { null } />
+                      <Route path = "owners" element = {<AdminOwnersManagementTab />} />
                       <Route path = "changes" element = { null } />
                     </Route>
                   </Routes>
