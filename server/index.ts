@@ -11,8 +11,12 @@ import categoryModel from './models/CategoryModels';
 import storeModel from './models/StoreModels';
 import type { StoreInterface } from './types/StoreInterface';
 import type { CategoryInterface } from './types/CategoryInterface';
+import type { OwnerInterface, OwnerStatus } from './types/OwnerInterface';
+import ownerModel from './models/OwnerModels';
+import { verifyPhoneVerification, type FirebaseRequest } from './middlewares/verifyPhoneVerification';
+import { getFirebaseAdminAuth } from './firebase/firebaseAdmin';
 
-dotenv.config();
+dotenv.config({ path: path.join(__dirname, '.env') });
 
 const app = express();
 const PORT = process.env.PORT ? Number(process.env.PORT) : 8080;
@@ -21,6 +25,7 @@ const allowedOrigins = [
     "https://outstandingspots.com",
     "https://www.outstandingspots.com",
     "http://localhost:5173",
+    "http://127.0.0.1:5173",
 ];
 
 app.use(
@@ -31,6 +36,7 @@ app.use(
             return cb(null, false);
         },
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
         credentials: true,
         optionsSuccessStatus: 204,
     })
@@ -104,6 +110,67 @@ function toStoreResponse(store: {
             eng: store.address?.eng ?? '',
         },
     };
+}
+
+function toOwnerStatus(status: string | null | undefined): OwnerStatus {
+    if (status === 'approved' || status === 'rejected') {
+        return status;
+    }
+    return 'pending';
+}
+
+function toOwnerResponse(owner: {
+    _id?: unknown;
+    name?: string | null;
+    phone?: string | null;
+    storeId?: unknown;
+    id?: string | null;
+    phoneVerified?: boolean | null;
+    firebaseUid?: string | null;
+    status?: string | null;
+}): OwnerInterface {
+    return {
+        _id: String(owner._id),
+        name: owner.name ?? '',
+        phone: owner.phone ?? '',
+        storeId: String(owner.storeId ?? ''),
+        id: owner.id ?? '',
+        phoneVerified: owner.phoneVerified ?? false,
+        firebaseUid: owner.firebaseUid || undefined,
+        status: toOwnerStatus(owner.status)
+    };
+}
+
+function hashOwnerPassword(password: string) {
+    const salt = crypto.randomBytes(16).toString('hex');
+    const hash = crypto.scryptSync(password, salt, 64).toString('hex');
+    return `${salt}:${hash}`;
+}
+
+function toE164KoreanPhone(phone: string) {
+    const numbers = phone.replace(/\D/g, '');
+    if (numbers.startsWith('0')) {
+        return `+82${numbers.slice(1)}`;
+    }
+    if (numbers.startsWith('82')) {
+        return `+${numbers}`;
+    }
+    return '';
+}
+
+function toKoreanNationalPhone(phone: string) {
+    const numbers = phone.replace(/\D/g, '');
+    if (numbers.startsWith('82')) {
+        return `0${numbers.slice(2)}`;
+    }
+    return numbers;
+}
+
+function getMongoErrorCode(error: unknown) {
+    if (error && typeof error === 'object' && 'code' in error) {
+        return (error as { code: unknown }).code;
+    }
+    return undefined;
 }
 
 let categoriesCache: CategoryInterface[] | null = null;
@@ -229,6 +296,47 @@ app.delete('/stores/:id', async (req: Request, res: Response) => {
     }
 });
 
+app.post('/owners', verifyPhoneVerification, async (req: FirebaseRequest, res: Response) => {
+    try {
+        const firebaseUser = req.firebaseUser;
+        if (!firebaseUser?.uid || !firebaseUser.phoneNumber) {
+            return res.status(401).json({ error: '전화번호 인증이 필요합니다.' });
+        }
+        const name = typeof req.body?.name === 'string' ? req.body.name.trim() : '';
+        const phone = typeof req.body?.phone === 'string' ? req.body.phone.trim() : '';
+        const id = typeof req.body?.id === 'string' ? req.body.id.trim() : '';
+        const password = typeof req.body?.password === 'string' ? req.body.password : '';
+        const storeId = typeof req.body?.storeId === 'string' ? req.body.storeId.trim() : '';
+        if (!name || !phone || !id || !password || !storeId) {
+            return res.status(400).json({ error: '필수 항목이 없습니다.' });
+        }
+        if (toE164KoreanPhone(phone) !== firebaseUser.phoneNumber) {
+            return res.status(400).json({ error: '전화번호가 인증 정보와 일치하지 않습니다.' });
+        }
+        const store = await storeModel.findById(storeId).select('_id').lean();
+        if (!store) {
+            return res.status(400).json({ error: '매장을 찾을 수 없습니다.' });
+        }
+        const created = await ownerModel.create({
+            name,
+            id,
+            password: hashOwnerPassword(password),
+            storeId,
+            phone: toKoreanNationalPhone(firebaseUser.phoneNumber),
+            firebaseUid: firebaseUser.uid,
+            phoneVerified: true,
+            status: 'pending'
+        });
+        res.status(201).json(toOwnerResponse(created.toObject()));
+    } catch (error) {
+        console.error('owners 생성에 오류가 발생했습니다:', error);
+        if (getMongoErrorCode(error) === 11000) {
+            return res.status(409).json({ error: '이미 가입된 계정입니다.' });
+        }
+        res.status(400).json({ error: 'owners 생성에 실패하였습니다.' });
+    }
+});
+
 app.listen(PORT, () => {
-    console.log('Server가 실행 중입니다.');
+    console.log(`Server가 실행 중입니다. http://localhost:${PORT}`);
 });

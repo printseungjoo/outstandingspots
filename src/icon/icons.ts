@@ -1,4 +1,4 @@
-import { faEye, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faEye, faLock, faUser, faXmark } from '@fortawesome/free-solid-svg-icons';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
 export const byPrefixAndName: Record<string, Record<string, IconDefinition>> = {
@@ -6,7 +6,9 @@ export const byPrefixAndName: Record<string, Record<string, IconDefinition>> = {
         user: faUser
     },
     fas: {
-        lock: faLock
+        lock: faLock,
+        check: faCheck,
+        xmark: faXmark
     },
     far: {
         eye: faEye,

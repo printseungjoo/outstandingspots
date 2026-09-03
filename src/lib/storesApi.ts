@@ -22,6 +22,10 @@ export async function uploadStorePhoto(blob: Blob) {
     return photo;
 }
 
+export async function fetchStores() {
+    return fetchJson<Store[]>(`${baseUrl}/stores`);
+}
+
 export async function createStore(store: Omit<Store, '_id'>) {
     return fetchJson<Store>(`${baseUrl}/stores`, {
         method: 'POST',

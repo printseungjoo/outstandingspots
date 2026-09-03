@@ -14,7 +14,7 @@ const SignUpPasswordInputWithDescriptionStyled = styled.div`
     gap: 1rem;
 `;
 
-const Title = styled.p`
+const Title = styled.p<{ $hasDescription?: boolean }>`
     width: 5.8rem;
     font-size: 0.9rem;
     font-weight: bold;
@@ -22,7 +22,7 @@ const Title = styled.p`
     margin: 0;
     flex-shrink: 0;
     text-align: left;
-    margin-bottom: 1rem;
+    margin-bottom: ${({ $hasDescription }) => $hasDescription ? '1rem' : '0'};
 `;
 
 const InputField = styled.div`
@@ -44,13 +44,24 @@ const Input = styled.input`
     }
 `;
 
-const Description = styled.p`
+const DescriptionRow = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+`;
+
+const Description = styled.p<{ $tone?: 'gray' | 'valid' | 'invalid' }>`
     font-size: 0.75rem;
-    color: gray;
+    color: ${({ $tone }) => $tone === 'valid' ? '#22c55e' : $tone === 'invalid' ? '#ef4444' : 'gray'};
     margin: 0;
+    margin-left: 0.2rem;
     flex-shrink: 0;
     text-align: left;
-    margin-left: 0.2rem;
+`;
+
+const ValidityIcon = styled(FontAwesomeIcon)<{ $valid: boolean }>`
+    font-size: 0.75rem;
+    color: ${({ $valid }) => $valid ? '#22c55e' : '#ef4444'};
 `;
 
 const SignUpPasswordStyled = styled.div`
@@ -74,6 +85,10 @@ const ToggleIcon = styled(Icon)`
     flex-shrink: 0;
 `;
 
+function isValidOwnerPassword(value: string) {
+    return /^(?=.*[A-Za-z])(?=.*\d).{8,20}$/.test(value);
+}
+
 interface SignUpPasswordInputWithDescriptionProps {
     engTitle: string;
     korTitle: string;
@@ -83,15 +98,27 @@ interface SignUpPasswordInputWithDescriptionProps {
     korDescription?: string;
     value?: string;
     onChange?: (value: string) => void;
+    matchWith?: string;
 }
 
-export function SignUpPasswordInputWithDescription({ engTitle, korTitle, engPlaceholder, korPlaceholder, engDescription, korDescription, value, onChange }: SignUpPasswordInputWithDescriptionProps) {
+export function SignUpPasswordInputWithDescription({ engTitle, korTitle, engPlaceholder, korPlaceholder, engDescription, korDescription, value, onChange, matchWith }: SignUpPasswordInputWithDescriptionProps) {
     const { language } = useLanguage();
     const [showPassword, setShowPassword] = useState<boolean>(false);
+    const isConfirm = matchWith !== undefined;
+    const typed = (value ?? '').length > 0;
+    const passwordValid = isValidOwnerPassword(value ?? '');
+    const passwordsMatch = typed && value === matchWith;
+    let confirmMessage: string | undefined;
+    if (isConfirm && typed) {
+        confirmMessage = passwordsMatch
+            ? (language === 'eng' ? 'The passwords you entered match.' : '입력한 비밀번호가 일치합니다.')
+            : (language === 'eng' ? 'The passwords you entered do not match.' : '입력한 비밀번호가 일치하지 않습니다.');
+    }
+    const showDescription = isConfirm ? Boolean(confirmMessage) : true;
 
     return(
         <SignUpPasswordInputWithDescriptionStyled>
-            <Title> { language === 'eng' ? engTitle : korTitle } </Title>
+            <Title $hasDescription = { showDescription }> { language === 'eng' ? engTitle : korTitle } </Title>
             <InputField>
                 <SignUpPasswordStyled>
                     <Input type = { showPassword ? 'text' : 'password' } value = { value }
@@ -99,7 +126,16 @@ export function SignUpPasswordInputWithDescription({ engTitle, korTitle, engPlac
                         onChange = {(e) => onChange?.(e.target.value)} />
                     <ToggleIcon icon = {byPrefixAndName.far['eye']} onClick = {() => setShowPassword((visible) => !visible)} />
                 </SignUpPasswordStyled>
-                <Description> { language === 'eng' ? engDescription : korDescription } </Description>
+                {isConfirm ? (
+                    confirmMessage && (<Description $tone = { passwordsMatch ? 'valid' : 'invalid' }> { confirmMessage } </Description>)
+                ) : (
+                    <DescriptionRow>
+                        <Description $tone = 'gray'> { language === 'eng' ? engDescription : korDescription } </Description>
+                        {typed && (
+                            <ValidityIcon icon = { passwordValid ? byPrefixAndName.fas.check : byPrefixAndName.fas.xmark } $valid = { passwordValid } />
+                        )}
+                    </DescriptionRow>
+                )}
             </InputField>
         </SignUpPasswordInputWithDescriptionStyled>
     )

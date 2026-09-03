@@ -11,5 +11,5 @@
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["index.ts", "config/**/*.ts", "models/**/*.ts", "types/**/*.ts", "firebase/**/*.ts"]
+  "include": ["index.ts", "config/**/*.ts", "models/**/*.ts", "types/**/*.ts", "firebase/**/*.ts", "middlewares/**/*.ts"]
 }

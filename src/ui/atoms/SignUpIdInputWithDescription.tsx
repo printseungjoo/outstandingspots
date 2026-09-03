@@ -1,6 +1,8 @@
 import styled from 'styled-components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { useLanguage } from '../../contexts/LanguageContext';
+import { byPrefixAndName } from '../../icon/icons';
 
 const SignUpIdInputWithDescriptionStyled = styled.div`
     box-sizing: border-box;
@@ -35,14 +37,29 @@ const Input = styled.input`
     padding: 0.5rem;
 `;
 
+const DescriptionRow = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-left: 0.2rem;
+`;
+
 const Description = styled.p`
     font-size: 0.75rem;
     color: gray;
     margin: 0;
     flex-shrink: 0;
     text-align: left;
-    margin-left: 0.2rem;
 `;
+
+const ValidityIcon = styled(FontAwesomeIcon)<{ $valid: boolean }>`
+    font-size: 0.75rem;
+    color: ${({ $valid }) => $valid ? '#22c55e' : '#ef4444'};
+`;
+
+function isValidOwnerId(value: string) {
+    return /^(?=.*[a-z])(?=.*\d)[a-z0-9]{4,20}$/.test(value);
+}
 
 interface SignUpIdInputWithDescriptionProps {
     engTitle: string;
@@ -57,6 +74,8 @@ interface SignUpIdInputWithDescriptionProps {
 
 export function SignUpIdInputWithDescription({ engTitle, korTitle, engPlaceholder, korPlaceholder, engDescription, korDescription, value, onChange }: SignUpIdInputWithDescriptionProps) {
     const { language } = useLanguage();
+    const typed = (value ?? '').length > 0;
+    const valid = isValidOwnerId(value ?? '');
 
     return(
         <SignUpIdInputWithDescriptionStyled>
@@ -64,7 +83,10 @@ export function SignUpIdInputWithDescription({ engTitle, korTitle, engPlaceholde
             <InputField>
                 <Input type = "text" value = { value } placeholder = { language === 'eng' ? engPlaceholder : korPlaceholder }
                     onChange = {(e) => onChange?.(e.target.value)} />
-                <Description> { language === 'eng' ? engDescription : korDescription } </Description>
+                <DescriptionRow>
+                    <Description> { language === 'eng' ? engDescription : korDescription } </Description>
+                    {typed && (<ValidityIcon icon = { valid ? byPrefixAndName.fas.check : byPrefixAndName.fas.xmark } $valid = { valid } />)}
+                </DescriptionRow>
             </InputField>
         </SignUpIdInputWithDescriptionStyled>
     )

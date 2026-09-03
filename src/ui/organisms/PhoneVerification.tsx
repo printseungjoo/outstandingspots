@@ -79,18 +79,8 @@ const RecaptchaBox = styled.div`
     position: absolute;
     width: 1px;
     height: 1px;
-    left: 0;
-    bottom: 0;
-`;
-
-const LocalhostHint = styled.p`
-    width: 80%;
-    margin: 0;
-    font-size: 0.8rem;
-    color: #5D53F1;
-    text-align: left;
-    box-sizing: border-box;
-    padding-left: 6.8rem;
+    left: -9999px;
+    top: 0;
 `;
 
 export function PhoneVerification({ phone, onPhoneChange, onVerified }: PhoneVerificationProps) {
@@ -212,13 +202,6 @@ export function PhoneVerification({ phone, onPhoneChange, onVerified }: PhoneVer
                     description = { verified
                         ? (language === 'eng' ? 'Phone number verified.' : '전화번호 인증이 완료되었습니다.')
                         : '\u00A0' } />
-                {isLocalhostHostname() && (
-                    <LocalhostHint>
-                        {language === 'eng'
-                            ? `Open ${getLocalhostRedirectUrl()} instead of localhost.`
-                            : `localhost 대신 ${getLocalhostRedirectUrl()} 로 열어 주세요.`}
-                    </LocalhostHint>
-                )}
             </PhoneFields>
             <RecaptchaBox ref = { recaptchaContainerRef } />
         </PhoneVerificationStyled>
