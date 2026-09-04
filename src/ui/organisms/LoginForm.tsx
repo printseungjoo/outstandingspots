@@ -6,6 +6,9 @@ import { LoginIdPassword } from '../atoms/LoginIdPassword';
 import { LoginButton } from '../atoms/LoginButton';
 import { SignUpButton } from '../atoms/SignUpButton';
 import { useAdminAuth } from '../../contexts/AdminAuthContext';
+import { useOwnerAuth } from '../../contexts/OwnerAuthContext';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { loginOwner, OwnerLoginError } from '../../lib/ownersApi';
 
 const LoginFormStyled = styled.div`
     width: 25%;
@@ -63,13 +66,40 @@ interface LoginFormProps {
 
 export function LoginForm({ who,onlyForWho, loginRole }: LoginFormProps) {
     const { loginAdmin } = useAdminAuth();
+    const { loginOwner: setOwnerSession } = useOwnerAuth();
+    const { language } = useLanguage();
     const navigate = useNavigate();
     const [isAdmin, setIsAdmin] = useState<boolean[]>([false, false]);
+    const [id, setId] = useState('');
+    const [password, setPassword] = useState('');
 
-    const handleLogin = () => {
-        if (loginRole === 'store' && isAdmin[0] && isAdmin[1]) {
+    const handleLogin = async () => {
+        if (loginRole !== 'store') {
+            return;
+        }
+        if (isAdmin[0] && isAdmin[1]) {
             loginAdmin();
             navigate('/admin');
+            return;
+        }
+        if (!id.trim() || !password) {
+            alert(language === 'eng' ? 'Please enter your ID and password.' : '아이디와 비밀번호를 입력해주세요.');
+            return;
+        }
+        try {
+            const owner = await loginOwner(id.trim(), password);
+            setOwnerSession(owner);
+            navigate('/owner');
+        } catch (error) {
+            if (error instanceof OwnerLoginError && error.status === 'pending') {
+                alert(language === 'eng' ? 'Please wait for admin approval.' : '관리자의 승인을 기다려주세요.');
+                return;
+            }
+            if (error instanceof OwnerLoginError && error.status === 'rejected') {
+                alert(language === 'eng' ? 'Your registration was rejected by the admin.' : '관리자로부터 승인이 거절되었습니다.');
+                return;
+            }
+            alert(language === 'eng' ? 'ID or password is incorrect.' : '아이디 또는 비밀번호가 올바르지 않습니다.');
         }
     };
 
@@ -78,8 +108,9 @@ export function LoginForm({ who,onlyForWho, loginRole }: LoginFormProps) {
             <ColoredMyPageIcon src = '/coloredMyPageIcon.png' alt = 'coloredMyPageIcon'/>
             <BoldText> { who } </BoldText>
             <LoginDiv>
-                <LoginIdPassword loginRole = { loginRole } onAdminCheckChange = { setIsAdmin }/>
-                <LoginButton onClick = { handleLogin } />
+                <LoginIdPassword loginRole = { loginRole } onAdminCheckChange = { setIsAdmin }
+                    onIdChange = { setId } onPasswordChange = { setPassword } />
+                <LoginButton onClick = {() => { void handleLogin(); }} />
                 <BlackThinLine />
                 <SignUpButton onClick = {() => navigate(loginRole === 'student' ? '/signup/student' : '/signup/store')} />
             </LoginDiv>

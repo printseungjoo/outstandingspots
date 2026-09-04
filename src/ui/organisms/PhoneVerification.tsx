@@ -20,22 +20,41 @@ export function isValidKoreanPhone(phone: string) {
     return /^01[016789]\d{7,8}$/.test(numbers);
 }
 
-function isLocalhostHostname() {
+export function isLocalhostHostname() {
     return window.location.hostname === 'localhost';
 }
 
-function getLocalhostRedirectUrl() {
+export function getLocalhostRedirectUrl() {
     return window.location.href.replace('://localhost', '://127.0.0.1');
 }
 
-function getFirebaseErrorCode(error: unknown) {
+export function getFirebaseErrorCode(error: unknown) {
     if (error && typeof error === 'object' && 'code' in error) {
         return String((error as { code: string }).code);
     }
     return '';
 }
 
-function getSendErrorMessage(error: unknown, language: Language) {
+export function getConfirmErrorMessage(error: unknown, language: Language) {
+    const code = getFirebaseErrorCode(error);
+    if (code === 'auth/invalid-verification-code') {
+        return language === 'eng' ? 'The verification code is invalid.' : '인증번호가 올바르지 않습니다.';
+    }
+    if (code === 'auth/code-expired' || code === 'auth/session-expired') {
+        return language === 'eng' ? 'The verification code expired. Please send it again.' : '인증번호가 만료되었습니다. 다시 전송해주세요.';
+    }
+    if (code === 'auth/credential-already-in-use' || code === 'auth/account-exists-with-different-credential') {
+        return language === 'eng' ? 'This phone number is already in use.' : '이미 사용 중인 전화번호입니다.';
+    }
+    if (error instanceof Error && error.message && !code.startsWith('auth/')) {
+        return error.message;
+    }
+    return language === 'eng'
+        ? `Failed to change the phone number.${code ? ` (${code})` : ''}`
+        : `전화번호 변경에 실패했습니다.${code ? ` (${code})` : ''}`;
+}
+
+export function getSendErrorMessage(error: unknown, language: Language) {
     const code = getFirebaseErrorCode(error);
     if (code === 'auth/invalid-phone-number') {
         return language === 'eng' ? 'Enter a valid phone number.' : '올바른 전화번호를 입력해 주세요.';

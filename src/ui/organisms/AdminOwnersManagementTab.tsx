@@ -95,23 +95,6 @@ export function AdminOwnersManagementTab() {
         }
     }
 
-    async function handleDelete(owner: Owner) {
-        const confirmed = window.confirm(
-            language === 'eng'
-                ? 'Remove this owner from the list? The login account will not be deleted.'
-                : '목록에서 삭제할까요? 로그인 계정은 삭제되지 않습니다.'
-        );
-        if (!confirmed) {
-            return;
-        }
-        try {
-            await loadOwners();
-        } catch (error) {
-            console.error(error);
-            alert(language === 'eng' ? 'Failed to delete the owner.' : '사장님 삭제에 실패했습니다.');
-        }
-    }
-
     return(
         <AdminOwnersManagementTabStyled>
             <AdminOwnersManagementTop />
@@ -131,8 +114,7 @@ export function AdminOwnersManagementTab() {
                     <SectionCount> { loading ? '-' : approvedOwners.length } </SectionCount>
                 </SectionTitleRow>
                 <AdminOwnersTable variant = 'approved' owners = { approvedOwners }
-                    onPending = {(owner) => { void handleStatusChange(owner, 'pending'); }}
-                    onDelete = {(owner) => { void handleDelete(owner); }} />
+                    onPending = {(owner) => { void handleStatusChange(owner, 'pending'); }} />
             </Section>
             <Section>
                 <SectionTitleRow>

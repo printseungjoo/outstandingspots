@@ -131,17 +131,9 @@ function joinStoreName(name?: string | null, branch?: string | null) {
     return `${storeName} ${branchName}`.trim();
 }
 
-function toOwnerResponse(owner: {
-    _id?: unknown;
-    name?: string | null;
-    phone?: string | null;
-    storeId?: unknown;
-    id?: string | null;
-    phoneVerified?: boolean | null;
-    firebaseUid?: string | null;
-    status?: string | null;
-    createdAt?: Date | string | null;
-}): OwnerInterface {
+function toOwnerResponse(owner: { _id?: unknown; name?: string | null; phone?: string | null; 
+        storeId?: unknown; id?: string | null; phoneVerified?: boolean | null; firebaseUid?: string | null; 
+        status?: string | null; createdAt?: Date | string | null; }): OwnerInterface {
     return {
         _id: String(owner._id),
         name: owner.name ?? '',
@@ -188,6 +180,27 @@ function hashOwnerPassword(password: string) {
     const salt = crypto.randomBytes(16).toString('hex');
     const hash = crypto.scryptSync(password, salt, 64).toString('hex');
     return `${salt}:${hash}`;
+}
+
+function isValidOwnerPassword(password: string) {
+    return /^(?=.*[A-Za-z])(?=.*\d).{8,20}$/.test(password);
+}
+
+function verifyOwnerPassword(password: string, stored: string) {
+    const [salt, hash] = stored.split(':');
+    if (!salt || !hash) {
+        return false;
+    }
+    try {
+        const computed = crypto.scryptSync(password, salt, 64);
+        const storedHash = Buffer.from(hash, 'hex');
+        if (storedHash.length !== computed.length) {
+            return false;
+        }
+        return crypto.timingSafeEqual(storedHash, computed);
+    } catch {
+        return false;
+    }
 }
 
 function toE164KoreanPhone(phone: string) {
@@ -339,6 +352,28 @@ app.delete('/stores/:id', async (req: Request, res: Response) => {
     }
 });
 
+app.post('/owners/login', async (req: Request, res: Response) => {
+    try {
+        const id = typeof req.body?.id === 'string' ? req.body.id.trim() : '';
+        const password = typeof req.body?.password === 'string' ? req.body.password : '';
+        if (!id || !password) {
+            return res.status(400).json({ error: '필수 항목이 없습니다.' });
+        }
+        const owner = await ownerModel.findOne({ id }).populate('storeId', 'name branch').lean();
+        if (!owner || typeof owner.password !== 'string' || !verifyOwnerPassword(password, owner.password)) {
+            return res.status(401).json({ error: '아이디 또는 비밀번호가 올바르지 않습니다.' });
+        }
+        const status = toOwnerStatus(owner.status);
+        if (status === 'pending' || status === 'rejected') {
+            return res.status(403).json({ status });
+        }
+        res.json(toOwnerAdminResponse(owner));
+    } catch (error) {
+        console.error('owners 로그인에 오류가 발생했습니다:', error);
+        res.status(400).json({ error: 'owners 로그인에 실패하였습니다.' });
+    }
+});
+
 app.get('/owners', async (_req: Request, res: Response) => {
     try {
         const owners = await ownerModel.find({}, '-password')
@@ -370,6 +405,93 @@ app.patch('/owners/:id', async (req: Request, res: Response) => {
     } catch (error) {
         console.error('owners 수정에 오류가 발생했습니다:', error);
         res.status(400).json({ error: 'owners 수정에 실패하였습니다.' });
+    }
+});
+
+app.patch('/owners/:id/profile', async (req: Request, res: Response) => {
+    try {
+        const name = typeof req.body?.name === 'string' ? req.body.name.trim() : '';
+        if (!name) {
+            return res.status(400).json({ error: '필수 항목이 없습니다.' });
+        }
+        const updated = await ownerModel.findByIdAndUpdate(
+            req.params.id,
+            { $set: { name } },
+            { new: true, runValidators: true }
+        ).select('-password').populate('storeId', 'name branch').lean();
+        if (!updated) {
+            return res.status(404).json({ error: 'owners를 찾을 수 없습니다.' });
+        }
+        res.json(toOwnerAdminResponse(updated));
+    } catch (error) {
+        console.error('owners 이름 수정에 오류가 발생했습니다:', error);
+        res.status(400).json({ error: 'owners 수정에 실패하였습니다.' });
+    }
+});
+
+app.patch('/owners/:id/phone', verifyPhoneVerification, async (req: FirebaseRequest, res: Response) => {
+    try {
+        const firebaseUser = req.firebaseUser;
+        if (!firebaseUser?.uid || !firebaseUser.phoneNumber) {
+            return res.status(401).json({ error: '전화번호 인증이 필요합니다.' });
+        }
+        const phone = toKoreanNationalPhone(firebaseUser.phoneNumber);
+        const updated = await ownerModel.findByIdAndUpdate(
+            req.params.id,
+            { $set: { phone, firebaseUid: firebaseUser.uid, phoneVerified: true } },
+            { new: true, runValidators: true }
+        ).select('-password').populate('storeId', 'name branch').lean();
+        if (!updated) {
+            return res.status(404).json({ error: 'owners를 찾을 수 없습니다.' });
+        }
+        res.json(toOwnerAdminResponse(updated));
+    } catch (error) {
+        console.error('owners 전화번호 수정에 오류가 발생했습니다:', error);
+        if (getMongoErrorCode(error) === 11000) {
+            return res.status(409).json({ error: '이미 사용 중인 전화번호입니다.' });
+        }
+        res.status(400).json({ error: 'owners 수정에 실패하였습니다.' });
+    }
+});
+
+app.patch('/owners/:id/password', async (req: Request, res: Response) => {
+    try {
+        const currentPassword = typeof req.body?.currentPassword === 'string' ? req.body.currentPassword : '';
+        const newPassword = typeof req.body?.newPassword === 'string' ? req.body.newPassword : '';
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ error: '필수 항목이 없습니다.' });
+        }
+        if (!isValidOwnerPassword(newPassword)) {
+            return res.status(400).json({ error: '비밀번호 형식이 올바르지 않습니다.' });
+        }
+        const owner = await ownerModel.findById(req.params.id).select('password');
+        if (!owner || typeof owner.password !== 'string') {
+            return res.status(404).json({ error: '사장님을 찾을 수 없습니다.' });
+        }
+        if (!verifyOwnerPassword(currentPassword, owner.password)) {
+            return res.status(401).json({ error: '현재 비밀번호가 올바르지 않습니다.' });
+        }
+        await ownerModel.updateOne(
+            { _id: owner._id },
+            { $set: { password: hashOwnerPassword(newPassword) } }
+        );
+        res.json({ ok: true });
+    } catch (error) {
+        console.error('owners 비밀번호 수정에 오류가 발생했습니다:', error);
+        res.status(400).json({ error: 'owners 수정에 실패하였습니다.' });
+    }
+});
+
+app.delete('/owners/:id', async (req: Request, res: Response) => {
+    try {
+        const deleted = await ownerModel.findByIdAndDelete(req.params.id).lean();
+        if (!deleted) {
+            return res.status(404).json({ error: '사장님을 찾을 수 없습니다.' });
+        }
+        res.json({ _id: String(deleted._id) });
+    } catch (error) {
+        console.error('owners 삭제에 오류가 발생했습니다:', error);
+        res.status(400).json({ error: 'owners 삭제에 실패하였습니다.' });
     }
 });
 

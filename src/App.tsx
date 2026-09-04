@@ -12,10 +12,16 @@ import type Language from './types/Language';
 import { LoginPage } from './ui/templates/LoginPage';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { AdminAuthProvider } from './contexts/AdminAuthContext';
+import { OwnerAuthProvider } from './contexts/OwnerAuthContext';
 import { StoresProvider } from './contexts/StoresContext';
 import { CategoryProvider } from './contexts/CategoryContext';
 import { AdminPage } from './ui/templates/AdminPage';
+import { OwnerPage } from './ui/templates/OwnerPage';
+import { OwnerStoreViewTab } from './ui/organisms/OwnerStoreViewTab';
+import { OwnerStoreEditTab } from './ui/organisms/OwnerStoreEditTab';
+import { OwnerAccountTab } from './ui/organisms/OwnerAccountTab';
 import { ProtectedAdminRoute } from './ui/atoms/ProtectedAdminRoute';
+import { ProtectedOwnerRoute } from './ui/atoms/ProtectedOwnerRoute';
 import { AdminStoreManagementTab } from './ui/organisms/AdminStoreManagementTab';
 import { AdminStoreAddTab } from './ui/organisms/AdminStoreAddTab';
 import { AdminOwnersManagementTab } from './ui/organisms/AdminOwnersManagementTab';
@@ -41,7 +47,8 @@ function App() {
     <BrowserRouter>
       <LanguageProvider language = { language } setLanguage = { setLanguage }>
         <AdminAuthProvider>
-          <StoresProvider>
+          <OwnerAuthProvider>
+            <StoresProvider>
             <CategoryProvider>
               <AppLayout>
                 <Header language = { language } onChangeLanguage = { setLanguage } />
@@ -50,6 +57,15 @@ function App() {
                     <Route path = "/" element = {<MapPage />} />
                     <Route path = "/login" element = {<LoginPage />} />
                     <Route path = "/signup/store" element = {<StoreSignUpPage />} />
+                    <Route path = "/owner" element = {
+                      <ProtectedOwnerRoute>
+                        <OwnerPage />
+                      </ProtectedOwnerRoute>
+                    }>
+                      <Route index element = {<OwnerStoreViewTab />} />
+                      <Route path = "edit" element = {<OwnerStoreEditTab />} />
+                      <Route path = "account" element = {<OwnerAccountTab />} />
+                    </Route>
                     <Route path = "/admin" element = {
                       <ProtectedAdminRoute>
                         <AdminPage />
@@ -66,7 +82,8 @@ function App() {
                 <Footer language = { language } />
               </AppLayout>
             </CategoryProvider>
-          </StoresProvider>
+            </StoresProvider>
+          </OwnerAuthProvider>
         </AdminAuthProvider>
       </LanguageProvider>
     </BrowserRouter>

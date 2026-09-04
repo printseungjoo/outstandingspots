@@ -160,6 +160,12 @@ type StoreAddForm = {
     lon: string;
 };
 
+interface AdminStoreAddTabProps {
+    storeIdOverride?: string;
+    cancelTo?: string;
+    afterSaveTo?: string;
+}
+
 const initialForm: StoreAddForm = {
     categoryKor: '',
     name: { kor: '', eng: '' },
@@ -250,9 +256,10 @@ function buildStorePatch(original: Store, form: StoreAddForm, category: Store['c
     return patch;
 }
 
-export function AdminStoreAddTab() {
+export function AdminStoreAddTab({ storeIdOverride, cancelTo = '/admin', afterSaveTo = '/admin' }: AdminStoreAddTabProps = {}) {
     const navigate = useNavigate();
-    const { storeId } = useParams();
+    const { storeId: storeIdFromParams } = useParams();
+    const storeId = storeIdOverride ?? storeIdFromParams;
     const { language } = useLanguage();
     const { categories } = useCategories();
     const { stores, loadingState, addStore, updateStore } = useStores();
@@ -268,38 +275,27 @@ export function AdminStoreAddTab() {
         if (!storeId) return;
         if (loadingState !== SUCCESS_MESSAGE) return;
         if (!editingStore) {
-            navigate('/admin');
+            navigate(cancelTo);
             return;
         }
         setForm(storeToForm(editingStore));
         setHasPhoto(Boolean(editingStore.photo));
         photoBlobRef.current = null;
-    }, [storeId, editingStore, loadingState, navigate]);
+    }, [storeId, editingStore, loadingState, navigate, cancelTo]);
 
     const lat = Number(form.lat);
     const lon = Number(form.lon);
     const canSave = Boolean(
         hasPhoto &&
         categories.find((item) => item.name.kor === form.categoryKor) &&
-        isLocalizedFilled(form.name) &&
-        isLocalizedFilled(form.branch) &&
-        isLocalizedFilled(form.theme) &&
-        isLocalizedFilled(form.discount) &&
-        isLocalizedFilled(form.description) &&
-        isFilled(form.naverMap) &&
-        isFilled(form.address) &&
-        isFilled(form.openTime) &&
-        isFilled(form.closeTime) &&
-        isFilled(form.lat) &&
-        isFilled(form.lon) &&
-        Number.isFinite(lat) &&
-        Number.isFinite(lon)
+        isLocalizedFilled(form.name) && isLocalizedFilled(form.branch) &&
+        isLocalizedFilled(form.theme) && isLocalizedFilled(form.discount) &&
+        isLocalizedFilled(form.description) && isFilled(form.naverMap) && isFilled(form.address) &&
+        isFilled(form.openTime) && isFilled(form.closeTime) && Number.isFinite(lat) && Number.isFinite(lon)
     );
 
     function setField<K extends 'categoryKor' | 'naverMap' | 'address' | 'openTime' | 'closeTime' | 'lat' | 'lon'>(
-        key: K,
-        value: string,
-    ) {
+        key: K, value: string) {
         setForm((prev) => ({ ...prev, [key]: value }));
     }
 
@@ -321,9 +317,7 @@ export function AdminStoreAddTab() {
         try {
             const { lat, lon } = await geocodeAddress(address);
             setForm((prev) => ({
-                ...prev,
-                lat: String(lat),
-                lon: String(lon),
+                ...prev, lat: String(lat), lon: String(lon)
             }));
         } catch (error) {
             console.error(error);
@@ -354,8 +348,8 @@ export function AdminStoreAddTab() {
                     const updated = await patchStore(storeId, patch);
                     updateStore(updated);
                 }
-                alert(language === 'eng' ? 'Successfully edited.' : '수정이 성공되었습니다.');
-                navigate('/admin');
+                alert(language === 'eng' ? 'Successfully updated.' : '성공적으로 수정되었습니다.');
+                navigate(afterSaveTo);
                 return;
             }
             const photoBlob = photoBlobRef.current;
@@ -381,7 +375,7 @@ export function AdminStoreAddTab() {
             });
             addStore(created);
             alert(language === 'eng' ? 'Successfully saved.' : '저장이 완료되었습니다.');
-            navigate('/admin');
+            navigate(afterSaveTo);
         } catch (error) {
             console.error(error);
             alert(language === 'eng' ? 'Failed to save the store.' : '매장 저장에 실패했습니다.');
@@ -472,8 +466,7 @@ export function AdminStoreAddTab() {
                             onChangeKor = {(value) => setLocalized('description', 'kor', value)}
                             onChangeEng = {(value) => setLocalized('description', 'eng', value)} />
                         <CancelSubmitButtons>
-                            <CancelButton type = 'button' disabled = { isSubmitting }
-                                onClick = {() => navigate('/admin')}>
+                            <CancelButton type = 'button' disabled = { isSubmitting } onClick = {() => navigate(cancelTo)}>
                                 {language === 'eng' ? 'Cancel' : '취소'}
                             </CancelButton>
                             <SubmitButton type = 'button' disabled = { isSubmitting || !canSave } onClick = { handleSave }>

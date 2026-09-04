@@ -92,10 +92,9 @@ interface AdminOwnersTableProps {
     onApprove?: (owner: Owner) => void;
     onReject?: (owner: Owner) => void;
     onPending?: (owner: Owner) => void;
-    onDelete?: (owner: Owner) => void;
 }
 
-export function AdminOwnersTable({ owners, variant, onApprove, onReject, onPending, onDelete }: AdminOwnersTableProps) {
+export function AdminOwnersTable({ owners, variant, onApprove, onReject, onPending }: AdminOwnersTableProps) {
     const { language } = useLanguage();
     
     const isPending = variant === 'pending';
@@ -141,16 +140,9 @@ export function AdminOwnersTable({ owners, variant, onApprove, onReject, onPendi
                                         </PrimaryButton>
                                     </>
                                 ) : (
-                                    <>
-                                        <ActionButton type = 'button' onClick = {() => onPending?.(owner)}>
-                                            {language === 'eng' ? 'Pending' : '대기'}
-                                        </ActionButton>
-                                        {variant === 'approved' && (
-                                            <ActionButton type = 'button' onClick = {() => onDelete?.(owner)}>
-                                                {language === 'eng' ? 'Delete' : '삭제'}
-                                            </ActionButton>
-                                        )}
-                                    </>
+                                    <ActionButton type = 'button' onClick = {() => onPending?.(owner)}>
+                                        {language === 'eng' ? 'Pending' : '대기'}
+                                    </ActionButton>
                                 )}
                             </Td>
                         </tr>
