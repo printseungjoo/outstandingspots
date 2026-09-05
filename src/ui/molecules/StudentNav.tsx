@@ -110,7 +110,7 @@ export function StudentNav() {
                 </StudentNavOption>
                 <StudentNavOption to = '/student/account' $selected = { pathname === '/student/account' }>
                     <IconSlot> <SmallIcon src = { accountIcon } alt = 'account icon'/> </IconSlot>
-                    { language === 'eng' ? 'Edit profile' : '회원정보 수정' }
+                    { language === 'eng' ? 'Account Management' : '계정 관리' }
                 </StudentNavOption>
             </StudentNavTop>
             <StudentNavBottom>

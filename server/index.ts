@@ -252,15 +252,17 @@ function getMongoDuplicateField(error: unknown) {
     return undefined;
 }
 
-function toStudentResponse(student: { _id?: unknown; nickname?: string; email?: string; emailVerified?: boolean; id?: string; favorites?: unknown }) {
+function toStudentResponse(student: { _id?: unknown; nickname?: string; email?: string; emailVerified?: boolean; id?: string; favorites?: unknown; recentViews?: unknown }) {
     const favorites = Array.isArray(student.favorites) ? student.favorites.map((item) => String(item)) : [];
+    const recentViews = Array.isArray(student.recentViews) ? student.recentViews.map((item) => String(item)) : [];
     return {
         _id: student._id != null ? String(student._id) : undefined,
         nickname: student.nickname,
         email: student.email,
         emailVerified: Boolean(student.emailVerified),
         id: student.id,
-        favorites
+        favorites,
+        recentViews
     };
 }
 
@@ -589,6 +591,53 @@ app.post('/students/login', async (req: Request, res: Response) => {
     }
 });
 
+const recentViewTasks = new Map<string, Promise<unknown>>();
+
+function enqueueRecentView<T>(studentId: string, task: () => Promise<T>) {
+    const previous = recentViewTasks.get(studentId) ?? Promise.resolve();
+    const current = previous.catch(() => undefined).then(task);
+    recentViewTasks.set(studentId, current);
+    return current;
+}
+
+app.post('/students/:id/recent-views', async (req: Request, res: Response) => {
+    try {
+        const storeId = typeof req.body?.storeId === 'string' ? req.body.storeId.trim() : '';
+        if (!storeId) {
+            return res.status(400).json({ error: 'MISSING_FIELDS' });
+        }
+        const store = await storeModel.findById(storeId).select('_id').lean();
+        if (!store) {
+            return res.status(404).json({ error: 'STORE_NOT_FOUND' });
+        }
+        const studentId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+        if (!studentId) {
+            return res.status(400).json({ error: 'MISSING_FIELDS' });
+        }
+        const updated = await enqueueRecentView(studentId, async () => {
+            const student = await studentModel.findById(studentId).select('recentViews');
+            if (!student) {
+                return null;
+            }
+            const viewedId = String(store._id);
+            const current = Array.isArray(student.recentViews) ? student.recentViews.map((item) => String(item)) : [];
+            const next = [viewedId, ...current.filter((id) => id !== viewedId)].slice(0, 7);
+            return studentModel.findByIdAndUpdate(
+                student._id,
+                { $set: { recentViews: next } },
+                { new: true }
+            ).lean();
+        });
+        if (!updated) {
+            return res.status(404).json({ error: 'STUDENT_NOT_FOUND' });
+        }
+        res.json(toStudentResponse(updated));
+    } catch (error) {
+        console.error('학생 최근 본 매장 저장에 오류가 발생했습니다:', error);
+        res.status(400).json({ error: 'RECENT_VIEW_ADD_FAILED' });
+    }
+});
+
 app.post('/students/:id/favorites', async (req: Request, res: Response) => {
     try {
         const storeId = typeof req.body?.storeId === 'string' ? req.body.storeId.trim() : '';
@@ -611,6 +660,68 @@ app.post('/students/:id/favorites', async (req: Request, res: Response) => {
     } catch (error) {
         console.error('학생 즐겨찾기 추가에 오류가 발생했습니다:', error);
         res.status(400).json({ error: 'FAVORITE_ADD_FAILED' });
+    }
+});
+
+app.patch('/students/:id/profile', async (req: Request, res: Response) => {
+    try {
+        const nickname = typeof req.body?.nickname === 'string' ? req.body.nickname.trim() : '';
+        if (!nickname) {
+            return res.status(400).json({ error: 'MISSING_FIELDS' });
+        }
+        const updated = await studentModel.findByIdAndUpdate(
+            req.params.id,
+            { $set: { nickname } },
+            { new: true, runValidators: true }
+        ).select('-password').lean();
+        if (!updated) {
+            return res.status(404).json({ error: 'STUDENT_NOT_FOUND' });
+        }
+        res.json(toStudentResponse(updated));
+    } catch (error) {
+        console.error('학생 이름 수정에 오류가 발생했습니다:', error);
+        res.status(400).json({ error: 'STUDENT_UPDATE_FAILED' });
+    }
+});
+
+app.patch('/students/:id/password', async (req: Request, res: Response) => {
+    try {
+        const currentPassword = typeof req.body?.currentPassword === 'string' ? req.body.currentPassword : '';
+        const newPassword = typeof req.body?.newPassword === 'string' ? req.body.newPassword : '';
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ error: 'MISSING_FIELDS' });
+        }
+        if (!isValidOwnerPassword(newPassword)) {
+            return res.status(400).json({ error: 'INVALID_PASSWORD' });
+        }
+        const student = await studentModel.findById(req.params.id).select('password');
+        if (!student || typeof student.password !== 'string') {
+            return res.status(404).json({ error: 'STUDENT_NOT_FOUND' });
+        }
+        if (!verifyOwnerPassword(currentPassword, student.password)) {
+            return res.status(401).json({ error: '현재 비밀번호가 올바르지 않습니다.' });
+        }
+        await studentModel.updateOne(
+            { _id: student._id },
+            { $set: { password: hashOwnerPassword(newPassword) } }
+        );
+        res.json({ ok: true });
+    } catch (error) {
+        console.error('학생 비밀번호 수정에 오류가 발생했습니다:', error);
+        res.status(400).json({ error: 'STUDENT_UPDATE_FAILED' });
+    }
+});
+
+app.delete('/students/:id', async (req: Request, res: Response) => {
+    try {
+        const deleted = await studentModel.findByIdAndDelete(req.params.id).lean();
+        if (!deleted) {
+            return res.status(404).json({ error: 'STUDENT_NOT_FOUND' });
+        }
+        res.json({ _id: String(deleted._id) });
+    } catch (error) {
+        console.error('학생 삭제에 오류가 발생했습니다:', error);
+        res.status(400).json({ error: 'STUDENT_DELETE_FAILED' });
     }
 });
 

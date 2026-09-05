@@ -94,7 +94,6 @@ export function AdminNav() {
     const isStoresPage = pathname === '/admin' || pathname === '/admin/';
     const storesIcon = isStoresPage ? '/coloredStoreIcon.png' : '/storePageIcon.png';
     const ownersIcon = pathname === '/admin/owners' ? '/coloredMyPageIcon.png' : '/myPageIcon.png';
-    const changesIcon = pathname === '/admin/changes' ? '/fileIcon.png' : '/blackFileIcon.png';
 
     return(
         <AdminNavStyled>
@@ -102,7 +101,6 @@ export function AdminNav() {
                 <Text> 관리 </Text>
                 <AdminNavOption to = "/admin/" $selected = { isStoresPage }> <IconSlot> <Icon src = { storesIcon } alt = 'store icon'/> </IconSlot> {language === 'eng' ? 'Stores Management' : '매장 관리'} </AdminNavOption>
                 <AdminNavOption to = "/admin/owners" $selected = { pathname === '/admin/owners' }> <IconSlot> <SmallIcon src = { ownersIcon } alt = 'owner icon'/> </IconSlot> {language === 'eng' ? 'Owners Management' : '사장님 관리'} </AdminNavOption>
-                <AdminNavOption to = "/admin/changes" $selected = { pathname === '/admin/changes' }> <IconSlot> <SmallIcon src = { changesIcon } alt = 'file icon'/> </IconSlot> {language === 'eng' ? 'Changes Management' : '변경 내역 관리'} </AdminNavOption>
             </AdminNavTop>
             <AdminNavBottom>
                 <AdminLogoutButton onClick = {() => { logoutAdmin(); navigate('/login');}}> 

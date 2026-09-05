@@ -2,21 +2,31 @@ import { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
 
 import type Student from '../types/Student';
+import { prependRecentView as nextRecentViews } from '../lib/studentsApi';
 
 interface StudentAuthContextValue {
     student: Student | null;
     isStudent: boolean;
     loginStudent: (student: Student) => void;
     updateStudent: (student: Student) => void;
+    prependRecentView: (storeId: string) => boolean;
     logoutStudent: () => void;
 }
 
 const STUDENT_STORAGE_KEY = 'os-student';
 
+function isNewerRecentViews(local: string[], incoming: string[]) {
+    if (local.length === 0) return false;
+    if (incoming.length === 0) return true;
+    if (local[0] === incoming[0]) return false;
+    return local.indexOf(incoming[0]) > 0;
+}
+
 function normalizeStudent(student: Student): Student {
     return {
         ...student,
-        favorites: Array.isArray(student.favorites) ? student.favorites : []
+        favorites: Array.isArray(student.favorites) ? student.favorites : [],
+        recentViews: Array.isArray(student.recentViews) ? student.recentViews : []
     };
 }
 
@@ -49,9 +59,35 @@ export function StudentAuthProvider({ children }: { children: ReactNode }) {
     };
 
     const updateStudent = (nextStudent: Student) => {
-        const normalized = normalizeStudent(nextStudent);
-        writeStoredStudent(normalized);
-        setStudent(normalized);
+        setStudent((current) => {
+            const incoming = normalizeStudent(nextStudent);
+            const merged: Student = current
+                ? {
+                    ...incoming,
+                    recentViews: isNewerRecentViews(current.recentViews, incoming.recentViews)
+                        ? current.recentViews
+                        : incoming.recentViews
+                }
+                : incoming;
+            writeStoredStudent(merged);
+            return merged;
+        });
+    };
+
+    const prependRecentView = (storeId: string) => {
+        let changed = false;
+        setStudent((current) => {
+            if (!current) return current;
+            if (current.recentViews[0] === storeId) return current;
+            changed = true;
+            const next = normalizeStudent({
+                ...current,
+                recentViews: nextRecentViews(current.recentViews, storeId)
+            });
+            writeStoredStudent(next);
+            return next;
+        });
+        return changed;
     };
 
     const logoutStudent = () => {
@@ -60,7 +96,7 @@ export function StudentAuthProvider({ children }: { children: ReactNode }) {
     };
 
     return (
-        <StudentAuthContext.Provider value = {{ student, isStudent: student !== null, loginStudent, updateStudent, logoutStudent }}>
+        <StudentAuthContext.Provider value = {{ student, isStudent: student !== null, loginStudent, updateStudent, prependRecentView, logoutStudent }}>
             { children }
         </StudentAuthContext.Provider>
     )

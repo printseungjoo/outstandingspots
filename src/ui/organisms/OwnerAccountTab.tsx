@@ -738,6 +738,9 @@ export function OwnerAccountTab() {
                     </PhoneCard>
                     <PasswordCard>
                         <CardTitle> {language === 'eng' ? 'Change password' : '비밀번호 변경'} </CardTitle>
+                        <CardHint>
+                            { language === 'eng' ? '8-20 characters including letters and numbers' : '영문자, 숫자 포함 8-20자' }
+                        </CardHint>
                         <PasswordStack>
                             <PasswordField>
                                 <FieldLabel> {language === 'eng' ? 'Current password' : '현재 비밀번호'} </FieldLabel>

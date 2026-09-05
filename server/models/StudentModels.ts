@@ -30,6 +30,13 @@ const studentSchema = new mongoose.Schema(
                 ref: 'Store'
             }],
             default: []
+        },
+        recentViews: {
+            type: [{
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Store'
+            }],
+            default: []
         }
     },
     {

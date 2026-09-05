@@ -1,5 +1,5 @@
 import styled, { css, keyframes } from 'styled-components';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { AllCategories } from '../molecules/AllCategories';
@@ -15,6 +15,7 @@ import { LanguageButtons } from '../molecules/LanguageButtons';
 import { SUCCESS_MESSAGE, useStores } from '../../contexts/StoresContext';
 import { useCategories } from '../../contexts/CategoryContext';
 import { useStudentAuth } from '../../contexts/StudentAuthContext';
+import { addStudentRecentView } from '../../lib/studentsApi';
 
 const MainContentStyled = styled.div`
     position: relative;
@@ -207,7 +208,8 @@ interface MainContentProps {
 export function MainContent({ className, language, onChangeLanguage }: MainContentProps) {
     const { stores, loadingState } = useStores();
     const { categories } = useCategories();
-    const { student, isStudent } = useStudentAuth();
+    const { student, isStudent, updateStudent, prependRecentView } = useStudentAuth();
+    const recentViewQueueRef = useRef(Promise.resolve());
     const [searchParams] = useSearchParams();
     const selectedStoreId = searchParams.get('store');
     
@@ -220,10 +222,28 @@ export function MainContent({ className, language, onChangeLanguage }: MainConte
     const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
     const [isLocating, setIsLocating] = useState<boolean>(false);
 
+    const recordRecentView = useCallback((store: Store) => {
+        if (!isStudent || !student?._id) return;
+        const changed = prependRecentView(store._id);
+        if (!changed) return;
+        const studentMongoId = student._id;
+        recentViewQueueRef.current = recentViewQueueRef.current
+            .catch(() => undefined)
+            .then(() => addStudentRecentView(studentMongoId, store._id))
+            .then(updateStudent)
+            .catch((error) => {
+                console.error(error);
+            });
+    }, [isStudent, student?._id, prependRecentView, updateStudent]);
+
+    const recordRecentViewRef = useRef(recordRecentView);
+    recordRecentViewRef.current = recordRecentView;
+
     const handleSelectStore = useCallback((store: Store) => {
         setSelectedStore(store);
         setIsStoreListOpen(false);
-    }, []);
+        recordRecentView(store);
+    }, [recordRecentView]);
 
     useEffect(() => {
         if (!selectedStoreId || stores.length === 0) return;
@@ -231,6 +251,7 @@ export function MainContent({ className, language, onChangeLanguage }: MainConte
         if (store) {
             setSelectedStore(store);
             setIsStoreListOpen(false);
+            recordRecentViewRef.current(store);
         }
     }, [selectedStoreId, stores]);
 

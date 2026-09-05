@@ -93,7 +93,6 @@ function App() {
                       <Route path = "store/add" element = {<AdminStoreAddTab />} />
                       <Route path = "store/edit/:storeId" element = {<AdminStoreAddTab />} />
                       <Route path = "owners" element = {<AdminOwnersManagementTab />} />
-                      <Route path = "changes" element = { null } />
                     </Route>
                   </Routes>
                 </RoutesArea>

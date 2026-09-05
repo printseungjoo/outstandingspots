@@ -5,4 +5,5 @@ export default interface Student {
     emailVerified: boolean;
     id: string;
     favorites: string[];
+    recentViews: string[];
 }
