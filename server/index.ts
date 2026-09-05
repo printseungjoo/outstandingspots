@@ -13,8 +13,9 @@ import type { StoreInterface } from './types/StoreInterface';
 import type { CategoryInterface } from './types/CategoryInterface';
 import type { OwnerInterface, OwnerStatus } from './types/OwnerInterface';
 import ownerModel from './models/OwnerModels';
+import studentModel from './models/StudentModels';
 import { verifyPhoneVerification, type FirebaseRequest } from './middlewares/verifyPhoneVerification';
-import { getFirebaseAdminAuth } from './firebase/firebaseAdmin';
+import { sendStudentEmailCode, verifyStudentEmailCode, isAllowedSchoolEmail, normalizeSchoolEmail, isSchoolEmailVerified, clearVerifiedSchoolEmail } from './lib/studentEmailOtp';
 
 dotenv.config({ path: path.join(__dirname, '.env') });
 
@@ -186,6 +187,10 @@ function isValidOwnerPassword(password: string) {
     return /^(?=.*[A-Za-z])(?=.*\d).{8,20}$/.test(password);
 }
 
+function isValidOwnerId(id: string) {
+    return /^(?=.*[a-z])(?=.*\d)[a-z0-9]{4,20}$/.test(id);
+}
+
 function verifyOwnerPassword(password: string, stored: string) {
     const [salt, hash] = stored.split(':');
     if (!salt || !hash) {
@@ -227,6 +232,34 @@ function getMongoErrorCode(error: unknown) {
         return (error as { code: unknown }).code;
     }
     return undefined;
+}
+
+function getMongoDuplicateField(error: unknown) {
+    if (!error || typeof error !== 'object') {
+        return undefined;
+    }
+    const keyPattern = (error as { keyPattern?: Record<string, unknown> }).keyPattern;
+    if (keyPattern && typeof keyPattern === 'object') {
+        const field = Object.keys(keyPattern)[0];
+        if (field) {
+            return field;
+        }
+    }
+    const keyValue = (error as { keyValue?: Record<string, unknown> }).keyValue;
+    if (keyValue && typeof keyValue === 'object') {
+        return Object.keys(keyValue)[0];
+    }
+    return undefined;
+}
+
+function toStudentResponse(student: { _id?: unknown; nickname?: string; email?: string; emailVerified?: boolean; id?: string }) {
+    return {
+        _id: student._id != null ? String(student._id) : undefined,
+        nickname: student.nickname,
+        email: student.email,
+        emailVerified: Boolean(student.emailVerified),
+        id: student.id
+    };
 }
 
 let categoriesCache: CategoryInterface[] | null = null;
@@ -533,6 +566,96 @@ app.post('/owners', verifyPhoneVerification, async (req: FirebaseRequest, res: R
             return res.status(409).json({ error: '이미 가입된 계정입니다.' });
         }
         res.status(400).json({ error: 'owners 생성에 실패하였습니다.' });
+    }
+});
+
+app.post('/students/email/code', async (req: Request, res: Response) => {
+    try {
+        const email = typeof req.body?.email === 'string' ? req.body.email : '';
+        await sendStudentEmailCode(email);
+        res.json({ ok: true });
+    } catch (error) {
+        const message = error instanceof Error ? error.message : '';
+        if (message === 'INVALID_SCHOOL_EMAIL') {
+            return res.status(400).json({ error: 'INVALID_SCHOOL_EMAIL' });
+        }
+        if (message === 'TOO_MANY_REQUESTS') {
+            return res.status(429).json({ error: 'TOO_MANY_REQUESTS' });
+        }
+        if (message === 'SMTP_NOT_CONFIGURED') {
+            return res.status(500).json({ error: 'SMTP_NOT_CONFIGURED' });
+        }
+        if (message === 'SMTP_SEND_FAILED') {
+            return res.status(500).json({ error: 'SMTP_SEND_FAILED' });
+        }
+        console.error('학생 이메일 인증번호 전송에 오류가 발생했습니다:', error);
+        res.status(400).json({ error: '인증 메일 전송에 실패했습니다.' });
+    }
+});
+
+app.post('/students/email/verify', async (req: Request, res: Response) => {
+    try {
+        const email = typeof req.body?.email === 'string' ? req.body.email : '';
+        const code = typeof req.body?.code === 'string' ? req.body.code : '';
+        await verifyStudentEmailCode(email, code);
+        res.json({ ok: true });
+    } catch (error) {
+        const message = error instanceof Error ? error.message : '';
+        if (message === 'CODE_NOT_SENT' || message === 'CODE_EXPIRED' || message === 'TOO_MANY_ATTEMPTS' || message === 'INVALID_CODE') {
+            return res.status(400).json({ error: message });
+        }
+        console.error('학생 이메일 인증번호 확인에 오류가 발생했습니다:', error);
+        res.status(400).json({ error: 'INVALID_CODE' });
+    }
+});
+
+app.post('/students', async (req: Request, res: Response) => {
+    try {
+        const nickname = typeof req.body?.nickname === 'string' ? req.body.nickname.trim() : '';
+        const email = typeof req.body?.email === 'string' ? normalizeSchoolEmail(req.body.email) : '';
+        const id = typeof req.body?.id === 'string' ? req.body.id.trim() : '';
+        const password = typeof req.body?.password === 'string' ? req.body.password : '';
+        if (!nickname || !email || !id || !password) {
+            return res.status(400).json({ error: 'MISSING_FIELDS' });
+        }
+        if (!isAllowedSchoolEmail(email)) {
+            return res.status(400).json({ error: 'INVALID_SCHOOL_EMAIL' });
+        }
+        if (!(await isSchoolEmailVerified(email))) {
+            return res.status(400).json({ error: 'EMAIL_NOT_VERIFIED' });
+        }
+        if (!isValidOwnerId(id)) {
+            return res.status(400).json({ error: 'INVALID_ID' });
+        }
+        if (!isValidOwnerPassword(password)) {
+            return res.status(400).json({ error: 'INVALID_PASSWORD' });
+        }
+        const duplicateId = await studentModel.findOne({ id }).select('_id').lean();
+        if (duplicateId) {
+            return res.status(409).json({ error: 'DUPLICATE_ID' });
+        }
+        const duplicateEmail = await studentModel.findOne({ email }).select('_id').lean();
+        if (duplicateEmail) {
+            return res.status(409).json({ error: 'DUPLICATE_EMAIL' });
+        }
+        const created = await studentModel.create({
+            nickname,
+            email,
+            emailVerified: true,
+            id,
+            password: hashOwnerPassword(password)
+        });
+        await clearVerifiedSchoolEmail(email);
+        res.status(201).json(toStudentResponse(created.toObject()));
+    } catch (error) {
+        console.error('students 생성에 오류가 발생했습니다:', error);
+        if (getMongoErrorCode(error) === 11000) {
+            if (getMongoDuplicateField(error) === 'email') {
+                return res.status(409).json({ error: 'DUPLICATE_EMAIL' });
+            }
+            return res.status(409).json({ error: 'DUPLICATE_ID' });
+        }
+        res.status(400).json({ error: 'STUDENT_CREATE_FAILED' });
     }
 });
 

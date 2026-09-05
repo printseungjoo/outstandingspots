@@ -26,6 +26,7 @@ import { AdminStoreManagementTab } from './ui/organisms/AdminStoreManagementTab'
 import { AdminStoreAddTab } from './ui/organisms/AdminStoreAddTab';
 import { AdminOwnersManagementTab } from './ui/organisms/AdminOwnersManagementTab';
 import { StoreSignUpPage } from './ui/molecules/StoreSignUpPage';
+import { StudentSignUpPage } from './ui/molecules/StudentSignUpPage';
 
 const AppLayout = styled.div`
   height: 100%;
@@ -57,6 +58,7 @@ function App() {
                     <Route path = "/" element = {<MapPage />} />
                     <Route path = "/login" element = {<LoginPage />} />
                     <Route path = "/signup/store" element = {<StoreSignUpPage />} />
+                    <Route path = "/signup/student" element = {<StudentSignUpPage />} />
                     <Route path = "/owner" element = {
                       <ProtectedOwnerRoute>
                         <OwnerPage />
