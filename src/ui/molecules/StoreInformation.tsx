@@ -5,7 +5,8 @@ import type Store from '../../types/Store';
 import { NaverMaps } from '../atoms/NaverMaps';
 import type Language from '../../types/Language';
 import { OpenOrNot } from '../atoms/OpenOrNot';
-import { ToBeContinuedAlert } from '../atoms/ToBeContinuedAlert';
+import { useStudentAuth } from '../../contexts/StudentAuthContext';
+import { addStudentFavorite, removeStudentFavorite } from '../../lib/studentsApi';
 
 const StoreInformationStyled = styled.div`
     width: 92%;
@@ -81,7 +82,7 @@ const StoreNameMapDiv = styled.div`
     align-items: center;
 `;
 
-const LikeButton = styled.button`
+const LikeButton = styled.button<{ $favorited?: boolean }>`
     width: 2rem;
     height: 2rem;
     padding: 0;
@@ -89,13 +90,22 @@ const LikeButton = styled.button`
     display: flex;
     align-items: center;
     justify-content: center;
-    background-image: url('/likeLogo.png');
+    background-image: url(${({ $favorited }) => $favorited ? '/coloredLikeLogo.png' : '/likeLogo.png'});
     background-size: 70%;
     background-repeat: no-repeat;
     background-position: center;
+    background-color: white;
     border: 0.3px solid gray;
     border-radius: 50%;
     cursor: pointer;
+    outline: none;
+    box-shadow: none;
+
+    &:focus, &:focus-visible, &:active {
+        outline: none;
+        box-shadow: none;
+        border: 0.3px solid gray;
+    }
 
     @media (max-width: 767px) {
         width: 1.7rem;
@@ -186,6 +196,40 @@ interface StoreInformationProps {
 }
 
 export function StoreInformation({ store, language }: StoreInformationProps) {
+    const { student, isStudent, updateStudent } = useStudentAuth();
+    const isFavorited = Boolean(student?.favorites?.includes(store._id));
+
+    async function handleFavorite() {
+        if (!isStudent || !student?._id) {
+            alert(language === 'eng'
+                ? 'Please log in as a student to use favorites.'
+                : '즐겨찾기는 학생 로그인 후 이용할 수 있습니다.');
+            return;
+        }
+        try {
+            const updated = isFavorited
+                ? await removeStudentFavorite(student._id, store._id)
+                : await addStudentFavorite(student._id, store._id);
+            updateStudent(updated);
+        } catch (error) {
+            console.error(error);
+            const message = error instanceof Error ? error.message : '';
+            if (message === 'HTTP 404' || message.includes('Cannot POST') || message.includes('Cannot DELETE')) {
+                alert(language === 'eng'
+                    ? 'The favorites API is missing. Restart the API server in the server folder.'
+                    : '즐겨찾기 API가 없습니다. server 폴더에서 API 서버를 재시작해 주세요.');
+                return;
+            }
+            if (message === 'Failed to fetch' || message.includes('NetworkError') || message.includes('fetch')) {
+                alert(language === 'eng'
+                    ? 'The API server is not running. Start it with npm run dev in the server folder.'
+                    : 'API 서버가 꺼져 있습니다. server 폴더에서 npm run dev로 시작해 주세요.');
+                return;
+            }
+            alert(language === 'eng' ? 'Failed to update favorites.' : '즐겨찾기 변경에 실패했습니다.');
+        }
+    }
+
     return (
         <StoreInformationStyled>
             <Photos photoSrc = { store.photo } storeAltName = {language === 'eng' ? store.name.eng : store.name.kor} />
@@ -197,7 +241,7 @@ export function StoreInformation({ store, language }: StoreInformationProps) {
                             <NaverMaps storeNaverMap = { store.naverMap }/>
                         </StoreNameMap>
                     </StoreNameMapDiv>
-                    <LikeButton onClick = {() => ToBeContinuedAlert()}/>
+                    <LikeButton type = 'button' $favorited = { isFavorited } onClick = {() => { void handleFavorite(); }} />
                 </StoreInfoFirstLineDiv>
                 <StoreInfoSecondLineDiv>
                     <BranchName>

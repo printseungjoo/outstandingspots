@@ -73,6 +73,8 @@ interface MapProps {
     language: Language;
     showSchoolReturn?: boolean;
     onUserMoveEnd?: () => void;
+    favoriteIds?: string[];
+    favoritesOnly?: boolean;
 }
 
 const DEFAULT_CENTER: [number, number] = [37.379995, 126.662810];
@@ -135,7 +137,7 @@ function MapUpdater({ selectedStore, userLocation, onUserMoveEnd }: MapUpdaterPr
 }
 
 export function Map({ className, onSelectStore, selectedCategory, selectedStore, stores,
-    userLocation, language, showSchoolReturn, onUserMoveEnd}: MapProps) {
+    userLocation, language, showSchoolReturn, onUserMoveEnd, favoriteIds, favoritesOnly }: MapProps) {
     const userLocationIcon = useMemo(() => L.divIcon({
         className: 'user-location-icon',
         html: `
@@ -154,7 +156,8 @@ export function Map({ className, onSelectStore, selectedCategory, selectedStore,
             <MapContainer center = { DEFAULT_CENTER } zoom = { DEFAULT_ZOOM } scrollWheelZoom = { true } style = {{ width: '100%', height: '100%' }}>
                 <MapUpdater selectedStore = { selectedStore } userLocation = { userLocation } onUserMoveEnd = { onUserMoveEnd } />
                 <TileLayer url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' />
-                <Marker onSelectStore = { onSelectStore } selectedCategory = { selectedCategory } selectedStore = { selectedStore } stores = { stores } />
+                <Marker onSelectStore = { onSelectStore } selectedCategory = { selectedCategory } selectedStore = { selectedStore } stores = { stores }
+                    favoriteIds = { favoriteIds } favoritesOnly = { favoritesOnly } />
                 {showSchoolReturn && userLocation && (
                     <LeafletMarker position = { userLocation } icon = { userLocationIcon } zIndexOffset = { 1000 } />
                 )}

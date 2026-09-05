@@ -8,6 +8,7 @@ import { LanguageButtons } from '../molecules/LanguageButtons';
 import { ToBeContinuedAlert } from '../atoms/ToBeContinuedAlert';
 import { useAdminAuth } from '../../contexts/AdminAuthContext';
 import { useOwnerAuth } from '../../contexts/OwnerAuthContext';
+import { useStudentAuth } from '../../contexts/StudentAuthContext';
 
 const HeaderStyled = styled.div`
     width: 100%;
@@ -70,9 +71,10 @@ export function Header({ language, onChangeLanguage }: HeaderProps) {
     const { pathname } = useLocation();
     const { isAdmin } = useAdminAuth();
     const { isOwner } = useOwnerAuth();
+    const { isStudent } = useStudentAuth();
     
-    const myPageLink = isAdmin ? '/admin' : isOwner ? '/owner' : '/login';
-    const myPageClicked = pathname === '/login' || pathname.startsWith('/admin') || pathname.startsWith('/owner');
+    const myPageLink = isAdmin ? '/admin' : isOwner ? '/owner' : isStudent ? '/student' : '/login';
+    const myPageClicked = pathname === '/login' || pathname.startsWith('/admin') || pathname.startsWith('/owner') || pathname.startsWith('/student');
 
     return(
         <HeaderStyled>

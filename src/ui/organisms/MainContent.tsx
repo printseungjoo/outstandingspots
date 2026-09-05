@@ -1,5 +1,6 @@
 import styled, { css, keyframes } from 'styled-components';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import { AllCategories } from '../molecules/AllCategories';
 import { OptionGroups } from '../molecules/OptionGroups';
@@ -13,6 +14,7 @@ import { SearchBar } from '../molecules/SearchBar';
 import { LanguageButtons } from '../molecules/LanguageButtons';
 import { SUCCESS_MESSAGE, useStores } from '../../contexts/StoresContext';
 import { useCategories } from '../../contexts/CategoryContext';
+import { useStudentAuth } from '../../contexts/StudentAuthContext';
 
 const MainContentStyled = styled.div`
     position: relative;
@@ -205,9 +207,13 @@ interface MainContentProps {
 export function MainContent({ className, language, onChangeLanguage }: MainContentProps) {
     const { stores, loadingState } = useStores();
     const { categories } = useCategories();
+    const { student, isStudent } = useStudentAuth();
+    const [searchParams] = useSearchParams();
+    const selectedStoreId = searchParams.get('store');
     
     const [selectedStore, setSelectedStore] = useState<Store | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
+    const [favoritesOnly, setFavoritesOnly] = useState(false);
     const [isWebsiteInfoOpen, setIsWebsiteInfoOpen] = useState<boolean>(false);
     const [isStoreListOpen, setIsStoreListOpen] = useState<boolean>(false);
     const [isLoadingVisible, setIsLoadingVisible] = useState(true);
@@ -218,6 +224,30 @@ export function MainContent({ className, language, onChangeLanguage }: MainConte
         setSelectedStore(store);
         setIsStoreListOpen(false);
     }, []);
+
+    useEffect(() => {
+        if (!selectedStoreId || stores.length === 0) return;
+        const store = stores.find((item) => item._id === selectedStoreId);
+        if (store) {
+            setSelectedStore(store);
+            setIsStoreListOpen(false);
+        }
+    }, [selectedStoreId, stores]);
+
+    const handleToggleFavorites = useCallback(() => {
+        if (!favoritesOnly && !isStudent) {
+            alert(language === 'eng'
+                ? 'Please log in as a student to see favorite stores.'
+                : '즐겨찾기한 매장은 학생 로그인 후 볼 수 있습니다.');
+            return;
+        }
+        setFavoritesOnly((current) => !current);
+        setSelectedStore((current) => {
+            if (!current || favoritesOnly) return current;
+            const favoriteIds = student?.favorites ?? [];
+            return favoriteIds.includes(current._id) ? current : null;
+        });
+    }, [favoritesOnly, isStudent, language, student?.favorites]);
 
     const handleMyLocation = useCallback(() => {
         setIsLocating(true);
@@ -249,9 +279,11 @@ export function MainContent({ className, language, onChangeLanguage }: MainConte
                 selectedStore = { selectedStore } stores = { stores } userLocation = { userLocation }
                 language = { language } onUserMoveEnd = { handleUserMoveEnd }
                 showSchoolReturn = { Boolean(userLocation) && !isLocating }
+                favoriteIds = { student?.favorites ?? [] } favoritesOnly = { favoritesOnly }
             />
             <UpperContentDiv>
-                <OptionGroupsPlus onOpenWebsiteInfo = {() => setIsWebsiteInfoOpen(true)} onMyLocation = { handleMyLocation } />
+                <OptionGroupsPlus onOpenWebsiteInfo = {() => setIsWebsiteInfoOpen(true)} onMyLocation = { handleMyLocation }
+                    onToggleFavorites = { handleToggleFavorites } favoritesOnly = { favoritesOnly } />
                 <SearchBar language = { language } stores = { stores } onSelectStore = { handleSelectStore } engPlaceholder = 'Search by store name or theme.' korPlaceholder = '매장 이름 혹은 테마로 검색해보세요.'/>
                 <LanguageButtonsPlus language = { language } onChangeLanguage = { onChangeLanguage } />
             </UpperContentDiv>

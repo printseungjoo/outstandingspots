@@ -252,13 +252,15 @@ function getMongoDuplicateField(error: unknown) {
     return undefined;
 }
 
-function toStudentResponse(student: { _id?: unknown; nickname?: string; email?: string; emailVerified?: boolean; id?: string }) {
+function toStudentResponse(student: { _id?: unknown; nickname?: string; email?: string; emailVerified?: boolean; id?: string; favorites?: unknown }) {
+    const favorites = Array.isArray(student.favorites) ? student.favorites.map((item) => String(item)) : [];
     return {
         _id: student._id != null ? String(student._id) : undefined,
         nickname: student.nickname,
         email: student.email,
         emailVerified: Boolean(student.emailVerified),
-        id: student.id
+        id: student.id,
+        favorites
     };
 }
 
@@ -566,6 +568,66 @@ app.post('/owners', verifyPhoneVerification, async (req: FirebaseRequest, res: R
             return res.status(409).json({ error: '이미 가입된 계정입니다.' });
         }
         res.status(400).json({ error: 'owners 생성에 실패하였습니다.' });
+    }
+});
+
+app.post('/students/login', async (req: Request, res: Response) => {
+    try {
+        const id = typeof req.body?.id === 'string' ? req.body.id.trim() : '';
+        const password = typeof req.body?.password === 'string' ? req.body.password : '';
+        if (!id || !password) {
+            return res.status(400).json({ error: 'MISSING_FIELDS' });
+        }
+        const student = await studentModel.findOne({ id }).lean();
+        if (!student || typeof student.password !== 'string' || !verifyOwnerPassword(password, student.password)) {
+            return res.status(401).json({ error: 'INVALID_CREDENTIALS' });
+        }
+        res.json(toStudentResponse(student));
+    } catch (error) {
+        console.error('students 로그인에 오류가 발생했습니다:', error);
+        res.status(400).json({ error: 'STUDENT_LOGIN_FAILED' });
+    }
+});
+
+app.post('/students/:id/favorites', async (req: Request, res: Response) => {
+    try {
+        const storeId = typeof req.body?.storeId === 'string' ? req.body.storeId.trim() : '';
+        if (!storeId) {
+            return res.status(400).json({ error: 'MISSING_FIELDS' });
+        }
+        const store = await storeModel.findById(storeId).select('_id').lean();
+        if (!store) {
+            return res.status(404).json({ error: 'STORE_NOT_FOUND' });
+        }
+        const updated = await studentModel.findByIdAndUpdate(
+            req.params.id,
+            { $addToSet: { favorites: store._id } },
+            { new: true }
+        ).lean();
+        if (!updated) {
+            return res.status(404).json({ error: 'STUDENT_NOT_FOUND' });
+        }
+        res.json(toStudentResponse(updated));
+    } catch (error) {
+        console.error('학생 즐겨찾기 추가에 오류가 발생했습니다:', error);
+        res.status(400).json({ error: 'FAVORITE_ADD_FAILED' });
+    }
+});
+
+app.delete('/students/:id/favorites/:storeId', async (req: Request, res: Response) => {
+    try {
+        const updated = await studentModel.findByIdAndUpdate(
+            req.params.id,
+            { $pull: { favorites: req.params.storeId } },
+            { new: true }
+        ).lean();
+        if (!updated) {
+            return res.status(404).json({ error: 'STUDENT_NOT_FOUND' });
+        }
+        res.json(toStudentResponse(updated));
+    } catch (error) {
+        console.error('학생 즐겨찾기 삭제에 오류가 발생했습니다:', error);
+        res.status(400).json({ error: 'FAVORITE_REMOVE_FAILED' });
     }
 });
 

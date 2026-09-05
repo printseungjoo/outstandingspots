@@ -23,6 +23,13 @@ const studentSchema = new mongoose.Schema(
         password: {
             type: String,
             required: true
+        },
+        favorites: {
+            type: [{
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Store'
+            }],
+            default: []
         }
     },
     {

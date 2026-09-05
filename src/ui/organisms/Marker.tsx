@@ -20,9 +20,11 @@ interface MarkerProps {
     selectedCategory?: string[];
     selectedStore?: Store | null;
     stores?: Store[];
+    favoriteIds?: string[];
+    favoritesOnly?: boolean;
 }
 
-export function Marker({onSelectStore, selectedCategory = [], selectedStore, stores = []}: MarkerProps) {
+export function Marker({onSelectStore, selectedCategory = [], selectedStore, stores = [], favoriteIds = [], favoritesOnly = false}: MarkerProps) {
     const onSelectStoreRef = useRef<typeof onSelectStore>(onSelectStore);
     
     useEffect(() => {
@@ -30,14 +32,15 @@ export function Marker({onSelectStore, selectedCategory = [], selectedStore, sto
     }, [onSelectStore]);
 
     const visibleStores = useMemo(() => {
+        const scopedStores = favoritesOnly ? stores.filter((store) => favoriteIds.includes(store._id)) : stores;
         if (selectedStore) {
-            return stores.filter((store) => store._id === selectedStore._id)
+            return scopedStores.filter((store) => store._id === selectedStore._id)
         }
         if (selectedCategory.length === 0) {
-            return stores
+            return scopedStores
         }
-        return stores.filter((store) => selectedCategory.includes(String(store.category.kor)))
-    }, [stores, selectedCategory, selectedStore])
+        return scopedStores.filter((store) => selectedCategory.includes(String(store.category.kor)))
+    }, [stores, selectedCategory, selectedStore, favoriteIds, favoritesOnly])
 
     return (
         <>

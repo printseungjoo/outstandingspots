@@ -13,6 +13,7 @@ import { LoginPage } from './ui/templates/LoginPage';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { AdminAuthProvider } from './contexts/AdminAuthContext';
 import { OwnerAuthProvider } from './contexts/OwnerAuthContext';
+import { StudentAuthProvider } from './contexts/StudentAuthContext';
 import { StoresProvider } from './contexts/StoresContext';
 import { CategoryProvider } from './contexts/CategoryContext';
 import { AdminPage } from './ui/templates/AdminPage';
@@ -22,6 +23,11 @@ import { OwnerStoreEditTab } from './ui/organisms/OwnerStoreEditTab';
 import { OwnerAccountTab } from './ui/organisms/OwnerAccountTab';
 import { ProtectedAdminRoute } from './ui/atoms/ProtectedAdminRoute';
 import { ProtectedOwnerRoute } from './ui/atoms/ProtectedOwnerRoute';
+import { ProtectedStudentRoute } from './ui/atoms/ProtectedStudentRoute';
+import { StudentPage } from './ui/templates/StudentPage';
+import { StudentFavoritesTab } from './ui/organisms/StudentFavoritesTab';
+import { StudentRecentTab } from './ui/organisms/StudentRecentTab';
+import { StudentAccountTab } from './ui/organisms/StudentAccountTab';
 import { AdminStoreManagementTab } from './ui/organisms/AdminStoreManagementTab';
 import { AdminStoreAddTab } from './ui/organisms/AdminStoreAddTab';
 import { AdminOwnersManagementTab } from './ui/organisms/AdminOwnersManagementTab';
@@ -49,6 +55,7 @@ function App() {
       <LanguageProvider language = { language } setLanguage = { setLanguage }>
         <AdminAuthProvider>
           <OwnerAuthProvider>
+          <StudentAuthProvider>
             <StoresProvider>
             <CategoryProvider>
               <AppLayout>
@@ -59,6 +66,15 @@ function App() {
                     <Route path = "/login" element = {<LoginPage />} />
                     <Route path = "/signup/store" element = {<StoreSignUpPage />} />
                     <Route path = "/signup/student" element = {<StudentSignUpPage />} />
+                    <Route path = "/student" element = {
+                      <ProtectedStudentRoute>
+                        <StudentPage />
+                      </ProtectedStudentRoute>
+                    }>
+                      <Route index element = {<StudentFavoritesTab />} />
+                      <Route path = "recent" element = {<StudentRecentTab />} />
+                      <Route path = "account" element = {<StudentAccountTab />} />
+                    </Route>
                     <Route path = "/owner" element = {
                       <ProtectedOwnerRoute>
                         <OwnerPage />
@@ -85,6 +101,7 @@ function App() {
               </AppLayout>
             </CategoryProvider>
             </StoresProvider>
+          </StudentAuthProvider>
           </OwnerAuthProvider>
         </AdminAuthProvider>
       </LanguageProvider>
