@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { useState } from 'react';
 
-import { AdminStoresManagementTable } from '../molecules/AdminStoresManagementTable';
+import { StoresTable } from '../molecules/StoresTable';
 import { AdminStoreFilterBar } from '../molecules/AdminStoreFilterBar';
 import { useStores } from '../../contexts/StoresContext';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -58,7 +58,7 @@ export function StoresPage() {
                 <AdminStoreFilterBar searchValue = { searchValue } onChangeSearchValue = { setSearchValue }
                     selectedCategory = { selectedCategory } onChangeSelectedCategory = { setSelectedCategory }
                     showAddButton = { false } />
-                <AdminStoresManagementTable stores = { sortedStores } showActions = { false } />
+                <StoresTable stores = { sortedStores } />
             </StoresContent>
         </StoresPageStyled>
     )
