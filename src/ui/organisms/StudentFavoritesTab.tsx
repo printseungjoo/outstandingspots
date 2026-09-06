@@ -49,6 +49,11 @@ export function StudentFavoritesTab() {
         const theme = store.theme[language].toLowerCase();
         return matchesCategory && (name.includes(query) || theme.includes(query));
     });
+    const sortedStores = [...filteredStores].sort((a, b) => {
+        const aName = language === 'eng' ? `${a.name.eng} ${a.branch.eng}` : `${a.name.kor} ${a.branch.kor}`;
+        const bName = language === 'eng' ? `${b.name.eng} ${b.branch.eng}` : `${b.name.kor} ${b.branch.kor}`;
+        return language === 'eng' ? aName.localeCompare(bName, 'en') : aName.localeCompare(bName, 'ko');
+    });
 
     return(
         <StudentFavoritesTabStyled>
@@ -60,7 +65,7 @@ export function StudentFavoritesTab() {
                 ? <EmptyMessage> { language === 'eng' ? 'There are no favorite stores.' : '즐겨찾기한 매장이 없습니다' } </EmptyMessage>
                 : filteredStores.length === 0
                     ? <EmptyMessage> { language === 'eng' ? 'There are no stores matching this filter.' : '해당 필터링에 맞는 매장이 없습니다.' } </EmptyMessage>
-                    : <StudentFavoritesTable stores = { filteredStores } />}
+                    : <StudentFavoritesTable stores = { sortedStores } />}
         </StudentFavoritesTabStyled>
     )
 }

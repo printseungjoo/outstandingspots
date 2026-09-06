@@ -34,6 +34,7 @@ import { AdminStoreAddTab } from './ui/organisms/AdminStoreAddTab';
 import { AdminOwnersManagementTab } from './ui/organisms/AdminOwnersManagementTab';
 import { StoreSignUpPage } from './ui/molecules/StoreSignUpPage';
 import { StudentSignUpPage } from './ui/molecules/StudentSignUpPage';
+import { StoresPage } from './ui/templates/StoresPage';
 
 const AppLayout = styled.div`
   height: 100%;
@@ -64,6 +65,7 @@ function App() {
                 <RoutesArea>
                   <Routes>
                     <Route path = "/" element = {<MapPage />} />
+                    <Route path = "/stores" element = {<StoresPage />} />
                     <Route path = "/login" element = {<LoginPage />} />
                     <Route path = "/signup/store" element = {<StoreSignUpPage />} />
                     <Route path = "/signup/student" element = {<StudentSignUpPage />} />

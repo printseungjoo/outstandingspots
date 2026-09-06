@@ -2,13 +2,22 @@ import styled from 'styled-components';
 import { useState } from 'react';
 
 import { AdminStoresManagementTable } from '../molecules/AdminStoresManagementTable';
-import { AdminStoreManagementTop } from '../molecules/AdminStoreManagementTop';
 import { AdminStoreFilterBar } from '../molecules/AdminStoreFilterBar';
 import { useStores } from '../../contexts/StoresContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import type Store from '../../types/Store';
 
-const AdminStoreManagementTabStyled = styled.div`
+const StoresPageStyled = styled.div`
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+
+    @media (max-width: 1024px) {
+        scrollbar-gutter: stable both-edges;
+    }
+`;
+
+const StoresContent = styled.div`
     width: 100%;
     height: 100%;
     padding: 0.8rem 1.5rem;
@@ -23,10 +32,9 @@ const AdminStoreManagementTabStyled = styled.div`
     }
 `;
 
-export function AdminStoreManagementTab() {
+export function StoresPage() {
     const [searchValue, setSearchValue] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
-
     const { stores } = useStores();
     const { language } = useLanguage();
 
@@ -39,17 +47,19 @@ export function AdminStoreManagementTab() {
         return matchesCategory && (name.includes(query) || theme.includes(query));
     });
     const sortedStores = [...filteredStores].sort((a, b) => {
-        const aName = language === 'eng' ? `${a.name.eng} ${a.branch.eng}` : `${a.name.kor} ${a.branch.kor}`;
-        const bName = language === 'eng' ? `${b.name.eng} ${b.branch.eng}` : `${b.name.kor} ${b.branch.kor}`;
+        const aName = language === 'eng' ? a.name.eng : a.name.kor;
+        const bName = language === 'eng' ? b.name.eng : b.name.kor;
         return language === 'eng' ? aName.localeCompare(bName, 'en') : aName.localeCompare(bName, 'ko');
     });
 
     return(
-        <AdminStoreManagementTabStyled>
-            <AdminStoreManagementTop />
-            <AdminStoreFilterBar searchValue = { searchValue } onChangeSearchValue = { setSearchValue }
-                selectedCategory = { selectedCategory } onChangeSelectedCategory = { setSelectedCategory } />
-            <AdminStoresManagementTable stores = { sortedStores } />
-        </AdminStoreManagementTabStyled>
+        <StoresPageStyled>
+            <StoresContent>
+                <AdminStoreFilterBar searchValue = { searchValue } onChangeSearchValue = { setSearchValue }
+                    selectedCategory = { selectedCategory } onChangeSelectedCategory = { setSelectedCategory }
+                    showAddButton = { false } />
+                <AdminStoresManagementTable stores = { sortedStores } showActions = { false } />
+            </StoresContent>
+        </StoresPageStyled>
     )
 }

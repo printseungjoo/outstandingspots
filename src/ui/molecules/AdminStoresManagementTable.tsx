@@ -52,20 +52,20 @@ const StorePhoto = styled.img`
     margin: 0 auto;
 `;
 
-const PhotoTh = styled(Th)`
-    width: 4.5rem;
+const PhotoTh = styled(Th)<{ $equal?: boolean }>`
+    width: ${({ $equal }) => $equal ? '10rem' : '4.5rem'};
 `;
 
-const NameTh = styled(Th)`
-    width: 24%;
+const NameTh = styled(Th)<{ $wide?: boolean }>`
+    ${({ $wide }) => $wide ? '' : 'width: 24%;'}
 `;
 
-const ThemeTh = styled(Th)`
-    width: 18%;
+const ThemeTh = styled(Th)<{ $wide?: boolean }>`
+    ${({ $wide }) => $wide ? '' : 'width: 18%;'}
 `;
 
-const DiscountTh = styled(Th)`
-    width: 34%;
+const DiscountTh = styled(Th)<{ $wide?: boolean }>`
+    ${({ $wide }) => $wide ? '' : 'width: 34%;'}
 `;
 
 const ActionTh = styled(Th)`
@@ -166,9 +166,10 @@ const CardActionButton = styled(ActionButton)`
 
 interface AdminStoresManagementTableProps {
     stores: Store[];
+    showActions?: boolean;
 }
 
-export function AdminStoresManagementTable({ stores }: AdminStoresManagementTableProps) {
+export function AdminStoresManagementTable({ stores, showActions = true }: AdminStoresManagementTableProps) {
     const { language } = useLanguage();
     const navigate = useNavigate();
     const { deleteStore } = useStores();
@@ -189,11 +190,11 @@ export function AdminStoresManagementTable({ stores }: AdminStoresManagementTabl
                 <Table>
                     <thead>
                         <tr>
-                            <PhotoTh> { language === 'eng' ? 'Photo' : '사진' } </PhotoTh>
-                            <NameTh> { language === 'eng' ? 'Name' : '이름' } </NameTh>
-                            <ThemeTh> { language === 'eng' ? 'Theme' : '테마' } </ThemeTh>
-                            <DiscountTh> { language === 'eng' ? 'Discount' : '할인' } </DiscountTh>
-                            <ActionTh> { language === 'eng' ? 'Actions' : '관리' } </ActionTh>
+                            <PhotoTh $equal = { !showActions }> { language === 'eng' ? 'Photo' : '사진' } </PhotoTh>
+                            <NameTh $wide = { !showActions }> { language === 'eng' ? 'Name' : '이름' } </NameTh>
+                            <ThemeTh $wide = { !showActions }> { language === 'eng' ? 'Theme' : '테마' } </ThemeTh>
+                            <DiscountTh $wide = { !showActions }> { language === 'eng' ? 'Discount' : '할인' } </DiscountTh>
+                            {showActions ? <ActionTh> { language === 'eng' ? 'Actions' : '관리' } </ActionTh> : null}
                         </tr>
                     </thead>
                     <tbody>
@@ -205,14 +206,16 @@ export function AdminStoresManagementTable({ stores }: AdminStoresManagementTabl
                                 <Td> { language === 'eng' ? `${store.name.eng} ${store.branch.eng}` : `${store.name.kor} ${store.branch.kor}` } </Td>
                                 <Td> { language === 'eng' ? store.theme?.eng : store.theme?.kor } </Td>
                                 <Td> { language === 'eng' ? store.discount.eng : store.discount.kor } </Td>
-                                <Td>
-                                    <ActionButton type = 'button' onClick = {() => navigate(`/admin/store/edit/${store._id}`)}>
-                                        { language === 'eng' ? 'Edit' : '수정' }
-                                    </ActionButton>
-                                    <ActionButton type = 'button' onClick = {() => { void handleDelete(store); }}>
-                                        { language === 'eng' ? 'Delete' : '삭제' }
-                                    </ActionButton>
-                                </Td>
+                                {showActions ? (
+                                    <Td>
+                                        <ActionButton type = 'button' onClick = {() => navigate(`/admin/store/edit/${store._id}`)}>
+                                            { language === 'eng' ? 'Edit' : '수정' }
+                                        </ActionButton>
+                                        <ActionButton type = 'button' onClick = {() => { void handleDelete(store); }}>
+                                            { language === 'eng' ? 'Delete' : '삭제' }
+                                        </ActionButton>
+                                    </Td>
+                                ) : null}
                             </tr>
                         ))}
                     </tbody>
@@ -229,14 +232,16 @@ export function AdminStoresManagementTable({ stores }: AdminStoresManagementTabl
                                 <CardMeta> { language === 'eng' ? 'Discount' : '할인' }: { language === 'eng' ? store.discount.eng : store.discount.kor } </CardMeta>
                             </CardInfo>
                         </CardTop>
-                        <CardActions>
-                            <CardActionButton type = 'button' onClick = {() => navigate(`/admin/store/edit/${store._id}`)}>
-                                { language === 'eng' ? 'Edit' : '수정' }
-                            </CardActionButton>
-                            <CardActionButton type = 'button' onClick = {() => { void handleDelete(store); }}>
-                                { language === 'eng' ? 'Delete' : '삭제' }
-                            </CardActionButton>
-                        </CardActions>
+                        {showActions ? (
+                            <CardActions>
+                                <CardActionButton type = 'button' onClick = {() => navigate(`/admin/store/edit/${store._id}`)}>
+                                    { language === 'eng' ? 'Edit' : '수정' }
+                                </CardActionButton>
+                                <CardActionButton type = 'button' onClick = {() => { void handleDelete(store); }}>
+                                    { language === 'eng' ? 'Delete' : '삭제' }
+                                </CardActionButton>
+                            </CardActions>
+                        ) : null}
                     </StoreCard>
                 ))}
             </CardList>

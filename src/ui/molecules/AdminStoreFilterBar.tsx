@@ -60,9 +60,10 @@ interface AdminStoreFilterBarProps {
     onChangeSearchValue: (value: string) => void;
     selectedCategory: string;
     onChangeSelectedCategory: (value: string) => void;
+    showAddButton?: boolean;
 }
 
-export function AdminStoreFilterBar({ searchValue, onChangeSearchValue, selectedCategory, onChangeSelectedCategory }: AdminStoreFilterBarProps) {
+export function AdminStoreFilterBar({ searchValue, onChangeSearchValue, selectedCategory, onChangeSelectedCategory, showAddButton = true }: AdminStoreFilterBarProps) {
     const { language } = useLanguage();
     const navigate = useNavigate();
 
@@ -72,9 +73,11 @@ export function AdminStoreFilterBar({ searchValue, onChangeSearchValue, selected
             <StoresNumber />
             <CategoryAddRow>
                 <AdminStoreSearchByCategory selectedCategory = { selectedCategory } onChangeSelectedCategory = { onChangeSelectedCategory } />
-                <ResponsiveAddButton type = 'button' onClick = {() => navigate('/admin/store/add')}>
-                    + { language === 'eng' ? 'Add Store' : '매장 추가' }
-                </ResponsiveAddButton>
+                {showAddButton ? (
+                    <ResponsiveAddButton type = 'button' onClick = {() => navigate('/admin/store/add')}>
+                        + { language === 'eng' ? 'Add Store' : '매장 추가' }
+                    </ResponsiveAddButton>
+                ) : null}
             </CategoryAddRow>
         </AdminStoreFilterBarStyled>
     )

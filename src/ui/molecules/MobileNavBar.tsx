@@ -1,7 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { ToBeContinuedAlert } from '../atoms/ToBeContinuedAlert';
 import { useAdminAuth } from '../../contexts/AdminAuthContext';
 import { useOwnerAuth } from '../../contexts/OwnerAuthContext';
 import { useStudentAuth } from '../../contexts/StudentAuthContext';
@@ -71,11 +70,13 @@ export function MobileNavBar() {
     const { isAdmin } = useAdminAuth();
     const { isOwner } = useOwnerAuth();
     const { isStudent } = useStudentAuth();
-    
+
     const myPageLink = isAdmin ? '/admin' : isOwner ? '/owner' : isStudent ? '/student' : '/login';
     const myPageClicked = pathname === '/login' || pathname.startsWith('/signup') || pathname.startsWith('/admin') || pathname.startsWith('/owner') || pathname.startsWith('/student');
     const myPageIcon = myPageClicked ? '/coloredMyPageIcon.png' : '/myPageIcon.png';
     const mapIcon = pathname === '/' ? '/clickedMapPageIcon.png' : '/mapPageIcon.png';
+    const storesClicked = pathname.startsWith('/stores');
+    const storesIcon = storesClicked ? '/coloredStoreIcon.png' : '/storePageIcon.png';
 
     return(
         <MobileNavBarDiv>
@@ -87,8 +88,8 @@ export function MobileNavBar() {
                     <NavLi>
                         <Link to = '/'> <Icon src = { mapIcon } alt = 'Map page icon'/> </Link>
                     </NavLi>
-                    <NavLi onClick = { ToBeContinuedAlert }>
-                        <Link to = '/'> <Icon src = '/storePageIcon.png' alt = 'Store page icon'/> </Link>
+                    <NavLi>
+                        <Link to = '/stores'> <Icon src = { storesIcon } alt = 'Store page icon'/> </Link>
                     </NavLi>
                 </NavUl>
             </nav>
