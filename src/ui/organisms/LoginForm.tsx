@@ -21,15 +21,33 @@ const LoginFormStyled = styled.div`
     padding: 3rem 0;
     flex-shrink: 0;
     z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    @media (max-width: 1024px) {
+        width: 100%;
+        max-width: 22rem;
+        height: auto;
+        padding: 1.6rem 0 1.3rem;
+    }
 `;
 
 const ColoredMyPageIcon = styled.img`
     width: 3vw;
     height: 6vh;
+    min-width: 2.5rem;
+    min-height: 2.5rem;
     border-radius: 50%;
     border: 1px solid #D1CDF4;
     padding: 0.5rem;
     box-shadow: 0px 0px 20px 0px #D1CDF4;
+    box-sizing: border-box;
+
+    @media (max-width: 1024px) {
+        width: 3rem;
+        height: 3rem;
+    }
 `;
 
 const BoldText = styled.p`
@@ -37,21 +55,34 @@ const BoldText = styled.p`
     font-weight: bold;
     color: #2E2A63;
     margin: 0;
+    text-align: center;
+
+    @media (max-width: 767px) {
+        font-size: 1.2rem;
+    }
 `;
 
 const LoginDiv = styled.div`
+    width: 100%;
+    box-sizing: border-box;
     padding: 2rem 2.5rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 1rem;
     margin-top: 0.5rem;
+
+    @media (max-width: 767px) {
+        padding: 1rem 1.2rem;
+    }
 `;
 
 const OnlyText = styled.p`
     font-size: 0.8rem;
     color: #2E2A63;
     margin: 0;
+    padding: 0 1rem;
+    text-align: center;
 `;
 
 const BlackThinLine = styled.div`

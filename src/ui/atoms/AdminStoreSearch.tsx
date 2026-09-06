@@ -10,12 +10,21 @@ const AdminStoreSearchStyled = styled.div`
     gap: 0.5rem;
     padding: 0 1rem;
     box-sizing: border-box;
+
+    @media (max-width: 1024px) {
+        padding: 0;
+        align-items: stretch;
+    }
 `;
 
 const Text = styled.p`
     color: black;
     font-size: 0.8rem;
     margin: 0;
+
+    @media (max-width: 1024px) {
+        display: none;
+    }
 `;
 
 const SearchDiv = styled.div`

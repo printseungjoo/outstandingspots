@@ -6,6 +6,10 @@ const OwnerStoreViewTopStyled = styled.div`
     width: 100%;
     display: flex;
     justify-content: space-between;
+
+    @media (max-width: 1024px) {
+        display: none;
+    }
 `;
 
 const TitleDiv = styled.div`

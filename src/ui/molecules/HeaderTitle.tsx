@@ -36,19 +36,34 @@ const SubText = styled.p`
     color: gray;
     margin: 0;
     font-size: 0.75rem;
+    text-align: left;
+`;
+
+const MobileBreak = styled.br<{ $show: boolean }>`
+    display: none;
+
+    @media (max-width: 767px) {
+        display: ${({ $show }) => $show ? 'block' : 'none'};
+    }
 `;
 
 interface HeaderTitleProps {
     language: Language;
+    breakSubtitleOnMobile?: boolean;
 }
 
-export function HeaderTitle({ language }: HeaderTitleProps) {
+export function HeaderTitle({ language, breakSubtitleOnMobile = false }: HeaderTitleProps) {
     return(
         <HeaderTitleStyled onClick = {() => window.location.reload()}>
             <HeaderIcon src = '/headerIcon.png' alt = 'Header icon' />
             <HeaderTitleDiv>
                 <BoldText> Outstanding Spots </BoldText>
-                <SubText> {language === 'eng' ? 'SUNY Korea Nearby Partner Stores Info' : 'SUNY Korea 주변 제휴 매장 안내 서비스'} </SubText>
+                <SubText>
+                    { language === 'eng' ? 'SUNY Korea Nearby Partner Stores' : 'SUNY Korea 주변 제휴 매장' }
+                    {' '}
+                    <MobileBreak $show = { breakSubtitleOnMobile } />
+                    { language === 'eng' ? 'Info' : '안내 서비스' }
+                </SubText>
             </HeaderTitleDiv>
         </HeaderTitleStyled>
     )

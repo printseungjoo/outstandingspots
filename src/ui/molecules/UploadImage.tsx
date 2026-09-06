@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import styled from 'styled-components';
 
@@ -53,6 +53,12 @@ const PreviewImg = styled.img`
     object-fit: contain;
 `;
 
+const DESKTOP_VIEWPORT_WIDTH = 1440;
+const DESKTOP_VIEWPORT_HEIGHT = 900;
+const STORE_PHOTO_ASPECT = (0.25 * DESKTOP_VIEWPORT_WIDTH * 0.92 * 0.90) / (0.20 * DESKTOP_VIEWPORT_HEIGHT);
+const STORE_PHOTO_WIDTH = 464;
+const STORE_PHOTO_HEIGHT = Math.round(STORE_PHOTO_WIDTH / STORE_PHOTO_ASPECT);
+
 interface UploadImageProps {
     onChangePhoto: (blob: Blob | null) => void;
     initialPreviewUrl?: string;
@@ -62,7 +68,6 @@ export function UploadImage({ onChangePhoto, initialPreviewUrl }: UploadImagePro
     const { language } = useLanguage();
 
     const [previewUrl, setPreviewUrl] = useState<string | null>(initialPreviewUrl ?? null);
-    const boxRef = useRef<HTMLLabelElement>(null);
 
     useEffect(() => {
         setPreviewUrl(initialPreviewUrl ?? null);
@@ -87,8 +92,8 @@ export function UploadImage({ onChangePhoto, initialPreviewUrl }: UploadImagePro
             const objectUrl = URL.createObjectURL(file);
             img.src = objectUrl;
             img.onload = () => {
-                const width = boxRef.current?.clientWidth || img.naturalWidth;
-                const height = boxRef.current?.clientHeight || img.naturalHeight;
+                const width = STORE_PHOTO_WIDTH;
+                const height = STORE_PHOTO_HEIGHT;
                 const canvas = document.createElement('canvas');
                 canvas.width = width;
                 canvas.height = height;
@@ -125,7 +130,7 @@ export function UploadImage({ onChangePhoto, initialPreviewUrl }: UploadImagePro
                 <Title> {language === 'eng' ? 'Store Photo' : '매장 사진'} </Title>
             </TitleDiv>
             <ImageFileInput type = 'file' accept = 'image/*' id = 'imageFileInput' onChange = { handleChange } />
-            <VisibleImageFileInput ref = { boxRef } htmlFor = 'imageFileInput'>
+            <VisibleImageFileInput htmlFor = 'imageFileInput'>
                 {previewUrl
                     ? <PreviewImg src = { previewUrl } alt = { language === 'eng' ? 'Store preview' : '매장 미리보기' } />
                     : (language === 'eng' ? 'Upload Image' : '이미지 업로드')}

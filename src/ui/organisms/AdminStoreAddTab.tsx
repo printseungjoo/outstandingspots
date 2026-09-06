@@ -25,6 +25,13 @@ const AdminStoreAddTabStyled = styled.div`
     padding: 0.7rem 1rem;
     box-sizing: border-box;
     overflow: hidden;
+
+    @media (max-width: 767px) {
+        height: auto;
+        overflow: auto;
+        padding: 0.6rem;
+        align-items: flex-start;
+    }
 `;
 
 const FormRow = styled.div`
@@ -35,6 +42,12 @@ const FormRow = styled.div`
     width: 100%;
     height: 100%;
     min-height: 0;
+
+    @media (max-width: 767px) {
+        flex-direction: column;
+        height: auto;
+        gap: 1.2rem;
+    }
 `;
 
 const AdminStoreAddLeftRight = styled.div`
@@ -45,6 +58,16 @@ const AdminStoreAddLeftRight = styled.div`
     flex-direction: column;
     align-items: center;
     box-sizing: border-box;
+
+    @media (max-width: 1024px) and (min-width: 768px) {
+        width: 46%;
+        gap: 1rem;
+    }
+
+    @media (max-width: 767px) {
+        width: 100%;
+        height: auto;
+    }
 `;
 
 const AddFormColumn = styled.div`
@@ -93,6 +116,7 @@ const InputForm = styled.input`
 
 const SearchButton = styled.button`
     width: 20%;
+    min-width: 4.2rem;
     flex-shrink: 0;
     box-sizing: border-box;
     border: 0.5px solid gray;
@@ -137,7 +161,6 @@ const ActionButton = styled.button`
 `;
 
 const CancelButton = styled(ActionButton)``;
-
 const SubmitButton = styled(ActionButton)``;
 
 type Localized = {
@@ -178,7 +201,7 @@ const initialForm: StoreAddForm = {
     openTime: '',
     closeTime: '',
     lat: '',
-    lon: '',
+    lon: ''
 };
 
 function isFilled(value: string) {
@@ -206,7 +229,7 @@ function storeToForm(store: Store): StoreAddForm {
         openTime: store.openTime,
         closeTime: store.closeTime,
         lat: String(store.lat),
-        lon: String(store.lon),
+        lon: String(store.lon)
     };
 }
 

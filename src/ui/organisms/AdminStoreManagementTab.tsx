@@ -17,6 +17,10 @@ const AdminStoreManagementTabStyled = styled.div`
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
+
+    @media (max-width: 767px) {
+        padding: 0.7rem 0.8rem 1rem;
+    }
 `;
 
 export function AdminStoreManagementTab() {

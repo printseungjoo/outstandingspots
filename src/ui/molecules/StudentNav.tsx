@@ -12,12 +12,42 @@ const StudentNavStyled = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    box-sizing: border-box;
+    flex-shrink: 0;
+
+    @media (max-width: 1024px) and (min-width: 768px) {
+        width: 12.5rem;
+        min-width: 12.5rem;
+        padding: 0 0.55rem;
+    }
+
+    @media (max-width: 767px) {
+        width: 100%;
+        height: auto;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        gap: 0.4rem;
+        padding: 0.45rem 0.6rem;
+        border: none;
+        border-bottom: 0.5px solid gray;
+    }
 `;
 
 const StudentNavTop = styled.div`
     display: flex;
     flex-direction: column;
     gap: 0.8rem;
+
+    @media (max-width: 767px) {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.25rem;
+        width: 100%;
+        min-width: 0;
+    }
 `;
 
 const Text = styled.p`
@@ -27,6 +57,10 @@ const Text = styled.p`
     justify-content: flex-start;
     margin: 1rem 0 0 0;
     padding-left: 0.3rem;
+
+    @media (max-width: 767px) {
+        display: none;
+    }
 `;
 
 const StudentNavOption = styled(Link)<{ $selected: boolean }>`
@@ -47,6 +81,15 @@ const StudentNavOption = styled(Link)<{ $selected: boolean }>`
         background-color: ${({ $selected }) => $selected ? '#F1EDFC' : 'transparent'};
         text-decoration: none;
     }
+
+    @media (max-width: 767px) {
+        flex: 1;
+        min-width: 0;
+        justify-content: center;
+        padding: 0.25rem 0.2rem;
+        font-size: 0.68rem;
+        white-space: nowrap;
+    }
 `;
 
 const IconSlot = styled.span`
@@ -56,6 +99,10 @@ const IconSlot = styled.span`
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+
+    @media (max-width: 767px) {
+        display: none;
+    }
 `;
 
 const Icon = styled.img`
@@ -71,6 +118,11 @@ const SmallIcon = styled.img`
 const StudentNavBottom = styled.div`
     margin-bottom: 1rem;
     padding: 0;
+
+    @media (max-width: 767px) {
+        margin-bottom: 0;
+        width: 100%;
+    }
 `;
 
 const StudentLogoutButton = styled.button`
@@ -83,6 +135,12 @@ const StudentLogoutButton = styled.button`
     font-size: 0.8rem;
     background-color: #F1EDFC;
     padding: 0.7rem 0.4rem;
+
+    @media (max-width: 767px) {
+        width: 100%;
+        padding: 0.45rem 0.7rem;
+        white-space: nowrap;
+    }
 `;
 
 export function StudentNav() {

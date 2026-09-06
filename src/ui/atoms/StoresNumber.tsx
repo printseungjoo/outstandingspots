@@ -13,6 +13,10 @@ const StoresNumberStyled = styled.div`
     padding: 0 1rem;
     box-sizing: border-box;
     margin: 0;
+
+    @media (max-width: 1024px) {
+        display: none;
+    }
 `;
 
 const Text = styled.p`

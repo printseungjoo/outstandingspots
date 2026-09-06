@@ -84,6 +84,10 @@ interface PhoneVerificationProps {
 const PhoneVerificationStyled = styled.div`
     width: 100%;
     position: relative;
+
+    @media (max-width: 1024px) {
+        display: contents;
+    }
 `;
 
 const PhoneFields = styled.div`
@@ -92,6 +96,10 @@ const PhoneFields = styled.div`
     flex-direction: column;
     align-items: center;
     gap: 0.3rem;
+
+    @media (max-width: 1024px) {
+        display: contents;
+    }
 `;
 
 const RecaptchaBox = styled.div`

@@ -12,6 +12,13 @@ const SignUpPasswordInputWithDescriptionStyled = styled.div`
     justify-content: flex-start;
     align-items: center;
     gap: 1rem;
+
+    @media (max-width: 767px) {
+        width: 92%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.25rem;
+    }
 `;
 
 const Title = styled.p<{ $hasDescription?: boolean }>`
@@ -23,6 +30,14 @@ const Title = styled.p<{ $hasDescription?: boolean }>`
     flex-shrink: 0;
     text-align: left;
     margin-bottom: ${({ $hasDescription }) => $hasDescription ? '1rem' : '0'};
+
+    @media (max-width: 1024px) {
+        margin-bottom: 0;
+    }
+
+    @media (max-width: 767px) {
+        width: auto;
+    }
 `;
 
 const InputField = styled.div`
@@ -44,19 +59,27 @@ const Input = styled.input`
     }
 `;
 
-const DescriptionRow = styled.div`
+const DescriptionRow = styled.div<{ $hideOnNarrow?: boolean }>`
     display: flex;
     align-items: center;
     gap: 0.3rem;
+
+    @media (max-width: 1024px) {
+        ${({ $hideOnNarrow }) => $hideOnNarrow && 'display: none;'}
+    }
 `;
 
-const Description = styled.p<{ $tone?: 'gray' | 'valid' | 'invalid' }>`
+const Description = styled.p<{ $tone?: 'gray' | 'valid' | 'invalid'; $hideOnNarrow?: boolean }>`
     font-size: 0.75rem;
     color: ${({ $tone }) => $tone === 'valid' ? '#22c55e' : $tone === 'invalid' ? '#ef4444' : 'gray'};
     margin: 0;
     margin-left: 0.2rem;
     flex-shrink: 0;
     text-align: left;
+
+    @media (max-width: 1024px) {
+        ${({ $hideOnNarrow }) => $hideOnNarrow && 'display: none;'}
+    }
 `;
 
 const ValidityIcon = styled(FontAwesomeIcon)<{ $valid: boolean }>`
@@ -99,9 +122,10 @@ interface SignUpPasswordInputWithDescriptionProps {
     value?: string;
     onChange?: (value: string) => void;
     matchWith?: string;
+    hideHintOnNarrow?: boolean;
 }
 
-export function SignUpPasswordInputWithDescription({ engTitle, korTitle, engPlaceholder, korPlaceholder, engDescription, korDescription, value, onChange, matchWith }: SignUpPasswordInputWithDescriptionProps) {
+export function SignUpPasswordInputWithDescription({ engTitle, korTitle, engPlaceholder, korPlaceholder, engDescription, korDescription, value, onChange, matchWith, hideHintOnNarrow }: SignUpPasswordInputWithDescriptionProps) {
     const { language } = useLanguage();
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const isConfirm = matchWith !== undefined;
@@ -127,9 +151,9 @@ export function SignUpPasswordInputWithDescription({ engTitle, korTitle, engPlac
                     <ToggleIcon icon = {byPrefixAndName.far['eye']} onClick = {() => setShowPassword((visible) => !visible)} />
                 </SignUpPasswordStyled>
                 {isConfirm ? (
-                    confirmMessage && (<Description $tone = { passwordsMatch ? 'valid' : 'invalid' }> { confirmMessage } </Description>)
+                    confirmMessage && (<Description $hideOnNarrow = { hideHintOnNarrow } $tone = { passwordsMatch ? 'valid' : 'invalid' }> { confirmMessage } </Description>)
                 ) : (
-                    <DescriptionRow>
+                    <DescriptionRow $hideOnNarrow = { hideHintOnNarrow }>
                         <Description $tone = 'gray'> { language === 'eng' ? engDescription : korDescription } </Description>
                         {typed && (
                             <ValidityIcon icon = { passwordValid ? byPrefixAndName.fas.check : byPrefixAndName.fas.xmark } $valid = { passwordValid } />

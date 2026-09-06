@@ -5,6 +5,7 @@ import { useLanguage } from '../../contexts/LanguageContext';
 const LoginButtonStyled = styled.button`
     width: 100%;
     height: 5vh;
+    min-height: 2.6rem;
     border-radius: 0;
     outline: none;
     border: 1px solid #7A77B0;

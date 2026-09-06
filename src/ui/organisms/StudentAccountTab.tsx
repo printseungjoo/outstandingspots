@@ -22,10 +22,20 @@ const Page = styled.div`
     gap: 0.7rem;
     overflow: hidden;
     text-align: left;
+
+    @media (max-width: 767px) {
+        padding: 0.7rem 0.8rem 1rem;
+        overflow: auto;
+        height: auto;
+    }
 `;
 
 const HeaderBlock = styled.div`
     flex-shrink: 0;
+
+    @media (max-width: 1024px) {
+        display: none;
+    }
 `;
 
 const Title = styled.p`
@@ -49,6 +59,13 @@ const Grid = styled.div`
     gap: 0.8rem;
     align-items: stretch;
     overflow: hidden;
+
+    @media (max-width: 1024px) {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        overflow: visible;
+        height: auto;
+    }
 `;
 
 const Card = styled.div`
@@ -65,6 +82,10 @@ const LeftCard = styled(Card)`
     display: flex;
     flex-direction: column;
     overflow: hidden;
+
+    @media (max-width: 1024px) {
+        height: auto;
+    }
 `;
 
 const InfoList = styled.div`
@@ -79,6 +100,10 @@ const PasswordCard = styled(Card)`
     flex-direction: column;
     overflow: hidden;
     padding: 0.7rem 1rem 0.75rem;
+
+    @media (max-width: 1024px) {
+        height: auto;
+    }
 `;
 
 const GuideCard = styled(Card)`
@@ -86,6 +111,10 @@ const GuideCard = styled(Card)`
     display: flex;
     flex-direction: column;
     gap: 0.45rem;
+
+    @media (max-width: 1024px) {
+        height: auto;
+    }
 `;
 
 const CardTitle = styled.p`
@@ -110,13 +139,42 @@ const GuideText = styled.p`
     line-height: 1.45;
 `;
 
-const InfoRow = styled.div`
+const InfoRow = styled.div<{ $stack?: boolean }>`
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 0.8rem;
     padding: 0.45rem 0;
     border-bottom: 1px solid #eeeaf6;
+
+    @media (max-width: 767px) {
+        flex-wrap: wrap;
+    }
+
+    @media (max-width: 1024px) {
+        ${({ $stack }) => $stack && `
+            display: block;
+            flex-wrap: nowrap;
+        `}
+    }
+`;
+
+const NameEditBlock = styled.div`
+    min-width: 0;
+    flex: 1;
+`;
+
+const NameEditRow = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+
+    @media (max-width: 1024px) {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 3.6rem 3.6rem;
+        align-items: stretch;
+        width: 100%;
+    }
 `;
 
 const InfoLabel = styled.p`
@@ -158,6 +216,31 @@ const PrimaryButton = styled.button`
     }
 `;
 
+const NameActionButton = styled(OutlineButton)`
+    @media (max-width: 1024px) {
+        width: 100%;
+        height: 2.15rem;
+        padding: 0;
+        box-sizing: border-box;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+`;
+
+const NameSaveButton = styled(PrimaryButton)`
+    @media (max-width: 1024px) {
+        width: 100%;
+        height: 2.15rem;
+        padding: 0;
+        font-size: 0.75rem;
+        box-sizing: border-box;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+`;
+
 const NameInput = styled.input`
     box-sizing: border-box;
     width: 12rem;
@@ -166,6 +249,12 @@ const NameInput = styled.input`
     padding: 0.35rem 0.5rem;
     font-size: 0.85rem;
     color: #2E2A63;
+
+    @media (max-width: 1024px) {
+        width: 100%;
+        max-width: none;
+        height: 2.15rem;
+    }
 `;
 
 const Field = styled.div`
@@ -263,6 +352,10 @@ const ButtonRight = styled.div`
 const WithdrawBox = styled.div`
     height: 100%;
     padding: 0.85rem 1.05rem;
+
+    @media (max-width: 1024px) {
+        height: auto;
+    }
     box-sizing: border-box;
     background: #fff6f6;
     border: 1px solid #f3d4d4;
@@ -418,31 +511,32 @@ export function StudentAccountTab() {
                 <LeftCard>
                     <CardTitle> { language === 'eng' ? 'Basic information' : '기본 정보' } </CardTitle>
                     <InfoList>
-                        <InfoRow>
-                            <div>
-                                <InfoLabel> { language === 'eng' ? 'Name' : '이름' } </InfoLabel>
-                                {editingName ? (
-                                    <NameInput value = { nameValue } onChange = {(e) => setNameValue(e.target.value)} />
-                                ) : (
-                                    <InfoValue> { student.nickname } </InfoValue>
-                                )}
-                            </div>
+                        <InfoRow $stack = { editingName }>
                             {editingName ? (
-                                <div>
-                                    <OutlineButton type = 'button' onClick = {() => {
-                                        setEditingName(false);
-                                        setNameValue(student.nickname);
-                                    }}> { language === 'eng' ? 'Cancel' : '취소' } </OutlineButton>
-                                    {' '}
-                                    <PrimaryButton type = 'button' disabled = { savingName } onClick = {() => { void handleSaveName(); }}>
-                                        { language === 'eng' ? 'Save' : '저장' }
-                                    </PrimaryButton>
-                                </div>
+                                <NameEditBlock>
+                                    <InfoLabel> { language === 'eng' ? 'Name' : '이름' } </InfoLabel>
+                                    <NameEditRow>
+                                        <NameInput value = { nameValue } onChange = {(e) => setNameValue(e.target.value)} />
+                                        <NameActionButton type = 'button' onClick = {() => {
+                                            setEditingName(false);
+                                            setNameValue(student.nickname);
+                                        }}> { language === 'eng' ? 'Cancel' : '취소' } </NameActionButton>
+                                        <NameSaveButton type = 'button' disabled = { savingName } onClick = {() => { void handleSaveName(); }}>
+                                            { language === 'eng' ? 'Save' : '저장' }
+                                        </NameSaveButton>
+                                    </NameEditRow>
+                                </NameEditBlock>
                             ) : (
-                                <OutlineButton type = 'button' onClick = {() => {
-                                    setNameValue(student.nickname);
-                                    setEditingName(true);
-                                }}> { language === 'eng' ? 'Edit' : '수정' } </OutlineButton>
+                                <>
+                                    <div>
+                                        <InfoLabel> { language === 'eng' ? 'Name' : '이름' } </InfoLabel>
+                                        <InfoValue> { student.nickname } </InfoValue>
+                                    </div>
+                                    <OutlineButton type = 'button' onClick = {() => {
+                                        setNameValue(student.nickname);
+                                        setEditingName(true);
+                                    }}> { language === 'eng' ? 'Edit' : '수정' } </OutlineButton>
+                                </>
                             )}
                         </InfoRow>
                         <InfoRow>

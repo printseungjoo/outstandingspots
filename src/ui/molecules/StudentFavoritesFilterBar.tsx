@@ -13,6 +13,12 @@ const StudentFavoritesFilterBarStyled = styled.div`
     align-items: stretch;
     padding: 1rem 1.5rem;
     box-sizing: border-box;
+
+    @media (max-width: 1024px) {
+        grid-template-columns: 1fr;
+        padding: 0.7rem;
+        gap: 0.7rem;
+    }
 `;
 
 interface StudentFavoritesFilterBarProps {

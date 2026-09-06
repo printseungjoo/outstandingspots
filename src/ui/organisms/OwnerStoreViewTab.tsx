@@ -16,7 +16,18 @@ const OwnerStoreViewTabStyled = styled.div`
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    text-align: left;
     gap: 1rem;
+
+    @media (max-width: 1024px) {
+        height: auto;
+        min-height: 100%;
+        padding-bottom: 1.5rem;
+    }
+
+    @media (max-width: 767px) {
+        padding: 0.7rem 0.8rem 1.5rem;
+    }
 `;
 
 const EmptyText = styled.p`
@@ -35,6 +46,12 @@ const SummaryCard = styled.div`
     align-items: center;
     gap: 1.2rem;
     background-color: white;
+
+    @media (max-width: 767px) {
+        align-items: flex-start;
+        padding: 0.8rem;
+        gap: 0.75rem;
+    }
 `;
 
 const StorePhoto = styled.img`
@@ -44,6 +61,11 @@ const StorePhoto = styled.img`
     border-radius: 0.4rem;
     flex-shrink: 0;
     background-color: #f3f0ff;
+
+    @media (max-width: 767px) {
+        width: 6.2rem;
+        height: 6.2rem;
+    }
 `;
 
 const SummaryInfo = styled.div`
@@ -71,39 +93,43 @@ const StoreName = styled.p`
     font-weight: bolder;
     font-size: 1.3rem;
     margin: 0;
-    line-height: 1.3;
+    line-height: 1;
     width: 100%;
     display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
+    align-items: flex-end;
+    flex-wrap: wrap;
     gap: 0.4rem;
     text-align: left;
 `;
 
 const StoreNameText = styled.span`
-    flex: 1;
-    min-width: 0;
+    display: block;
+    line-height: 1;
     text-align: left;
     overflow-wrap: anywhere;
     word-break: break-word;
 `;
 
 const NaverMapSlot = styled.span`
-    display: inline-flex;
-    align-items: center;
-    height: 1.35rem;
-    line-height: 0;
+    display: block;
     flex-shrink: 0;
-    margin-top: 0.05rem;
+    width: 1em;
+    height: 1em;
 
     & a {
-        display: inline-flex;
-        align-items: center;
+        display: block;
+        width: 100%;
+        height: 100%;
         line-height: 0;
     }
 
-    & button {
+    & a button {
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
         margin: 0;
+        margin-bottom: 0;
+        vertical-align: bottom;
     }
 `;
 
@@ -159,6 +185,18 @@ const CardsRow = styled.div`
     grid-template-columns: 1fr 1fr 1fr;
     gap: 1rem;
     align-items: stretch;
+
+    @media (max-width: 1024px) {
+        margin-bottom: 1.25rem;
+    }
+
+    @media (max-width: 1024px) and (min-width: 768px) {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    @media (max-width: 767px) {
+        grid-template-columns: 1fr;
+    }
 `;
 
 const scrollBar = `
@@ -194,16 +232,28 @@ const InfoCard = styled.div`
     align-items: stretch;
     gap: 0.85rem;
     overflow: hidden;
+
+    @media (max-width: 1024px) {
+        padding: 1rem 1.1rem;
+    }
 `;
 
 const CardScroll = styled.div`
     flex: 1 1 auto;
+    min-width: 0;
     min-height: 0;
+    width: 100%;
     display: flex;
     flex-direction: column;
+    align-items: stretch;
     gap: 1.15rem;
     padding-right: 0.75rem;
+    text-align: left;
     ${scrollBar}
+
+    @media (max-width: 1024px) {
+        padding-right: 0;
+    }
 `;
 
 const CardTitle = styled.p`
@@ -216,48 +266,73 @@ const CardTitle = styled.p`
 const BenefitCard = styled(InfoCard)`
     gap: 1.15rem;
     padding: 1.15rem 0.35rem 1.15rem 1.2rem;
+
+    @media (max-width: 1024px) {
+        padding: 1.15rem 1.2rem;
+    }
 `;
 
 const BenefitSection = styled.div`
+    width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
+    align-items: stretch;
+    gap: 0.3rem;
     text-align: left;
 `;
 
-const BenefitTitle = styled.p`
-    font-weight: 700;
+const BenefitTitle = styled.h5`
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    font-weight: bold;
     font-size: 0.95rem;
-    color: #2E2A63;
+    color: black;
     margin: 0;
+    padding: 0;
+    text-align: left;
+    text-indent: 0;
 `;
 
 const BenefitBox = styled.div`
+    display: block;
     width: 100%;
     box-sizing: border-box;
-    background: #F3F4F9;
-    border-radius: 0.55rem;
+    background-color: #F1F1FA;
+    border: 0.8px solid gray;
     padding: 0.85rem 0.95rem;
     text-align: left;
 `;
 
-const BenefitText = styled.p`
+const BenefitText = styled.div`
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
     font-size: 0.85rem;
-    color: #3a3a4a;
+    color: gray;
     margin: 0;
+    padding: 0;
     white-space: pre-wrap;
+    overflow-wrap: anywhere;
     word-break: break-word;
     line-height: 1.55;
     text-align: left;
+    text-indent: 0;
 `;
 
-const BenefitNote = styled.p`
-    margin: 0.55rem 0 0 0;
-    font-size: 0.75rem;
-    color: #8a8aa3;
+const BenefitNote = styled.div`
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-size: 0.6rem;
+    color: black;
     line-height: 1.45;
+    overflow-wrap: anywhere;
+    word-break: break-word;
     text-align: left;
+    text-indent: 0;
 `;
 
 const FieldList = styled.div`
@@ -359,16 +434,14 @@ export function OwnerStoreViewTab() {
                 <BenefitCard>
                     <CardScroll>
                     <BenefitSection>
-                        <BenefitTitle> 🎓 { language === 'eng' ? 'SUNY Benefit' : 'SUNY 혜택' } </BenefitTitle>
+                        <BenefitTitle>🎓 { language === 'eng' ? 'SUNY Benefit' : 'SUNY 혜택' }</BenefitTitle>
                         <BenefitBox>
                             <BenefitText> { language === 'eng' ? store.discount.eng : store.discount.kor } </BenefitText>
-                            <BenefitNote>
-                                { language === 'eng' ? '*You must bring your SUNY student ID card to receive the discount.' : '할인을 받기 위해서는 학생증을 필수 지참해야합니다.' }
-                            </BenefitNote>
+                            <BenefitNote> { language === 'eng' ? '*You must bring your SUNY student ID card to receive the discount.' : '할인을 받기 위해서는 학생증을 필수 지참해야합니다.'} </BenefitNote>
                         </BenefitBox>
                     </BenefitSection>
                     <BenefitSection>
-                        <BenefitTitle> ✅ { language === 'eng' ? 'Additional precautions' : '추가 유의사항' } </BenefitTitle>
+                        <BenefitTitle>✅ { language === 'eng' ? 'Additional precautions' : '추가 유의사항' } </BenefitTitle>
                         <BenefitBox>
                             <BenefitText> { language === 'eng' ? store.description.eng : store.description.kor } </BenefitText>
                         </BenefitBox>

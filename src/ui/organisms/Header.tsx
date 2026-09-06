@@ -13,7 +13,7 @@ import { useStudentAuth } from '../../contexts/StudentAuthContext';
 const HeaderStyled = styled.div`
     width: 100%;
     flex-shrink: 0;
-    min-height: 8dvh;
+    min-height: 8svh;
     box-sizing: border-box;
     display: flex;
     justify-content: space-between;
@@ -40,13 +40,14 @@ const NavBars = styled.div`
     }
 `;
 
-const HeaderRightDiv = styled.div`
+const HeaderRightDiv = styled.div<{ $hideOnMobileMap?: boolean }>`
     display: flex;
     align-items: center;
     gap: 1.5rem;
 
     @media (max-width: 767px) {
-        display: none;
+        gap: 0.4rem;
+        display: ${({ $hideOnMobileMap }) => $hideOnMobileMap ? 'none' : 'flex'};
     }
 `;
 
@@ -75,11 +76,12 @@ export function Header({ language, onChangeLanguage }: HeaderProps) {
     
     const myPageLink = isAdmin ? '/admin' : isOwner ? '/owner' : isStudent ? '/student' : '/login';
     const myPageClicked = pathname === '/login' || pathname.startsWith('/admin') || pathname.startsWith('/owner') || pathname.startsWith('/student');
+    const hideLanguageOnMobile = pathname === '/';
 
     return(
         <HeaderStyled>
             <HeaderLeftDiv>
-                <HeaderTitle language = { language } />
+                <HeaderTitle language = { language } breakSubtitleOnMobile = { !hideLanguageOnMobile } />
                 <NavBars>
                     <NavBar navName = {language === 'eng' ? 'Map' : '지도'} clicked = { pathname === '/' } link = "/" onClick = {() => {}} />
                     {/* <NavBar navName = {language === 'eng' ? 'Stores' : '전체 매장'} clicked = { pathname === '/stores' } link = "/stores" /> */}
@@ -87,7 +89,7 @@ export function Header({ language, onChangeLanguage }: HeaderProps) {
                     <NavBar navName = {language === 'eng' ? 'Stores' : '전체 매장'} clicked = { pathname === '' } link = "/" onClick = {() => ToBeContinuedAlert()} />
                 </NavBars>
             </HeaderLeftDiv>
-            <HeaderRightDiv>
+            <HeaderRightDiv $hideOnMobileMap = { pathname === '/' }>
                 <LanguageButtonsPlus language = { language } onChangeLanguage = { onChangeLanguage } />
             </HeaderRightDiv>
         </HeaderStyled>

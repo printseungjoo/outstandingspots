@@ -9,13 +9,16 @@ import { useStores } from '../../contexts/StoresContext';
 const TableWrap = styled.div`
     width: 100%;
     overflow: auto;
+
+    @media (max-width: 1024px) {
+        display: none;
+    }
 `;
 
 const Table = styled.table`
     width: 100%;
     border-collapse: collapse;
     background-color: white;
-    table-layout: fixed;
 `;
 
 const Th = styled.th`
@@ -25,7 +28,6 @@ const Th = styled.th`
     font-weight: 600;
     padding: 0.7rem 0.8rem;
     border-bottom: 1px solid #e4e0f2;
-    white-space: nowrap;
 `;
 
 const Td = styled.td`
@@ -35,9 +37,8 @@ const Td = styled.td`
     font-size: 0.85rem;
     color: #2E2A63;
     vertical-align: middle;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 `;
 
 const StorePhoto = styled.img`
@@ -54,7 +55,7 @@ const PhotoTh = styled(Th)`
 `;
 
 const ActionTh = styled(Th)`
-    width: 10rem;
+    width: 8.5rem;
 `;
 
 const ActionButton = styled.button`
@@ -70,6 +71,83 @@ const ActionButton = styled.button`
     &:last-child {
         margin-right: 0;
     }
+`;
+
+const CardList = styled.div`
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    gap: 0.7rem;
+
+    @media (max-width: 1024px) {
+        display: flex;
+        padding-bottom: 3.5rem;
+        box-sizing: border-box;
+    }
+`;
+
+const StoreCard = styled.div`
+    width: 100%;
+    box-sizing: border-box;
+    background: white;
+    border: 1px solid #e4e0f2;
+    border-radius: 0.45rem;
+    padding: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+`;
+
+const CardTop = styled.div`
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+`;
+
+const CardPhoto = styled.img`
+    width: 3.2rem;
+    height: 3.2rem;
+    object-fit: cover;
+    border-radius: 0.35rem;
+    flex-shrink: 0;
+    background: #f3f0ff;
+`;
+
+const CardInfo = styled.div`
+    min-width: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    text-align: left;
+`;
+
+const CardName = styled.p`
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #2E2A63;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+`;
+
+const CardMeta = styled.p`
+    margin: 0;
+    font-size: 0.8rem;
+    color: #6b6580;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+`;
+
+const CardActions = styled.div`
+    display: flex;
+    gap: 0.45rem;
+`;
+
+const CardActionButton = styled(ActionButton)`
+    flex: 1;
+    margin-right: 0;
+    padding: 0.45rem 0.7rem;
 `;
 
 interface AdminStoresManagementTableProps {
@@ -92,38 +170,62 @@ export function AdminStoresManagementTable({ stores }: AdminStoresManagementTabl
     }
 
     return(
-        <TableWrap>
-            <Table>
-                <thead>
-                    <tr>
-                        <PhotoTh> {language === 'eng' ? 'Photo' : '사진'} </PhotoTh>
-                        <Th> {language === 'eng' ? 'Name' : '이름'} </Th>
-                        <Th> {language === 'eng' ? 'Theme' : '테마'} </Th>
-                        <Th> {language === 'eng' ? 'Discount' : '할인'} </Th>
-                        <ActionTh> {language === 'eng' ? 'Actions' : '관리'} </ActionTh>
-                    </tr>
-                </thead>
-                <tbody>
-                    {stores.map((store) => (
-                        <tr key = { store._id }>
-                            <Td>
-                                <StorePhoto src = { resolvePhotoUrl(store.photo) } alt = { language === 'eng' ? store.name.eng : store.name.kor } />
-                            </Td>
-                            <Td> {language === 'eng' ? `${store.name.eng} ${store.branch.eng}` : `${store.name.kor} ${store.branch.kor}`} </Td>
-                            <Td> {language === 'eng' ? store.theme?.eng : store.theme?.kor} </Td>
-                            <Td> {language === 'eng' ? store.discount.eng : store.discount.kor} </Td>
-                            <Td>
-                                <ActionButton type = "button" onClick = {() => navigate(`/admin/store/edit/${store._id}`)}>
-                                    {language === 'eng' ? 'Edit' : '수정'}
-                                </ActionButton>
-                                <ActionButton type = "button" onClick = {() => { void handleDelete(store); }}>
-                                    {language === 'eng' ? 'Delete' : '삭제'}
-                                </ActionButton>
-                            </Td>
+        <>
+            <TableWrap>
+                <Table>
+                    <thead>
+                        <tr>
+                            <PhotoTh> { language === 'eng' ? 'Photo' : '사진' } </PhotoTh>
+                            <Th> { language === 'eng' ? 'Name' : '이름' } </Th>
+                            <Th> { language === 'eng' ? 'Theme' : '테마' } </Th>
+                            <Th> { language === 'eng' ? 'Discount' : '할인' } </Th>
+                            <ActionTh> { language === 'eng' ? 'Actions' : '관리' } </ActionTh>
                         </tr>
-                    ))}
-                </tbody>
-            </Table>
-        </TableWrap>
+                    </thead>
+                    <tbody>
+                        {stores.map((store) => (
+                            <tr key = { store._id }>
+                                <Td>
+                                    <StorePhoto src = { resolvePhotoUrl(store.photo) } alt = { language === 'eng' ? store.name.eng : store.name.kor } />
+                                </Td>
+                                <Td> { language === 'eng' ? `${store.name.eng} ${store.branch.eng}` : `${store.name.kor} ${store.branch.kor}` } </Td>
+                                <Td> { language === 'eng' ? store.theme?.eng : store.theme?.kor } </Td>
+                                <Td> { language === 'eng' ? store.discount.eng : store.discount.kor } </Td>
+                                <Td>
+                                    <ActionButton type = 'button' onClick = {() => navigate(`/admin/store/edit/${store._id}`)}>
+                                        { language === 'eng' ? 'Edit' : '수정' }
+                                    </ActionButton>
+                                    <ActionButton type = 'button' onClick = {() => { void handleDelete(store); }}>
+                                        { language === 'eng' ? 'Delete' : '삭제' }
+                                    </ActionButton>
+                                </Td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </Table>
+            </TableWrap>
+            <CardList>
+                {stores.map((store) => (
+                    <StoreCard key = { store._id }>
+                        <CardTop>
+                            <CardPhoto src = { resolvePhotoUrl(store.photo) } alt = { language === 'eng' ? store.name.eng : store.name.kor } />
+                            <CardInfo>
+                                <CardName> { language === 'eng' ? `${store.name.eng} ${store.branch.eng}` : `${store.name.kor} ${store.branch.kor}` } </CardName>
+                                <CardMeta> { language === 'eng' ? 'Theme' : '테마' }: { language === 'eng' ? store.theme?.eng : store.theme?.kor } </CardMeta>
+                                <CardMeta> { language === 'eng' ? 'Discount' : '할인' }: { language === 'eng' ? store.discount.eng : store.discount.kor } </CardMeta>
+                            </CardInfo>
+                        </CardTop>
+                        <CardActions>
+                            <CardActionButton type = 'button' onClick = {() => navigate(`/admin/store/edit/${store._id}`)}>
+                                { language === 'eng' ? 'Edit' : '수정' }
+                            </CardActionButton>
+                            <CardActionButton type = 'button' onClick = {() => { void handleDelete(store); }}>
+                                { language === 'eng' ? 'Delete' : '삭제' }
+                            </CardActionButton>
+                        </CardActions>
+                    </StoreCard>
+                ))}
+            </CardList>
+        </>
     )
 }

@@ -17,6 +17,13 @@ const SignUpSearchStoreStyled = styled.div`
     gap: 1rem;
     position: relative;
     z-index: 10;
+
+    @media (max-width: 767px) {
+        width: 92%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.25rem;
+    }
 `;
 
 const Title = styled.p`
@@ -28,6 +35,14 @@ const Title = styled.p`
     flex-shrink: 0;
     text-align: left;
     margin-bottom: 1rem;
+
+    @media (max-width: 1024px) {
+        margin-bottom: 0;
+    }
+
+    @media (max-width: 767px) {
+        width: auto;
+    }
 `;
 
 const InputFieldDiv = styled.div`
@@ -104,6 +119,10 @@ const Description = styled.p`
     flex-shrink: 0;
     text-align: left;
     margin-left: 0.2rem;
+
+    @media (max-width: 1024px) {
+        display: none;
+    }
 `;
 
 function storeMatchesQuery(store: Store, query: string) {

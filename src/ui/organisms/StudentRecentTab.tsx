@@ -17,6 +17,10 @@ const StudentRecentTabStyled = styled.div`
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
+
+    @media (max-width: 767px) {
+        padding: 0.7rem 0.8rem 1rem;
+    }
 `;
 
 const TitleDiv = styled.div`
@@ -24,6 +28,10 @@ const TitleDiv = styled.div`
     flex-direction: column;
     align-items: flex-start;
     gap: 0;
+
+    @media (max-width: 1024px) {
+        display: none;
+    }
 `;
 
 const BoldText = styled.p`
@@ -59,6 +67,18 @@ const Select = styled.select`
     border-radius: 0.3rem;
     padding: 0.25rem 0.6rem;
     font-size: 0.85rem;
+`;
+
+const FilterHint = styled.p`
+    display: none;
+    font-size: 0.8rem;
+    color: black;
+    margin: 0;
+    text-align: left;
+
+    @media (max-width: 1024px) {
+        display: block;
+    }
 `;
 
 const EmptyMessage = styled.p`
@@ -100,6 +120,7 @@ export function StudentRecentTab() {
                         </option>
                     ))}
                 </Select>
+                <FilterHint> { language === 'eng' ? 'Shows the 7 most recently viewed stores.' : '최근 본 매장 7개를 보여줍니다.' } </FilterHint>
             </FilterBlock>
             {recentStores.length === 0
                 ? <EmptyMessage> { language === 'eng' ? 'There are no recently viewed stores.' : '최근 본 매장이 없습니다.' } </EmptyMessage>

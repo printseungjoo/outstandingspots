@@ -25,10 +25,20 @@ const Page = styled.div`
     gap: 0.7rem;
     overflow: hidden;
     text-align: left;
+
+    @media (max-width: 767px) {
+        padding: 0.7rem 0.8rem 1rem;
+        overflow: auto;
+        height: auto;
+    }
 `;
 
 const HeaderBlock = styled.div`
     flex-shrink: 0;
+
+    @media (max-width: 1024px) {
+        display: none;
+    }
 `;
 
 const Title = styled.p`
@@ -51,6 +61,12 @@ const Grid = styled.div`
     gap: 0.8rem;
     align-items: stretch;
     overflow: hidden;
+
+    @media (max-width: 1024px) {
+        grid-template-columns: 1fr;
+        overflow: visible;
+        height: auto;
+    }
 `;
 
 const RightColumn = styled.div`
@@ -60,6 +76,11 @@ const RightColumn = styled.div`
     min-height: 0;
     height: 100%;
     overflow: hidden;
+
+    @media (max-width: 1024px) {
+        height: auto;
+        overflow: visible;
+    }
 `;
 
 const Card = styled.div`
@@ -76,6 +97,10 @@ const LeftCard = styled(Card)`
     display: flex;
     flex-direction: column;
     overflow: hidden;
+
+    @media (max-width: 1024px) {
+        height: auto;
+    }
 `;
 
 const InfoList = styled.div`
@@ -113,7 +138,7 @@ const CardHint = styled.p<{ $success?: boolean }>`
     margin: 0 0 0.55rem 0;
 `;
 
-const InfoRow = styled.div`
+const InfoRow = styled.div<{ $stack?: boolean }>`
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -124,6 +149,30 @@ const InfoRow = styled.div`
     &:last-child {
         border-bottom: none;
         padding-bottom: 0;
+    }
+
+    @media (max-width: 1024px) {
+        ${({ $stack }) => $stack && `
+            display: block;
+        `}
+    }
+`;
+
+const NameEditBlock = styled.div`
+    min-width: 0;
+    flex: 1;
+`;
+
+const NameEditRow = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+
+    @media (max-width: 1024px) {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 3.6rem 3.6rem;
+        align-items: stretch;
+        width: 100%;
     }
 `;
 
@@ -166,6 +215,31 @@ const PrimaryButton = styled.button`
     }
 `;
 
+const NameActionButton = styled(OutlineButton)`
+    @media (max-width: 1024px) {
+        width: 100%;
+        height: 2.15rem;
+        padding: 0;
+        box-sizing: border-box;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+`;
+
+const NameSaveButton = styled(PrimaryButton)`
+    @media (max-width: 1024px) {
+        width: 100%;
+        height: 2.15rem;
+        padding: 0;
+        font-size: 0.75rem;
+        box-sizing: border-box;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+`;
+
 const NameInput = styled.input`
     box-sizing: border-box;
     width: 12rem;
@@ -174,6 +248,12 @@ const NameInput = styled.input`
     padding: 0.35rem 0.5rem;
     font-size: 0.85rem;
     color: #2E2A63;
+
+    @media (max-width: 1024px) {
+        width: 100%;
+        max-width: none;
+        height: 2.15rem;
+    }
 `;
 
 const StatusBadge = styled.span`
@@ -192,6 +272,10 @@ const Stepper = styled.div`
     align-items: center;
     gap: 0.4rem;
     margin: 0 0 0.7rem 0;
+
+    @media (max-width: 767px) {
+        flex-wrap: wrap;
+    }
 `;
 
 const Step = styled.div<{ $active: boolean; $done: boolean }>`
@@ -232,6 +316,11 @@ const FieldRow = styled.div`
     display: flex;
     align-items: flex-end;
     gap: 0.6rem;
+
+    @media (max-width: 767px) {
+        flex-direction: column;
+        align-items: stretch;
+    }
 `;
 
 const Field = styled.div`
@@ -616,31 +705,32 @@ export function OwnerAccountTab() {
                 <LeftCard>
                     <CardTitle> {language === 'eng' ? 'Basic information' : '기본 정보'} </CardTitle>
                     <InfoList>
-                    <InfoRow>
-                        <div>
-                            <InfoLabel> {language === 'eng' ? 'Name' : '이름'} </InfoLabel>
-                            {editingName ? (
-                                <NameInput value = { nameValue } onChange = {(e) => setNameValue(e.target.value)} />
-                            ) : (
-                                <InfoValue> { owner.name } </InfoValue>
-                            )}
-                        </div>
+                    <InfoRow $stack = { editingName }>
                         {editingName ? (
-                            <div>
-                                <OutlineButton type = 'button' onClick = {() => {
-                                    setEditingName(false);
-                                    setNameValue(owner.name);
-                                }}> {language === 'eng' ? 'Cancel' : '취소'} </OutlineButton>
-                                {' '}
-                                <PrimaryButton type = 'button' disabled = { savingName } onClick = {() => { void handleSaveName(); }}>
-                                    {language === 'eng' ? 'Save' : '저장'}
-                                </PrimaryButton>
-                            </div>
+                            <NameEditBlock>
+                                <InfoLabel> {language === 'eng' ? 'Name' : '이름'} </InfoLabel>
+                                <NameEditRow>
+                                    <NameInput value = { nameValue } onChange = {(e) => setNameValue(e.target.value)} />
+                                    <NameActionButton type = 'button' onClick = {() => {
+                                        setEditingName(false);
+                                        setNameValue(owner.name);
+                                    }}> {language === 'eng' ? 'Cancel' : '취소'} </NameActionButton>
+                                    <NameSaveButton type = 'button' disabled = { savingName } onClick = {() => { void handleSaveName(); }}>
+                                        {language === 'eng' ? 'Save' : '저장'}
+                                    </NameSaveButton>
+                                </NameEditRow>
+                            </NameEditBlock>
                         ) : (
-                            <OutlineButton type = 'button' onClick = {() => {
-                                setNameValue(owner.name);
-                                setEditingName(true);
-                            }}> {language === 'eng' ? 'Edit' : '수정'} </OutlineButton>
+                            <>
+                                <div>
+                                    <InfoLabel> {language === 'eng' ? 'Name' : '이름'} </InfoLabel>
+                                    <InfoValue> { owner.name } </InfoValue>
+                                </div>
+                                <OutlineButton type = 'button' onClick = {() => {
+                                    setNameValue(owner.name);
+                                    setEditingName(true);
+                                }}> {language === 'eng' ? 'Edit' : '수정'} </OutlineButton>
+                            </>
                         )}
                     </InfoRow>
                     <InfoRow>

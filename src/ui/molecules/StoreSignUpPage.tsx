@@ -21,6 +21,14 @@ const StoreSignUpPageStyled = styled.div`
     align-items: center;
     justify-content: center;
     background: linear-gradient(white 0%, #DBD8F7 30%, #DBD8F7 70%, white 100%);
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 0.6rem 0;
+    text-align: left;
+
+    @media (max-width: 1024px) {
+        padding: 0.45rem;
+    }
 `;
 
 const StoreSignUpField = styled.div`
@@ -30,6 +38,22 @@ const StoreSignUpField = styled.div`
     border: 1px solid white;
     box-shadow: 0 0 10px 0 #00000030;
     display: flex;
+
+    @media (max-width: 1024px) and (min-width: 768px) {
+        width: 100%;
+        max-width: 52rem;
+        height: 100%;
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    @media (max-width: 767px) {
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        flex-direction: column;
+        overflow: hidden;
+    }
 `;
 
 const LeftDiv = styled.div`
@@ -39,6 +63,17 @@ const LeftDiv = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
+    @media (max-width: 1024px) {
+        flex-shrink: 0;
+        height: auto;
+        padding-top: 1rem;
+    }
+
+    @media (max-width: 767px) {
+        width: 100%;
+        padding: 1rem 0 0.6rem;
+    }
 `;
 
 const StoreIconFrame = styled.div`
@@ -52,6 +87,10 @@ const StoreIconFrame = styled.div`
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+
+    @media (max-width: 1024px) {
+        display: none;
+    }
 `;
 
 const StoreIcon = styled.img`
@@ -66,6 +105,10 @@ const Title = styled.p`
     font-weight: bold;
     color: black;
     margin: 0.75rem 0 0 0;
+
+    @media (max-width: 1024px) {
+        margin-top: 0;
+    }
 `;
 
 const Description = styled.p`
@@ -83,6 +126,19 @@ const RightDiv = styled.form`
     align-items: center;
     background-color: #DBD8F7;
     gap: 0.3rem;
+
+    @media (max-width: 1024px) {
+        flex: 1;
+        min-height: 0;
+        overflow: hidden;
+        justify-content: flex-start;
+        gap: 0.12rem;
+        padding: 0.4rem 0 0.55rem;
+    }
+
+    @media (max-width: 767px) {
+        width: 100%;
+    }
 `;
 
 const SignUpIdPasswordDiv = styled.div`
@@ -92,11 +148,55 @@ const SignUpIdPasswordDiv = styled.div`
     justify-content: center;
     align-items: center;
     gap: 0.3rem;
+
+    @media (max-width: 1024px) {
+        display: contents;
+    }
+`;
+
+const ButtonRow = styled.div`
+    width: 80%;
+    display: flex;
+    justify-content: center;
+
+    @media (max-width: 1024px) {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.4rem;
+        box-sizing: border-box;
+        margin-top: 0.25rem;
+    }
+
+    @media (max-width: 767px) {
+        width: 92%;
+        margin-top: 0.7rem;
+    }
+`;
+
+const CancelButton = styled.button`
+    display: none;
+
+    @media (max-width: 1024px) {
+        display: flex;
+        box-sizing: border-box;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem;
+        border-radius: 0.3rem;
+        border: 0.5px solid gray;
+        color: gray;
+        background-color: white;
+        font-size: 0.85rem;
+        font-weight: 400;
+        cursor: pointer;
+    }
 `;
 
 const SignUpButton = styled.button`
-    width: 80%;
+    width: 100%;
     height: 5vh;
+    min-height: 2.6rem;
     border-radius: 0.3rem;
     outline: none;
     border: 1px solid white;
@@ -110,6 +210,18 @@ const SignUpButton = styled.button`
     &:disabled {
         opacity: 0.6;
         cursor: not-allowed;
+    }
+
+    @media (max-width: 1024px) {
+        box-sizing: border-box;
+        height: auto;
+        min-height: 0;
+        margin-top: 0;
+        padding: 0.5rem;
+        border: 0.5px solid gray;
+        background-color: white;
+        font-size: 0.85rem;
+        font-weight: 400;
     }
 `;
 
@@ -234,9 +346,14 @@ export function StoreSignUpPage() {
                         <SignUpPasswordInputWithDescription engTitle = 'Check' korTitle = '비밀번호 확인' engPlaceholder = 'Enter your password again.' korPlaceholder = '비밀번호를 다시 입력해주세요.'
                             value = { passwordCheck } onChange = { setPasswordCheck } matchWith = { password } />
                     </SignUpIdPasswordDiv>
-                    <SignUpButton type = "submit" disabled = { isSubmitting }>
-                        { language === 'eng' ? 'Submit' : '제출' }
-                    </SignUpButton>
+                    <ButtonRow>
+                        <CancelButton type = 'button' onClick = {() => navigate('/login')}>
+                            { language === 'eng' ? 'Cancel' : '취소' }
+                        </CancelButton>
+                        <SignUpButton type = 'submit' disabled = { isSubmitting }>
+                            { language === 'eng' ? 'Submit' : '제출' }
+                        </SignUpButton>
+                    </ButtonRow>
                 </RightDiv>
             </StoreSignUpField>
         </StoreSignUpPageStyled>

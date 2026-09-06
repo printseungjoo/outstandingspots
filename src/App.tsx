@@ -8,6 +8,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { MapPage } from './ui/templates/MapPage';
 import { Header } from './ui/organisms/Header';
 import { Footer } from './ui/molecules/Footer';
+import { MobileNavBar } from './ui/molecules/MobileNavBar';
 import type Language from './types/Language';
 import { LoginPage } from './ui/templates/LoginPage';
 import { LanguageProvider } from './contexts/LanguageContext';
@@ -96,6 +97,7 @@ function App() {
                     </Route>
                   </Routes>
                 </RoutesArea>
+                <MobileNavBar />
                 <Footer language = { language } />
               </AppLayout>
             </CategoryProvider>

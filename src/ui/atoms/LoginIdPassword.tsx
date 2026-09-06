@@ -8,6 +8,7 @@ import { useLanguage } from '../../contexts/LanguageContext';
 const LoginIdStyled = styled.div`
     width: 100%;
     height: 5vh;
+    min-height: 2.6rem;
     border: 0;
     outline: none;
     background-color: #E6E3FB;
@@ -41,6 +42,7 @@ const LoginIdInput = styled.input`
 const LoginPasswordStyled = styled.div`
     width: 100%;
     height: 5vh;
+    min-height: 2.6rem;
     border: 0;
     outline: none;
     background-color: #E6E3FB;

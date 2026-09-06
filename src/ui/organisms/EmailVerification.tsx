@@ -68,6 +68,10 @@ interface EmailVerificationProps {
 const EmailVerificationStyled = styled.div`
     width: 100%;
     position: relative;
+
+    @media (max-width: 1024px) {
+        display: contents;
+    }
 `;
 
 const EmailFields = styled.div`
@@ -76,6 +80,10 @@ const EmailFields = styled.div`
     flex-direction: column;
     align-items: center;
     gap: 0.3rem;
+
+    @media (max-width: 1024px) {
+        display: contents;
+    }
 `;
 
 export function EmailVerification({ email, onEmailChange, onVerified }: EmailVerificationProps) {

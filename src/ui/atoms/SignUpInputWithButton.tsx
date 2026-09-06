@@ -9,6 +9,13 @@ const SignUpInputWithButtonStyled = styled.div`
     justify-content: center;
     align-items: center;
     gap: 1rem;
+
+    @media (max-width: 767px) {
+        width: 92%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.25rem;
+    }
 `;
 
 const Title = styled.p<{ $hasDescription?: boolean }>`
@@ -20,6 +27,24 @@ const Title = styled.p<{ $hasDescription?: boolean }>`
     flex-shrink: 0;
     text-align: left;
     margin-bottom: ${({ $hasDescription }) => $hasDescription ? '1rem' : '0'};
+
+    @media (max-width: 767px) {
+        width: auto;
+        margin-bottom: 0;
+    }
+`;
+
+const Description = styled.p<{ $spacer?: boolean }>`
+    font-size: 0.75rem;
+    color: #5D53F1;
+    margin: 0;
+    flex-shrink: 0;
+    text-align: left;
+    margin-left: 0.2rem;
+
+    @media (max-width: 1024px) {
+        ${({ $spacer }) => $spacer && 'display: none;'}
+    }
 `;
 
 const InputFieldDiv = styled.div`
@@ -79,15 +104,6 @@ const SignUpButton = styled.button`
     }
 `;
 
-const Description = styled.p`
-    font-size: 0.75rem;
-    color: #5D53F1;
-    margin: 0;
-    flex-shrink: 0;
-    text-align: left;
-    margin-left: 0.2rem;
-`;
-
 interface SignUpInputWithButtonProps {
     engTitle: string;
     korTitle: string;
@@ -116,10 +132,11 @@ export function SignUpInputWithButton({
     const { language } = useLanguage();
 
     const isInactive = Boolean(inputDisabled || inputReadOnly);
+    const isSpacer = description === '\u00A0';
 
     return(
         <SignUpInputWithButtonStyled>
-            <Title $hasDescription = { Boolean(description) }> { language === 'eng' ? engTitle : korTitle } </Title>
+            <Title $hasDescription = { Boolean(description) && !isSpacer }> { language === 'eng' ? engTitle : korTitle } </Title>
             <InputFieldDiv>
                 <InputField $inactive = { isInactive }>
                     <SignUpInput type = { inputType } value = { value } $inactive = { isInactive }
@@ -135,7 +152,7 @@ export function SignUpInputWithButton({
                         { language === 'eng' ? engButtonText : korButtonText }
                     </SignUpButton>
                 </InputField>
-                {description && (<Description> { description } </Description>)}
+                {description && (<Description $spacer = { isSpacer }> { description } </Description>)}
             </InputFieldDiv>
         </SignUpInputWithButtonStyled>
     )

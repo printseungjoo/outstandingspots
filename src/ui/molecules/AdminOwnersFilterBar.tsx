@@ -12,6 +12,10 @@ const AdminOwnersFilterBarStyled = styled.div`
     align-items: stretch;
     padding: 1rem 1.5rem;
     box-sizing: border-box;
+
+    @media (max-width: 1024px) {
+        padding: 0.7rem;
+    }
 `;
 
 interface AdminOwnersFilterBarProps {

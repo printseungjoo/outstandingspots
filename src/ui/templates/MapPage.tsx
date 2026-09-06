@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 import { MainContent } from '../organisms/MainContent';
-import { MobileNavBar } from '../molecules/MobileNavBar';
 import { useLanguage } from '../../contexts/LanguageContext';
 
 const MapPageStyled = styled.div`
@@ -19,7 +18,6 @@ export function MapPage() {
     return(
         <MapPageStyled>
             <MainContent language = { language } onChangeLanguage = { setLanguage } />
-            <MobileNavBar/>
         </MapPageStyled>
     )
 }

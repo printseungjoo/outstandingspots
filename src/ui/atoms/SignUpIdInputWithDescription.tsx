@@ -11,6 +11,13 @@ const SignUpIdInputWithDescriptionStyled = styled.div`
     justify-content: center;
     align-items: center;
     gap: 1rem;
+
+    @media (max-width: 767px) {
+        width: 92%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.25rem;
+    }
 `;
 
 const Title = styled.p`
@@ -22,6 +29,14 @@ const Title = styled.p`
     flex-shrink: 0;
     text-align: left;
     margin-bottom: 1rem;
+
+    @media (max-width: 1024px) {
+        margin-bottom: 0;
+    }
+
+    @media (max-width: 767px) {
+        width: auto;
+    }
 `;
 
 const InputField = styled.div`
@@ -37,11 +52,15 @@ const Input = styled.input`
     padding: 0.5rem;
 `;
 
-const DescriptionRow = styled.div`
+const DescriptionRow = styled.div<{ $hideOnNarrow?: boolean }>`
     display: flex;
     align-items: center;
     gap: 0.3rem;
     margin-left: 0.2rem;
+
+    @media (max-width: 1024px) {
+        ${({ $hideOnNarrow }) => $hideOnNarrow && 'display: none;'}
+    }
 `;
 
 const Description = styled.p`
@@ -70,9 +89,10 @@ interface SignUpIdInputWithDescriptionProps {
     korDescription?: string;
     value?: string;
     onChange?: (value: string) => void;
+    hideHintOnNarrow?: boolean;
 }
 
-export function SignUpIdInputWithDescription({ engTitle, korTitle, engPlaceholder, korPlaceholder, engDescription, korDescription, value, onChange }: SignUpIdInputWithDescriptionProps) {
+export function SignUpIdInputWithDescription({ engTitle, korTitle, engPlaceholder, korPlaceholder, engDescription, korDescription, value, onChange, hideHintOnNarrow }: SignUpIdInputWithDescriptionProps) {
     const { language } = useLanguage();
     const typed = (value ?? '').length > 0;
     const valid = isValidOwnerId(value ?? '');
@@ -83,7 +103,7 @@ export function SignUpIdInputWithDescription({ engTitle, korTitle, engPlaceholde
             <InputField>
                 <Input type = "text" value = { value } placeholder = { language === 'eng' ? engPlaceholder : korPlaceholder }
                     onChange = {(e) => onChange?.(e.target.value)} />
-                <DescriptionRow>
+                <DescriptionRow $hideOnNarrow = { hideHintOnNarrow }>
                     <Description> { language === 'eng' ? engDescription : korDescription } </Description>
                     {typed && (<ValidityIcon icon = { valid ? byPrefixAndName.fas.check : byPrefixAndName.fas.xmark } $valid = { valid } />)}
                 </DescriptionRow>
