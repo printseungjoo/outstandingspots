@@ -5,7 +5,6 @@ import { HeaderTitle } from '../molecules/HeaderTitle';
 import type Language from '../../types/Language';
 import { NavBar } from '../atoms/NavBar';
 import { LanguageButtons } from '../molecules/LanguageButtons';
-import { ToBeContinuedAlert } from '../atoms/ToBeContinuedAlert';
 import { useAdminAuth } from '../../contexts/AdminAuthContext';
 import { useOwnerAuth } from '../../contexts/OwnerAuthContext';
 import { useStudentAuth } from '../../contexts/StudentAuthContext';
@@ -84,9 +83,8 @@ export function Header({ language, onChangeLanguage }: HeaderProps) {
                 <HeaderTitle language = { language } breakSubtitleOnMobile = { !hideLanguageOnMobile } />
                 <NavBars>
                     <NavBar navName = {language === 'eng' ? 'Map' : '지도'} clicked = { pathname === '/' } link = "/" onClick = {() => {}} />
-                    {/* <NavBar navName = {language === 'eng' ? 'Stores' : '전체 매장'} clicked = { pathname === '/stores' } link = "/stores" /> */}
                     <NavBar navName = {language === 'eng' ? 'My page' : '마이페이지'} clicked = { myPageClicked } link = { myPageLink } onClick = {() => {}} />
-                    <NavBar navName = {language === 'eng' ? 'Stores' : '전체 매장'} clicked = { pathname === '' } link = "/" onClick = {() => ToBeContinuedAlert()} />
+                    <NavBar navName = {language === 'eng' ? 'Stores' : '전체 매장'} clicked = { pathname.startsWith('/stores') } link = "/stores" onClick = {() => {}} />
                 </NavBars>
             </HeaderLeftDiv>
             <HeaderRightDiv $hideOnMobileMap = { pathname === '/' }>
