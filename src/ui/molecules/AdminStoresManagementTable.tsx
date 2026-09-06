@@ -19,6 +19,7 @@ const Table = styled.table`
     width: 100%;
     border-collapse: collapse;
     background-color: white;
+    table-layout: fixed;
 `;
 
 const Th = styled.th`
@@ -28,6 +29,7 @@ const Th = styled.th`
     font-weight: 600;
     padding: 0.7rem 0.8rem;
     border-bottom: 1px solid #e4e0f2;
+    white-space: nowrap;
 `;
 
 const Td = styled.td`
@@ -54,8 +56,20 @@ const PhotoTh = styled(Th)`
     width: 4.5rem;
 `;
 
+const NameTh = styled(Th)`
+    width: 24%;
+`;
+
+const ThemeTh = styled(Th)`
+    width: 18%;
+`;
+
+const DiscountTh = styled(Th)`
+    width: 34%;
+`;
+
 const ActionTh = styled(Th)`
-    width: 8.5rem;
+    width: 9.5rem;
 `;
 
 const ActionButton = styled.button`
@@ -176,9 +190,9 @@ export function AdminStoresManagementTable({ stores }: AdminStoresManagementTabl
                     <thead>
                         <tr>
                             <PhotoTh> { language === 'eng' ? 'Photo' : '사진' } </PhotoTh>
-                            <Th> { language === 'eng' ? 'Name' : '이름' } </Th>
-                            <Th> { language === 'eng' ? 'Theme' : '테마' } </Th>
-                            <Th> { language === 'eng' ? 'Discount' : '할인' } </Th>
+                            <NameTh> { language === 'eng' ? 'Name' : '이름' } </NameTh>
+                            <ThemeTh> { language === 'eng' ? 'Theme' : '테마' } </ThemeTh>
+                            <DiscountTh> { language === 'eng' ? 'Discount' : '할인' } </DiscountTh>
                             <ActionTh> { language === 'eng' ? 'Actions' : '관리' } </ActionTh>
                         </tr>
                     </thead>
