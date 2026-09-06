@@ -4,6 +4,17 @@ import type { OwnerStatus } from '../types/Owner';
 
 const baseUrl = (import.meta.env.VITE_API_URL as string | undefined) ?? '';
 
+function adminAuthHeaders(): HeadersInit {
+    const id = String(import.meta.env.VITE_ADMIN_ID ?? '');
+    const password = String(import.meta.env.VITE_ADMIN_PASSWORD ?? '');
+    const bytes = new TextEncoder().encode(`${id}:${password}`);
+    let binary = '';
+    bytes.forEach((byte) => {
+        binary += String.fromCharCode(byte);
+    });
+    return { Authorization: `Basic ${btoa(binary)}` };
+}
+
 export type OwnerSignupBody = {
     name: string;
     phone: string;
@@ -56,7 +67,9 @@ export async function loginOwner(id: string, password: string) {
 }
 
 export async function fetchOwners() {
-    return fetchJson<Owner[]>(`${baseUrl}/owners`);
+    return fetchJson<Owner[]>(`${baseUrl}/owners`, {
+        headers: adminAuthHeaders()
+    });
 }
 
 export function isValidOwnerPassword(value: string) {
@@ -114,6 +127,7 @@ export async function patchOwnerStatus(ownerId: string, status: OwnerStatus) {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
+            ...adminAuthHeaders()
         },
         body: JSON.stringify({ status })
     });

@@ -15,6 +15,7 @@ import type { OwnerInterface, OwnerStatus } from './types/OwnerInterface';
 import ownerModel from './models/OwnerModels';
 import studentModel from './models/StudentModels';
 import { verifyPhoneVerification, type FirebaseRequest } from './middlewares/verifyPhoneVerification';
+import { verifyAdmin } from './middlewares/verifyAdmin';
 import { sendStudentEmailCode, verifyStudentEmailCode, isAllowedSchoolEmail, normalizeSchoolEmail, isSchoolEmailVerified, clearVerifiedSchoolEmail } from './lib/studentEmailOtp';
 
 dotenv.config({ path: path.join(__dirname, '.env') });
@@ -411,7 +412,7 @@ app.post('/owners/login', async (req: Request, res: Response) => {
     }
 });
 
-app.get('/owners', async (_req: Request, res: Response) => {
+app.get('/owners', verifyAdmin, async (_req: Request, res: Response) => {
     try {
         const owners = await ownerModel.find({}, '-password')
             .populate('storeId', 'name branch')
@@ -424,7 +425,7 @@ app.get('/owners', async (_req: Request, res: Response) => {
     }
 });
 
-app.patch('/owners/:id', async (req: Request, res: Response) => {
+app.patch('/owners/:id', verifyAdmin, async (req: Request, res: Response) => {
     try {
         const status = typeof req.body?.status === 'string' ? req.body.status : '';
         if (status !== 'pending' && status !== 'approved' && status !== 'rejected') {
@@ -571,6 +572,10 @@ app.post('/owners', verifyPhoneVerification, async (req: FirebaseRequest, res: R
         }
         res.status(400).json({ error: 'owners 생성에 실패하였습니다.' });
     }
+});
+
+app.get('/students', (_req: Request, res: Response) => {
+    res.status(401).json({ error: '권한이 없습니다.' });
 });
 
 app.post('/students/login', async (req: Request, res: Response) => {
