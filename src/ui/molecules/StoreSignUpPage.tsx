@@ -156,14 +156,13 @@ const SignUpIdPasswordDiv = styled.div`
 
 const ButtonRow = styled.div`
     width: 80%;
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem;
+    box-sizing: border-box;
+    margin-top: 1rem;
 
     @media (max-width: 1024px) {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0.4rem;
-        box-sizing: border-box;
         margin-top: 0.25rem;
     }
 
@@ -174,22 +173,27 @@ const ButtonRow = styled.div`
 `;
 
 const CancelButton = styled.button`
-    display: none;
+    display: flex;
+    box-sizing: border-box;
+    width: 100%;
+    height: 5vh;
+    min-height: 2.6rem;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 0.3rem;
+    border: 1px solid white;
+    color: gray;
+    background-color: #EEECFA;
+    font-weight: 400;
+    cursor: pointer;
 
     @media (max-width: 1024px) {
-        display: flex;
-        box-sizing: border-box;
-        width: 100%;
-        align-items: center;
-        justify-content: center;
-        padding: 0.5rem;
-        border-radius: 0.3rem;
+        height: auto;
+        min-height: 0;
         border: 0.5px solid gray;
-        color: gray;
         background-color: white;
         font-size: 0.85rem;
-        font-weight: 400;
-        cursor: pointer;
     }
 `;
 
@@ -205,7 +209,9 @@ const SignUpButton = styled.button`
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 1rem;
+    margin-top: 0;
+    box-sizing: border-box;
+    padding: 0.5rem;
 
     &:disabled {
         opacity: 0.6;
@@ -213,11 +219,8 @@ const SignUpButton = styled.button`
     }
 
     @media (max-width: 1024px) {
-        box-sizing: border-box;
         height: auto;
         min-height: 0;
-        margin-top: 0;
-        padding: 0.5rem;
         border: 0.5px solid gray;
         background-color: white;
         font-size: 0.85rem;

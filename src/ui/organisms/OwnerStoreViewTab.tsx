@@ -225,17 +225,13 @@ const InfoCard = styled.div`
     max-height: 26rem;
     border: 1px solid #e6e3f2;
     border-radius: 0.5rem;
-    padding: 1rem 0.35rem 1rem 1.1rem;
+    padding: 1rem 1.1rem;
     background-color: white;
     display: flex;
     flex-direction: column;
     align-items: stretch;
     gap: 0.85rem;
     overflow: hidden;
-
-    @media (max-width: 1024px) {
-        padding: 1rem 1.1rem;
-    }
 `;
 
 const CardScroll = styled.div`
@@ -247,13 +243,9 @@ const CardScroll = styled.div`
     flex-direction: column;
     align-items: stretch;
     gap: 1.15rem;
-    padding-right: 0.75rem;
+    padding: 0;
     text-align: left;
     ${scrollBar}
-
-    @media (max-width: 1024px) {
-        padding-right: 0;
-    }
 `;
 
 const CardTitle = styled.p`
@@ -265,11 +257,7 @@ const CardTitle = styled.p`
 
 const BenefitCard = styled(InfoCard)`
     gap: 1.15rem;
-    padding: 1.15rem 0.35rem 1.15rem 1.2rem;
-
-    @media (max-width: 1024px) {
-        padding: 1.15rem 1.2rem;
-    }
+    padding: 1.15rem 1.2rem;
 `;
 
 const BenefitSection = styled.div`
@@ -281,17 +269,16 @@ const BenefitSection = styled.div`
     text-align: left;
 `;
 
-const BenefitTitle = styled.h5`
+const BenefitTitle = styled.p`
     display: block;
     width: 100%;
     box-sizing: border-box;
     font-weight: bold;
     font-size: 0.95rem;
     color: black;
-    margin: 0;
+    margin: 0.3rem 0;
     padding: 0;
     text-align: left;
-    text-indent: 0;
 `;
 
 const BenefitBox = styled.div`
@@ -300,11 +287,11 @@ const BenefitBox = styled.div`
     box-sizing: border-box;
     background-color: #F1F1FA;
     border: 0.8px solid gray;
-    padding: 0.85rem 0.95rem;
+    padding: 0.5rem 0.8rem;
     text-align: left;
 `;
 
-const BenefitText = styled.div`
+const BenefitText = styled.p`
     display: block;
     width: 100%;
     box-sizing: border-box;
@@ -312,35 +299,23 @@ const BenefitText = styled.div`
     color: gray;
     margin: 0;
     padding: 0;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-    line-height: 1.55;
     text-align: left;
-    text-indent: 0;
 `;
 
-const BenefitNote = styled.div`
-    display: block;
-    width: 100%;
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+const BenefitNote = styled(BenefitText)`
     font-size: 0.6rem;
     color: black;
-    line-height: 1.45;
-    overflow-wrap: anywhere;
-    word-break: break-word;
-    text-align: left;
-    text-indent: 0;
 `;
 
 const FieldList = styled.div`
+    width: 100%;
     display: flex;
     flex-direction: column;
 `;
 
 const FieldRow = styled.div`
+    width: 100%;
+    box-sizing: border-box;
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -359,12 +334,14 @@ const FieldLabel = styled.p`
     color: #8a84a0;
     margin: 0;
     flex-shrink: 0;
+    text-align: left;
 `;
 
 const FieldValue = styled.p`
     font-size: 0.85rem;
     color: #2E2A63;
     margin: 0;
+    min-width: 0;
     text-align: right;
     word-break: break-word;
 `;
@@ -434,16 +411,16 @@ export function OwnerStoreViewTab() {
                 <BenefitCard>
                     <CardScroll>
                     <BenefitSection>
-                        <BenefitTitle>🎓 { language === 'eng' ? 'SUNY Benefit' : 'SUNY 혜택' }</BenefitTitle>
+                        <BenefitTitle>🎓 {language === 'eng' ? 'SUNY Benefit' : 'SUNY 혜택'}</BenefitTitle>
                         <BenefitBox>
-                            <BenefitText> { language === 'eng' ? store.discount.eng : store.discount.kor } </BenefitText>
-                            <BenefitNote> { language === 'eng' ? '*You must bring your SUNY student ID card to receive the discount.' : '할인을 받기 위해서는 학생증을 필수 지참해야합니다.'} </BenefitNote>
+                            <BenefitText>{language === 'eng' ? store.discount.eng : store.discount.kor}</BenefitText>
+                            <BenefitNote>{language === 'eng' ? '*You must bring your SUNY student ID card to receive the discount.' : '할인을 받기 위해서는 학생증을 필수 지참해야합니다.'}</BenefitNote>
                         </BenefitBox>
                     </BenefitSection>
                     <BenefitSection>
-                        <BenefitTitle>✅ { language === 'eng' ? 'Additional precautions' : '추가 유의사항' } </BenefitTitle>
+                        <BenefitTitle>✅ {language === 'eng' ? 'Additional precautions' : '추가 유의사항'}</BenefitTitle>
                         <BenefitBox>
-                            <BenefitText> { language === 'eng' ? store.description.eng : store.description.kor } </BenefitText>
+                            <BenefitText>{language === 'eng' ? store.description.eng : store.description.kor}</BenefitText>
                         </BenefitBox>
                     </BenefitSection>
                     </CardScroll>
@@ -453,30 +430,30 @@ export function OwnerStoreViewTab() {
                     <CardScroll>
                     <FieldList>
                         <FieldRow>
-                            <FieldLabel> { language === 'eng' ? 'Store name (KOR/ENG)' : '매장명 (한/영)' } </FieldLabel>
-                            <FieldValue> { `${store.name.kor} / ${store.name.eng}` } </FieldValue>
+                            <FieldLabel>{language === 'eng' ? 'Store name (KOR/ENG)' : '매장명 (한/영)'}</FieldLabel>
+                            <FieldValue>{`${store.name.kor} / ${store.name.eng}`}</FieldValue>
                         </FieldRow>
                         <FieldRow>
-                            <FieldLabel> { language === 'eng' ? 'Category (KOR/ENG)' : '카테고리 (한/영)' } </FieldLabel>
-                            <FieldValue> { `${store.category.kor} / ${store.category.eng}` } </FieldValue>
+                            <FieldLabel>{language === 'eng' ? 'Category (KOR/ENG)' : '카테고리 (한/영)'}</FieldLabel>
+                            <FieldValue>{`${store.category.kor} / ${store.category.eng}`}</FieldValue>
                         </FieldRow>
                         <FieldRow>
-                            <FieldLabel> { language === 'eng' ? 'Theme (KOR/ENG)' : '테마 (한/영)' } </FieldLabel>
-                            <FieldValue> { `${store.theme.kor} / ${store.theme.eng}` } </FieldValue>
+                            <FieldLabel>{language === 'eng' ? 'Theme (KOR/ENG)' : '테마 (한/영)'}</FieldLabel>
+                            <FieldValue>{`${store.theme.kor} / ${store.theme.eng}`}</FieldValue>
                         </FieldRow>
                         <FieldRow>
-                            <FieldLabel> { language === 'eng' ? 'Business hours' : '영업 시간' } </FieldLabel>
-                            <FieldValue> { store.openTime } - { store.closeTime } </FieldValue>
+                            <FieldLabel>{language === 'eng' ? 'Business hours' : '영업 시간'}</FieldLabel>
+                            <FieldValue>{store.openTime} - {store.closeTime}</FieldValue>
                         </FieldRow>
                         <FieldRow>
-                            <FieldLabel> { language === 'eng' ? 'Naver map' : '네이버 지도' } </FieldLabel>
+                            <FieldLabel>{language === 'eng' ? 'Naver map' : '네이버 지도'}</FieldLabel>
                             <MapLink href = { store.naverMap } target = '_blank' rel = 'noopener noreferrer'>
                                 {language === 'eng' ? 'View on map' : '지도에서 보기'} ↗
                             </MapLink>
                         </FieldRow>
                         <FieldRow>
-                            <FieldLabel> { language === 'eng' ? 'Branch (KOR/ENG)' : '지점명 (한/영)' } </FieldLabel>
-                            <FieldValue> { `${store.branch.kor} / ${store.branch.eng}` } </FieldValue>
+                            <FieldLabel>{language === 'eng' ? 'Branch (KOR/ENG)' : '지점명 (한/영)'}</FieldLabel>
+                            <FieldValue>{`${store.branch.kor} / ${store.branch.eng}`}</FieldValue>
                         </FieldRow>
                     </FieldList>
                     </CardScroll>
@@ -486,16 +463,16 @@ export function OwnerStoreViewTab() {
                     <CardScroll>
                     <FieldList>
                         <FieldRow>
-                            <FieldLabel> { language === 'eng' ? 'Address (KOR/ENG)' : '주소 (한/영)' } </FieldLabel>
-                            <FieldValue> { `${store.address.kor} / ${store.address.eng}` } </FieldValue>
+                            <FieldLabel>{language === 'eng' ? 'Address (KOR/ENG)' : '주소 (한/영)'}</FieldLabel>
+                            <FieldValue>{`${store.address.kor} / ${store.address.eng}`}</FieldValue>
                         </FieldRow>
                         <FieldRow>
-                            <FieldLabel> { language === 'eng' ? 'Latitude' : '위도' } </FieldLabel>
-                            <FieldValue> { store.lat } </FieldValue>
+                            <FieldLabel>{language === 'eng' ? 'Latitude' : '위도'}</FieldLabel>
+                            <FieldValue>{store.lat}</FieldValue>
                         </FieldRow>
                         <FieldRow>
-                            <FieldLabel> { language === 'eng' ? 'Longitude' : '경도' } </FieldLabel>
-                            <FieldValue> { store.lon } </FieldValue>
+                            <FieldLabel>{language === 'eng' ? 'Longitude' : '경도'}</FieldLabel>
+                            <FieldValue>{store.lon}</FieldValue>
                         </FieldRow>
                     </FieldList>
                     </CardScroll>

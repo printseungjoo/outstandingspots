@@ -19,6 +19,7 @@ const OwnerContent = styled.div`
     min-width: 0;
     height: 100%;
     overflow: auto;
+    text-align: left;
 
     @media (max-width: 1024px) {
         scrollbar-gutter: stable both-edges;

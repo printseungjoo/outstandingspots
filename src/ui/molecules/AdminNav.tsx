@@ -24,10 +24,9 @@ const AdminNavStyled = styled.div`
     @media (max-width: 767px) {
         width: 100%;
         height: auto;
-        flex-direction: row;
-        flex-wrap: nowrap;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
         align-items: center;
-        justify-content: space-between;
         gap: 0.25rem;
         padding: 0.45rem 0.6rem;
         border: none;
@@ -41,13 +40,7 @@ const AdminNavTop = styled.div`
     gap: 0.8rem;
 
     @media (max-width: 767px) {
-        flex-direction: row;
-        flex-wrap: nowrap;
-        align-items: center;
-        justify-content: space-between;
-        gap: 0.25rem;
-        flex: 2;
-        min-width: 0;
+        display: contents;
     }
 `;
 
@@ -84,7 +77,8 @@ const AdminNavOption = styled(Link)<{ $selected: boolean }>`
     }
 
     @media (max-width: 767px) {
-        flex: 1;
+        box-sizing: border-box;
+        width: 100%;
         min-width: 0;
         justify-content: center;
         padding: 0.25rem 0.2rem;
@@ -121,26 +115,32 @@ const AdminNavBottom = styled.div`
     padding: 0;
 
     @media (max-width: 767px) {
-        margin-bottom: 0;
-        flex: 1;
-        min-width: 0;
+        display: contents;
     }
 `;
 
 const AdminLogoutButton = styled.button`
     width: 100%;
     height: 100%;
+    box-sizing: border-box;
     background-color: transparent;
     border: none;
     cursor: pointer;
     color: gray;
     font-size: 0.8rem;
+    font-weight: 400;
     background-color: #F1EDFC;
     padding: 0.7rem 0.4rem;
 
     @media (max-width: 767px) {
         width: 100%;
         height: auto;
+        min-height: 1.4rem;
+        line-height: 1.4rem;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         padding: 0.25rem 0.2rem;
         font-size: 0.68rem;
         border-radius: 0.3rem;
@@ -166,8 +166,8 @@ export function AdminNav() {
                 <AdminNavOption to = "/admin/owners" $selected = { pathname === '/admin/owners' }> <IconSlot> <SmallIcon src = { ownersIcon } alt = 'owner icon'/> </IconSlot> {language === 'eng' ? 'Owners Management' : '사장님 관리'} </AdminNavOption>
             </AdminNavTop>
             <AdminNavBottom>
-                <AdminLogoutButton onClick = {() => { logoutAdmin(); navigate('/login');}}> 
-                    {language === 'eng' ? 'Logout' : '로그아웃'} 
+                <AdminLogoutButton onClick = {() => { logoutAdmin(); navigate('/login'); }}>
+                    {language === 'eng' ? 'Logout' : '로그아웃'}
                 </AdminLogoutButton>
             </AdminNavBottom>
         </AdminNavStyled>

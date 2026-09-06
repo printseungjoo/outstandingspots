@@ -75,7 +75,7 @@ export function Header({ language, onChangeLanguage }: HeaderProps) {
     const { isStudent } = useStudentAuth();
     
     const myPageLink = isAdmin ? '/admin' : isOwner ? '/owner' : isStudent ? '/student' : '/login';
-    const myPageClicked = pathname === '/login' || pathname.startsWith('/admin') || pathname.startsWith('/owner') || pathname.startsWith('/student');
+    const myPageClicked = pathname === '/login' || pathname.startsWith('/signup') || pathname.startsWith('/admin') || pathname.startsWith('/owner') || pathname.startsWith('/student');
     const hideLanguageOnMobile = pathname === '/';
 
     return(
