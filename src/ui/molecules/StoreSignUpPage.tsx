@@ -130,10 +130,11 @@ const RightDiv = styled.form`
     @media (max-width: 1024px) {
         flex: 1;
         min-height: 0;
-        overflow: hidden;
+        overflow-x: hidden;
+        overflow-y: auto;
         justify-content: flex-start;
         gap: 0.12rem;
-        padding: 0.4rem 0 0.55rem;
+        padding: 0.8rem 0 1.2rem;
     }
 
     @media (max-width: 767px) {
