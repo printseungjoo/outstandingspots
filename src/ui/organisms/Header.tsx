@@ -6,11 +6,14 @@ import type Language from '../../types/Language';
 import { NavBar } from '../atoms/NavBar';
 import { LanguageButtons } from '../molecules/LanguageButtons';
 import { ToBeContinuedAlert } from '../atoms/ToBeContinuedAlert';
+import { useAdminAuth } from '../../contexts/AdminAuthContext';
+import { useOwnerAuth } from '../../contexts/OwnerAuthContext';
+import { useStudentAuth } from '../../contexts/StudentAuthContext';
 
 const HeaderStyled = styled.div`
     width: 100%;
     flex-shrink: 0;
-    min-height: 8dvh;
+    min-height: 8svh;
     box-sizing: border-box;
     display: flex;
     justify-content: space-between;
@@ -37,13 +40,14 @@ const NavBars = styled.div`
     }
 `;
 
-const HeaderRightDiv = styled.div`
+const HeaderRightDiv = styled.div<{ $hideOnMobileMap?: boolean }>`
     display: flex;
     align-items: center;
     gap: 1.5rem;
 
     @media (max-width: 767px) {
-        display: none;
+        gap: 0.4rem;
+        display: ${({ $hideOnMobileMap }) => $hideOnMobileMap ? 'none' : 'flex'};
     }
 `;
 
@@ -66,21 +70,27 @@ interface HeaderProps {
 
 export function Header({ language, onChangeLanguage }: HeaderProps) {
     const { pathname } = useLocation();
+    const { isAdmin } = useAdminAuth();
+    const { isOwner } = useOwnerAuth();
+    const { isStudent } = useStudentAuth();
+    
+    const myPageLink = isAdmin ? '/admin' : isOwner ? '/owner' : isStudent ? '/student' : '/login';
+    const myPageClicked = pathname === '/login' || pathname.startsWith('/signup') || pathname.startsWith('/admin') || pathname.startsWith('/owner') || pathname.startsWith('/student');
+    const hideLanguageOnMobile = pathname === '/';
 
     return(
         <HeaderStyled>
             <HeaderLeftDiv>
-                <HeaderTitle language = { language } />
+                <HeaderTitle language = { language } breakSubtitleOnMobile = { !hideLanguageOnMobile } />
                 <NavBars>
                     <NavBar navName = {language === 'eng' ? 'Map' : '지도'} clicked = { pathname === '/' } link = "/" onClick = {() => {}} />
-                    {/* <NavBar navName = {language === 'eng' ? 'Stores' : '전체 매장'} clicked = { pathname === '/stores' } link = "/stores" />
-                    <NavBar navName = {language === 'eng' ? 'My page' : '마이페이지'} clicked = { pathname === '/myPage' } link = "/myPage" /> */}
+                    {/* <NavBar navName = {language === 'eng' ? 'Stores' : '전체 매장'} clicked = { pathname === '/stores' } link = "/stores" /> */}
+                    <NavBar navName = {language === 'eng' ? 'My page' : '마이페이지'} clicked = { myPageClicked } link = { myPageLink } onClick = {() => {}} />
                     <NavBar navName = {language === 'eng' ? 'Stores' : '전체 매장'} clicked = { pathname === '' } link = "/" onClick = {() => ToBeContinuedAlert()} />
-                    <NavBar navName = {language === 'eng' ? 'My page' : '마이페이지'} clicked = { pathname === '' } link = "/" onClick = {() => ToBeContinuedAlert()} />
                 </NavBars>
             </HeaderLeftDiv>
-            <HeaderRightDiv>
-                <LanguageButtonsPlus onChangeLanguage = { onChangeLanguage } />
+            <HeaderRightDiv $hideOnMobileMap = { pathname === '/' }>
+                <LanguageButtonsPlus language = { language } onChangeLanguage = { onChangeLanguage } />
             </HeaderRightDiv>
         </HeaderStyled>
     )

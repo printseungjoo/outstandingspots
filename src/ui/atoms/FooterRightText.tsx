@@ -26,6 +26,7 @@ const FileIcon = styled.img`
 const Text = styled.p`
     color: black;
     font-size: 0.9rem;
+    margin: 0;
 `;
 
 interface FooterRightTextProps {
@@ -35,7 +36,7 @@ interface FooterRightTextProps {
 export function FooterRightText({ language }: FooterRightTextProps) {
     return(
         <FooterRightTextStyled>
-            <FileIcon src = '/file.png' alt = 'file' />
+            <FileIcon src = '/fileIcon.png' alt = 'file icon' />
             <Text onClick = {() => ToBeContinuedAlert()}> {language === 'eng' ? 'Web guide (PDF)' : '웹 사용 설명서 (PDF)'} </Text>
         </FooterRightTextStyled>
     )

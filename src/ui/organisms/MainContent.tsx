@@ -1,5 +1,6 @@
 import styled, { css, keyframes } from 'styled-components';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import { AllCategories } from '../molecules/AllCategories';
 import { OptionGroups } from '../molecules/OptionGroups';
@@ -8,11 +9,13 @@ import { StoreInformationTab } from '../organisms/StoreInformationTab';
 import type Store from '../../types/Store';
 import { WebsiteInformationTab } from './WebsiteInformationTab';
 import { AllStoresTab } from './AllStoresTab';
-import fetchJson from '../../lib/fetchJson';
 import type Language from '../../types/Language';
-import type Category from '../../types/Category';
 import { SearchBar } from '../molecules/SearchBar';
 import { LanguageButtons } from '../molecules/LanguageButtons';
+import { SUCCESS_MESSAGE, useStores } from '../../contexts/StoresContext';
+import { useCategories } from '../../contexts/CategoryContext';
+import { useStudentAuth } from '../../contexts/StudentAuthContext';
+import { addStudentRecentView } from '../../lib/studentsApi';
 
 const MainContentStyled = styled.div`
     position: relative;
@@ -161,8 +164,6 @@ const SchoolReturnButton = styled.button`
     }
 `;
 
-const SUCCESS_MESSAGE = '즐거운 이용 되세요! Enjoy the service!';
-
 const Loading = styled.div<{ $animate: boolean }>`
     background-color: #e3e6ff;
     color: #535FC1;
@@ -204,24 +205,70 @@ interface MainContentProps {
     onChangeLanguage: (language: Language) => void;
 }
 
-const baseUrl = import.meta.env.VITE_API_URL;
-
 export function MainContent({ className, language, onChangeLanguage }: MainContentProps) {
+    const { stores, loadingState } = useStores();
+    const { categories } = useCategories();
+    const { student, isStudent, updateStudent, prependRecentView } = useStudentAuth();
+    const recentViewQueueRef = useRef(Promise.resolve());
+    const [searchParams] = useSearchParams();
+    const selectedStoreId = searchParams.get('store');
+    
     const [selectedStore, setSelectedStore] = useState<Store | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
+    const [favoritesOnly, setFavoritesOnly] = useState(false);
     const [isWebsiteInfoOpen, setIsWebsiteInfoOpen] = useState<boolean>(false);
     const [isStoreListOpen, setIsStoreListOpen] = useState<boolean>(false);
-    const [categories, setCategories] = useState<Category[]>([]);
-    const [stores, setStores] = useState<Store[]>([]);
-    const [loadingState, setLoadingState] = useState<string>('매장 정보를 불러오는 중입니다 Loading store information');
     const [isLoadingVisible, setIsLoadingVisible] = useState(true);
     const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
     const [isLocating, setIsLocating] = useState<boolean>(false);
 
+    const recordRecentView = useCallback((store: Store) => {
+        if (!isStudent || !student?._id) return;
+        const changed = prependRecentView(store._id);
+        if (!changed) return;
+        const studentMongoId = student._id;
+        recentViewQueueRef.current = recentViewQueueRef.current
+            .catch(() => undefined)
+            .then(() => addStudentRecentView(studentMongoId, store._id))
+            .then(updateStudent)
+            .catch((error) => {
+                console.error(error);
+            });
+    }, [isStudent, student?._id, prependRecentView, updateStudent]);
+
+    const recordRecentViewRef = useRef(recordRecentView);
+    recordRecentViewRef.current = recordRecentView;
+
     const handleSelectStore = useCallback((store: Store) => {
         setSelectedStore(store);
         setIsStoreListOpen(false);
-    }, []);
+        recordRecentView(store);
+    }, [recordRecentView]);
+
+    useEffect(() => {
+        if (!selectedStoreId || stores.length === 0) return;
+        const store = stores.find((item) => item._id === selectedStoreId);
+        if (store) {
+            setSelectedStore(store);
+            setIsStoreListOpen(false);
+            recordRecentViewRef.current(store);
+        }
+    }, [selectedStoreId, stores]);
+
+    const handleToggleFavorites = useCallback(() => {
+        if (!favoritesOnly && !isStudent) {
+            alert(language === 'eng'
+                ? 'Please log in as a student to see favorite stores.'
+                : '즐겨찾기한 매장은 학생 로그인 후 볼 수 있습니다.');
+            return;
+        }
+        setFavoritesOnly((current) => !current);
+        setSelectedStore((current) => {
+            if (!current || favoritesOnly) return current;
+            const favoriteIds = student?.favorites ?? [];
+            return favoriteIds.includes(current._id) ? current : null;
+        });
+    }, [favoritesOnly, isStudent, language, student?.favorites]);
 
     const handleMyLocation = useCallback(() => {
         setIsLocating(true);
@@ -243,25 +290,6 @@ export function MainContent({ className, language, onChangeLanguage }: MainConte
         setIsLocating(false);
     }, []);
 
-    useEffect(() => {
-        const controller = new AbortController();
-        Promise.all([
-            fetchJson<Category[]>(`${baseUrl}/categories`, { signal: controller.signal }),
-            fetchJson<Store[]>(`${baseUrl}/stores`, { signal: controller.signal })
-        ])
-        .then(([categoriesData, storesData]) => {
-            setCategories(categoriesData);
-            setStores(storesData);
-            setLoadingState(SUCCESS_MESSAGE);
-        })
-        .catch((error) => {
-            if (controller.signal.aborted) return;
-            console.error(error);
-            setLoadingState('다시 시도해주세요 Try again');
-        })
-        return () => controller.abort();
-    }, [])
-
     const isSuccess = loadingState === SUCCESS_MESSAGE;
 
     return (
@@ -272,11 +300,13 @@ export function MainContent({ className, language, onChangeLanguage }: MainConte
                 selectedStore = { selectedStore } stores = { stores } userLocation = { userLocation }
                 language = { language } onUserMoveEnd = { handleUserMoveEnd }
                 showSchoolReturn = { Boolean(userLocation) && !isLocating }
+                favoriteIds = { student?.favorites ?? [] } favoritesOnly = { favoritesOnly }
             />
             <UpperContentDiv>
-                <OptionGroupsPlus onOpenWebsiteInfo = {() => setIsWebsiteInfoOpen(true)} onMyLocation = { handleMyLocation } />
-                <SearchBar language = { language } stores = { stores } onSelectStore = { handleSelectStore } />
-                <LanguageButtonsPlus onChangeLanguage = { onChangeLanguage } />
+                <OptionGroupsPlus onOpenWebsiteInfo = {() => setIsWebsiteInfoOpen(true)} onMyLocation = { handleMyLocation }
+                    onToggleFavorites = { handleToggleFavorites } favoritesOnly = { favoritesOnly } />
+                <SearchBar language = { language } stores = { stores } onSelectStore = { handleSelectStore } engPlaceholder = 'Search by store name or theme.' korPlaceholder = '매장 이름 혹은 테마로 검색해보세요.'/>
+                <LanguageButtonsPlus language = { language } onChangeLanguage = { onChangeLanguage } />
             </UpperContentDiv>
             {isStoreListOpen && (<AllStoresTab onOpen = { handleSelectStore } onClose = {() => setIsStoreListOpen(false)} language = { language } stores = { stores } />)}
             <BottomContentDiv>

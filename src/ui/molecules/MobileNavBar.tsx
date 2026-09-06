@@ -2,6 +2,9 @@ import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { ToBeContinuedAlert } from '../atoms/ToBeContinuedAlert';
+import { useAdminAuth } from '../../contexts/AdminAuthContext';
+import { useOwnerAuth } from '../../contexts/OwnerAuthContext';
+import { useStudentAuth } from '../../contexts/StudentAuthContext';
 
 const MobileNavBarDiv = styled.div`
     z-index: 2;
@@ -65,19 +68,28 @@ const Icon = styled.img`
 
 export function MobileNavBar() {
     const { pathname } = useLocation();
+    const { isAdmin } = useAdminAuth();
+    const { isOwner } = useOwnerAuth();
+    const { isStudent } = useStudentAuth();
+    
+    const myPageLink = isAdmin ? '/admin' : isOwner ? '/owner' : isStudent ? '/student' : '/login';
+    const myPageClicked = pathname === '/login' || pathname.startsWith('/signup') || pathname.startsWith('/admin') || pathname.startsWith('/owner') || pathname.startsWith('/student');
+    const myPageIcon = myPageClicked ? '/coloredMyPageIcon.png' : '/myPageIcon.png';
     const mapIcon = pathname === '/' ? '/clickedMapPageIcon.png' : '/mapPageIcon.png';
 
     return(
         <MobileNavBarDiv>
-            <nav id = "navbar">
+            <nav id = 'navbar'>
                 <NavUl>
-                    {/* <NavLi onClick = { ToBeContinuedAlert }> <a href = "/my"> <Icon src = '/myPageIcon.png' alt = 'My page icon'/> </a> </NavLi> */}
-                    <NavLi onClick = { ToBeContinuedAlert }> <a href = "/"> <Icon src = '/myPageIcon.png' alt = 'My page icon'/> </a> </NavLi>
                     <NavLi>
-                        <Link to = "/"> <Icon src = { mapIcon } alt = 'Map page icon'/> </Link>
+                        <Link to = { myPageLink }> <Icon src = { myPageIcon } alt = 'My page icon'/> </Link>
                     </NavLi>
-                    {/* <NavLi onClick = { ToBeContinuedAlert }> <a href = "/store"> <Icon src = '/storePageIcon.png' alt = 'Store page icon'/> </a> </NavLi> */}
-                    <NavLi onClick = { ToBeContinuedAlert }> <a href = "/"> <Icon src = '/storePageIcon.png' alt = 'Store page icon'/> </a> </NavLi>
+                    <NavLi>
+                        <Link to = '/'> <Icon src = { mapIcon } alt = 'Map page icon'/> </Link>
+                    </NavLi>
+                    <NavLi onClick = { ToBeContinuedAlert }>
+                        <Link to = '/'> <Icon src = '/storePageIcon.png' alt = 'Store page icon'/> </Link>
+                    </NavLi>
                 </NavUl>
             </nav>
         </MobileNavBarDiv>

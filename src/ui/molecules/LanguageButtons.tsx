@@ -1,8 +1,9 @@
 import styled from 'styled-components';
-import { useState } from 'react';
+import { useContext } from 'react';
 
 import { Languages } from '../atoms/Languages';
 import type Language from '../../types/Language';
+import { LanguageContext } from '../../contexts/LanguageContext';
 
 const LanguageButton = styled.div`
     display: inline-flex;
@@ -13,16 +14,23 @@ const LanguageButton = styled.div`
 
 interface LanguageButtonsProps {
     className?: string;
-    onChangeLanguage: (language: Language) => void;
+    language?: Language;
+    onChangeLanguage?: (language: Language) => void;
 }
 
-export function LanguageButtons({ className, onChangeLanguage }: LanguageButtonsProps) {
-    const [kor, setKor] = useState(true);
+export function LanguageButtons({ className, language, onChangeLanguage }: LanguageButtonsProps) {
+    const context = useContext(LanguageContext);
+    const currentLanguage = language ?? context?.language ?? 'kor';
+
+    const changeLanguage = (next: Language) => {
+        context?.setLanguage(next);
+        onChangeLanguage?.(next);
+    };
 
     return(
         <LanguageButton className = { className }>
-            <Languages languageName = 'KOR' selected = { kor } onClick = {() => {setKor(true); onChangeLanguage('kor')}}/>
-            <Languages languageName = 'ENG' selected = { !kor } onClick = {() => {setKor(false); onChangeLanguage('eng')}}/>
+            <Languages languageName = 'KOR' selected = { currentLanguage === 'kor' } onClick = {() => changeLanguage('kor')}/>
+            <Languages languageName = 'ENG' selected = { currentLanguage === 'eng' } onClick = {() => changeLanguage('eng')}/>
         </LanguageButton>
     )
 }

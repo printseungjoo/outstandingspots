@@ -1,0 +1,181 @@
+import styled from 'styled-components';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import { LoginIdPassword } from '../atoms/LoginIdPassword';
+import { LoginButton } from '../atoms/LoginButton';
+import { SignUpButton } from '../atoms/SignUpButton';
+import { useAdminAuth } from '../../contexts/AdminAuthContext';
+import { useOwnerAuth } from '../../contexts/OwnerAuthContext';
+import { useStudentAuth } from '../../contexts/StudentAuthContext';
+import { useLanguage } from '../../contexts/LanguageContext';
+import { loginOwner, OwnerLoginError } from '../../lib/ownersApi';
+import { loginStudent } from '../../lib/studentsApi';
+
+const LoginFormStyled = styled.div`
+    width: 25%;
+    height: 80%;
+    border: 2px solid white;
+    background-color: #DBD8F750;
+    box-sizing: border-box;
+    padding: 3rem 0;
+    flex-shrink: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    @media (max-width: 1024px) {
+        width: 100%;
+        max-width: 22rem;
+        height: auto;
+        padding: 1.6rem 0 1.3rem;
+    }
+`;
+
+const ColoredMyPageIcon = styled.img`
+    width: 3vw;
+    height: 6vh;
+    min-width: 2.5rem;
+    min-height: 2.5rem;
+    border-radius: 50%;
+    border: 1px solid #D1CDF4;
+    padding: 0.5rem;
+    box-shadow: 0px 0px 20px 0px #D1CDF4;
+    box-sizing: border-box;
+
+    @media (max-width: 1024px) {
+        width: 3rem;
+        height: 3rem;
+    }
+`;
+
+const BoldText = styled.p`
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2E2A63;
+    margin: 0;
+    text-align: center;
+
+    @media (max-width: 767px) {
+        font-size: 1.2rem;
+    }
+`;
+
+const LoginDiv = styled.div`
+    width: 100%;
+    box-sizing: border-box;
+    padding: 2rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+
+    @media (max-width: 767px) {
+        padding: 1rem 1.2rem;
+    }
+`;
+
+const OnlyText = styled.p`
+    font-size: 0.8rem;
+    color: #2E2A63;
+    margin: 0;
+    padding: 0 1rem;
+    text-align: center;
+`;
+
+const BlackThinLine = styled.div`
+    width: 100%;
+    height: 0.1rem;
+    border-top: 0.5px solid black;
+`;
+
+interface LoginFormProps {
+    who: string;
+    onlyForWho: string;
+    loginRole: string;
+}
+
+export function LoginForm({ who,onlyForWho, loginRole }: LoginFormProps) {
+    const { loginAdmin } = useAdminAuth();
+    const { loginOwner: setOwnerSession } = useOwnerAuth();
+    const { loginStudent: setStudentSession } = useStudentAuth();
+    const { language } = useLanguage();
+    const navigate = useNavigate();
+    const [isAdmin, setIsAdmin] = useState<boolean[]>([false, false]);
+    const [id, setId] = useState('');
+    const [password, setPassword] = useState('');
+
+    const handleLogin = async () => {
+        if (loginRole === 'student') {
+            if (!id.trim() || !password) {
+                alert(language === 'eng' ? 'Please enter your ID and password.' : '아이디와 비밀번호를 입력해주세요.');
+                return;
+            }
+            try {
+                const student = await loginStudent(id.trim(), password);
+                setStudentSession(student);
+                navigate('/student');
+            } catch (error) {
+                const message = error instanceof Error ? error.message : '';
+                if (message === 'HTTP 404' || message.includes('Cannot POST')) {
+                    alert(language === 'eng'
+                        ? 'The login API is missing. Restart the API server in the server folder.'
+                        : '로그인 API가 없습니다. server 폴더에서 API 서버를 재시작해 주세요.');
+                    return;
+                }
+                if (message === 'Failed to fetch' || message.includes('NetworkError') || message.includes('fetch')) {
+                    alert(language === 'eng'
+                        ? 'The API server is not running. Start it with npm run dev in the server folder.'
+                        : 'API 서버가 꺼져 있습니다. server 폴더에서 npm run dev로 시작해 주세요.');
+                    return;
+                }
+                alert(language === 'eng' ? 'ID or password is incorrect.' : '아이디 또는 비밀번호가 올바르지 않습니다.');
+            }
+            return;
+        }
+        if (loginRole !== 'store') {
+            return;
+        }
+        if (isAdmin[0] && isAdmin[1]) {
+            loginAdmin();
+            navigate('/admin');
+            return;
+        }
+        if (!id.trim() || !password) {
+            alert(language === 'eng' ? 'Please enter your ID and password.' : '아이디와 비밀번호를 입력해주세요.');
+            return;
+        }
+        try {
+            const owner = await loginOwner(id.trim(), password);
+            setOwnerSession(owner);
+            navigate('/owner');
+        } catch (error) {
+            if (error instanceof OwnerLoginError && error.status === 'pending') {
+                alert(language === 'eng' ? 'Please wait for admin approval.' : '관리자의 승인을 기다려주세요.');
+                return;
+            }
+            if (error instanceof OwnerLoginError && error.status === 'rejected') {
+                alert(language === 'eng' ? 'Your registration was rejected by the admin.' : '관리자로부터 승인이 거절되었습니다.');
+                return;
+            }
+            alert(language === 'eng' ? 'ID or password is incorrect.' : '아이디 또는 비밀번호가 올바르지 않습니다.');
+        }
+    };
+
+    return(
+        <LoginFormStyled>
+            <ColoredMyPageIcon src = '/coloredMyPageIcon.png' alt = 'coloredMyPageIcon'/>
+            <BoldText> { who } </BoldText>
+            <LoginDiv>
+                <LoginIdPassword loginRole = { loginRole } onAdminCheckChange = { setIsAdmin }
+                    onIdChange = { setId } onPasswordChange = { setPassword } />
+                <LoginButton onClick = {() => { void handleLogin(); }} />
+                <BlackThinLine />
+                <SignUpButton onClick = {() => navigate(loginRole === 'student' ? '/signup/student' : '/signup/store')} />
+            </LoginDiv>
+            <OnlyText> { onlyForWho } </OnlyText>
+        </LoginFormStyled>
+    )
+}

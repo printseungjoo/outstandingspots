@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 import { useRef, useState } from 'react';
 import type { ChangeEvent, KeyboardEvent } from 'react';
 
@@ -62,9 +62,14 @@ interface SearchBarProps {
     language: Language;
     stores: Store[];
     onSelectStore?: (store: Store) => void;
+    onQueryChange?: (value: string) => void;
+    persistSelectedName?: boolean;
+    engPlaceholder: string;
+    korPlaceholder: string;
+    className?: string;
 }
 
-export function SearchBar({ language, stores, onSelectStore }: SearchBarProps) {
+export function SearchBar({ language, stores, onSelectStore, onQueryChange, persistSelectedName, engPlaceholder, korPlaceholder, className }: SearchBarProps) {
     const [matchDataList, setMatchDataList] = useState<Store[]>([]);
     const [nowIndex, setNowIndex] = useState(0);
     const [inputValue, setInputValue] = useState('');
@@ -86,41 +91,63 @@ export function SearchBar({ language, stores, onSelectStore }: SearchBarProps) {
         });
     }
 
+    const findMatches = (raw: string) => {
+        const value = raw.trim();
+        const lowerCaseValue = value.toLowerCase();
+        if (!value) {
+            return [] as Store[];
+        }
+        return stores.filter((store) => {
+            const name = (language === 'eng' ? store.name.eng : store.name.kor).toLowerCase();
+            const themeKor = store.theme?.kor ?? '';
+            const themeEng = store.theme?.eng?.toLowerCase() ?? '';
+            return name.includes(lowerCaseValue) || themeKor.includes(lowerCaseValue) || themeEng.includes(lowerCaseValue);
+        });
+    }
+
     const selectStore = (store: Store) => {
-        clearInput();
+        skipInputUpdate.current = true;
+        if (persistSelectedName) {
+            const selectedName = language === 'eng' ? store.name.eng : store.name.kor;
+            setInputValue(selectedName);
+            if (inputRef.current) {
+                inputRef.current.value = selectedName;
+            }
+            onQueryChange?.(selectedName);
+        } else {
+            clearInput();
+        }
         setMatchDataList([]);
         setNowIndex(0);
         inputRef.current?.blur();
         onSelectStore?.(store);
+        requestAnimationFrame(() => {
+            skipInputUpdate.current = false;
+        });
     }
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         if (skipInputUpdate.current) {
-            setInputValue('');
             return;
         }
-        setInputValue(event.target.value);
+        const nextValue = event.target.value;
+        setInputValue(nextValue);
+        setNowIndex(0);
+        setMatchDataList(findMatches(nextValue));
+        onQueryChange?.(nextValue);
     }
 
     const handleCompositionEnd = () => {
         if (skipInputUpdate.current) {
-            setInputValue('');
-            if (inputRef.current) {
-                inputRef.current.value = '';
-            }
+            return;
         }
+        const nextValue = inputRef.current?.value ?? inputValue;
+        setMatchDataList(findMatches(nextValue));
+        onQueryChange?.(nextValue);
     }
 
     const handleKeyUp = (event: KeyboardEvent<HTMLInputElement>) => {
-        const value = event.currentTarget.value.trim();
-        const lowerCaseValue = value.toLowerCase();
-        const nextMatches = value
-            ? stores.filter((store) => {
-                const name = (language === 'eng' ? store.name.eng : store.name.kor).toLowerCase();
-                const themeKor = store.theme?.kor?.toLowerCase() ?? '';
-                const themeEng = store.theme?.eng?.toLowerCase() ?? '';
-                return name.includes(lowerCaseValue) || themeKor.includes(lowerCaseValue) || themeEng.includes(lowerCaseValue);
-            }) : [];
+        const nextMatches = findMatches(event.currentTarget.value);
 
         switch(event.keyCode) {
             case 38:
@@ -146,11 +173,11 @@ export function SearchBar({ language, stores, onSelectStore }: SearchBarProps) {
     }
 
     return(
-        <SearchDiv>
+        <SearchDiv className = { className }>
             <SearchBarDiv>
                 <SearchIcon> 🔍 </SearchIcon>
                 <SearchInput type = "text" id = "searchBar" ref = { inputRef } value = { inputValue }
-                    placeholder = {language === 'kor' ? '매장 이름 혹은 테마로 검색해보세요' : 'Search by store name or theme'}
+                    placeholder = { language === 'eng' ? engPlaceholder : korPlaceholder }
                     onChange = { handleChange } onCompositionEnd = { handleCompositionEnd } onKeyUp = { handleKeyUp }
                 />
             </SearchBarDiv>

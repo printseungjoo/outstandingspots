@@ -15,6 +15,7 @@ const BlackText = styled.p`
     font-weight: bold;
     color: black;
     font-size: 0.9rem;
+    margin: 0;
 `;
 
 const PurpleText = styled.span`
@@ -26,7 +27,7 @@ const PurpleText = styled.span`
 export function FooterLeftText() {
     return(
         <FooterLeftTextStyled>
-            <MortarboardIcon src = '/mortarboard.png' alt = 'mortarboard' />
+            <MortarboardIcon src = '/mortarboardIcon.png' alt = 'mortarboard icon' />
             <BlackText> Only for <PurpleText> SUNY Korea </PurpleText> students </BlackText>
         </FooterLeftTextStyled>
     )
