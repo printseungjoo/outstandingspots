@@ -70,11 +70,19 @@ const LanguageButtonsPlus = styled(LanguageButtons)<{ $innerMobile?: boolean }>`
     scale: 0.7;
 
     @media (max-width: 767px) {
-        scale: 0.8;
-        ${({ $innerMobile }) => $innerMobile && `
-            transform-origin: center;
+        ${({ $innerMobile }) => $innerMobile ? `
+            scale: none;
+            transform: none;
             flex-shrink: 0;
-            scale: 0.68;
+            align-self: center;
+            padding: 0.12rem 0.16rem;
+
+            button {
+                padding: 0.22rem 0.34rem;
+                font-size: 0.72rem;
+            }
+        ` : `
+            scale: 0.8;
         `}
     }
 `;
