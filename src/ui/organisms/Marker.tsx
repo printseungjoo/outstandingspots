@@ -6,6 +6,7 @@ import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import type Store from '../../types/Store';
+import { isStoreOpen, OPEN_NOW_CATEGORY } from '../../lib/isStoreOpen';
 
 delete (L.Icon.Default.prototype as { _getIconUrl?: () => string })._getIconUrl
 
@@ -39,7 +40,13 @@ export function Marker({onSelectStore, selectedCategory = [], selectedStore, sto
         if (selectedCategory.length === 0) {
             return scopedStores
         }
-        return scopedStores.filter((store) => selectedCategory.includes(String(store.category.kor)))
+        const categoryFilters = selectedCategory.filter((category) => category !== OPEN_NOW_CATEGORY);
+        const wantsOpenNow = selectedCategory.includes(OPEN_NOW_CATEGORY);
+        return scopedStores.filter((store) => {
+            const matchesCategory = categoryFilters.length === 0 || categoryFilters.includes(String(store.category.kor));
+            const matchesOpen = !wantsOpenNow || isStoreOpen(store.openTime, store.closeTime);
+            return matchesCategory && matchesOpen;
+        })
     }, [stores, selectedCategory, selectedStore, favoriteIds, favoritesOnly])
 
     return (
