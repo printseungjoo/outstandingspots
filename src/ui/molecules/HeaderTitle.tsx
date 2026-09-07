@@ -38,7 +38,7 @@ const HeaderTitleDiv = styled.div`
     align-items: flex-start;
 `;
 
-const BoldText = styled.p<{ $compactOnMobile?: boolean }>`
+const BoldText = styled.h1<{ $compactOnMobile?: boolean }>`
     font-size: 1.2rem;
     font-weight: bold;
     margin: 0;
@@ -84,7 +84,7 @@ interface HeaderTitleProps {
 export function HeaderTitle({ language, breakSubtitleOnMobile = false, compactOnMobile = false }: HeaderTitleProps) {
     return(
         <HeaderTitleStyled $compactOnMobile = { compactOnMobile } onClick = {() => window.location.reload()}>
-            <HeaderIcon $compactOnMobile = { compactOnMobile } src = '/headerIcon.png' alt = 'Header icon' />
+            <HeaderIcon $compactOnMobile = { compactOnMobile } src = '/headerIcon.png' alt = 'Outstanding Spots' />
             <HeaderTitleDiv>
                 <BoldText $compactOnMobile = { compactOnMobile }> Outstanding Spots </BoldText>
                 <SubText $compactOnMobile = { compactOnMobile }>

@@ -35,6 +35,7 @@ import { AdminOwnersManagementTab } from './ui/organisms/AdminOwnersManagementTa
 import { StoreSignUpPage } from './ui/molecules/StoreSignUpPage';
 import { StudentSignUpPage } from './ui/molecules/StudentSignUpPage';
 import { StoresPage } from './ui/templates/StoresPage';
+import { Seo } from './ui/atoms/Seo';
 
 const AppLayout = styled.div`
   height: 100%;
@@ -61,6 +62,7 @@ function App() {
             <StoresProvider>
             <CategoryProvider>
               <AppLayout>
+                <Seo />
                 <Header language = { language } onChangeLanguage = { setLanguage } />
                 <RoutesArea>
                   <Routes>
@@ -100,7 +102,7 @@ function App() {
                   </Routes>
                 </RoutesArea>
                 <MobileNavBar />
-                <Footer language = { language } />
+                <Footer />
               </AppLayout>
             </CategoryProvider>
             </StoresProvider>

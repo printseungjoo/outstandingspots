@@ -2,7 +2,6 @@ import styled from 'styled-components';
 
 import { FooterLeftText } from '../atoms/FooterLeftText';
 import { FooterRightText } from '../atoms/FooterRightText';
-import type Language from '../../types/Language';
 
 const FooterStyled = styled.div`
     background-color: #FAF9FE;
@@ -20,15 +19,11 @@ const FooterStyled = styled.div`
     }
 `;
 
-interface FooterProps {
-    language: Language;
-}
-
-export function Footer({ language }: FooterProps) {
+export function Footer() {
     return(
         <FooterStyled>
             <FooterLeftText />
-            <FooterRightText language = { language } />
+            <FooterRightText />
         </FooterStyled>
     )
 }
