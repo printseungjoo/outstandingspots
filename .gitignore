@@ -23,9 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 
-*storybook.log
-storybook-static
-  
 .env
 .vercel
 server/uploads

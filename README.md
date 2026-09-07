@@ -45,7 +45,6 @@ Outstanding Spots 웹사이트는 지도와 마커를 통해 한눈에 계약된
 - React
 - TypeScript
 - Emotion (CSS-in-JS)
-- Storybook
 - Vite
 
 ### Backend
@@ -91,8 +90,7 @@ Outstanding Spots 웹사이트는 지도와 마커를 통해 한눈에 계약된
 
 1. HTML, CSS 중심 구조에서 React, TypeScript, Emotion 기반으로 재구성
 2. 아토믹 디자인 폴더 구조로 UI 컴포넌트를 모듈화하여 유지보수성과 재사용성 개선
-3. Storybook을 통해 UI 개발 생산성 향상
-4. 웹 디자인을 통째로 변경하여 개발
+3. 웹 디자인을 통째로 변경하여 개발
 
 ---
 

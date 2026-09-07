@@ -11,7 +11,6 @@ function copyIndexTo404() {
   }
 }
 
-// https://vite.dev/config/
 export default defineConfig({
   base: '/',
   plugins: [react(), copyIndexTo404()],
