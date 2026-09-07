@@ -820,6 +820,12 @@ Try again`))}),()=>y.abort()},[]);const m=y=>{r(_=>[..._,y])},p=y=>{r(_=>_.map(E
     min-width: 0;
     padding: 0.8rem 0 0.8rem 0;
     cursor: pointer;
+
+    @media (max-width: 767px) {
+        ${({$compactOnMobile:t})=>t&&`
+            padding: 0.45rem 0;
+        `}
+    }
 `,fz=x.img`
     width: 2.4rem;
     height: 2.4rem;
@@ -846,7 +852,7 @@ Try again`))}),()=>y.abort()},[]);const m=y=>{r(_=>[..._,y])},p=y=>{r(_=>_.map(E
     @media (max-width: 767px) {
         display: ${({$show:t})=>t?"block":"none"};
     }
-`;function vz({language:t,breakSubtitleOnMobile:i=!1}){return h.jsxs(dz,{onClick:()=>window.location.reload(),children:[h.jsx(fz,{src:"/headerIcon.png",alt:"Header icon"}),h.jsxs(hz,{children:[h.jsx(mz,{children:" Outstanding Spots "}),h.jsxs(pz,{children:[t==="eng"?"SUNY Korea Nearby Partner Stores":"SUNY Korea 주변 제휴 매장"," ",h.jsx(gz,{$show:i}),t==="eng"?"Info":"안내 서비스"]})]})]})}const yz=x(Sa)`
+`;function vz({language:t,breakSubtitleOnMobile:i=!1,compactOnMobile:r=!1}){return h.jsxs(dz,{$compactOnMobile:r,onClick:()=>window.location.reload(),children:[h.jsx(fz,{src:"/headerIcon.png",alt:"Header icon"}),h.jsxs(hz,{children:[h.jsx(mz,{children:" Outstanding Spots "}),h.jsxs(pz,{children:[t==="eng"?"SUNY Korea Nearby Partner Stores":"SUNY Korea 주변 제휴 매장"," ",h.jsx(gz,{$show:i}),t==="eng"?"Info":"안내 서비스"]})]})]})}const yz=x(Sa)`
     height: 100%;
     display: flex;
     align-items: center;
@@ -883,10 +889,22 @@ Try again`))}),()=>y.abort()},[]);const m=y=>{r(_=>[..._,y])},p=y=>{r(_=>_.map(E
     overflow: visible;
     border-bottom: 4px solid #A79AF5;
     padding: 0 0.8rem;
+
+    @media (max-width: 767px) {
+        ${({$innerMobile:t})=>t&&`
+            align-items: center;
+            min-height: 0;
+        `}
+    }
 `,Tz=x.div`
     display: flex;
     align-items: center;
     gap: 1.5rem;
+    min-width: 0;
+
+    @media (max-width: 767px) {
+        ${({$innerMobile:t})=>t&&"flex: 1;"}
+    }
 `,Ez=x.div`
     display: flex;
     gap: 1.5rem;
@@ -915,8 +933,13 @@ Try again`))}),()=>y.abort()},[]);const m=y=>{r(_=>[..._,y])},p=y=>{r(_=>_.map(E
 
     @media (max-width: 767px) {
         scale: 0.8;
+        ${({$innerMobile:t})=>t&&`
+            transform-origin: center;
+            flex-shrink: 0;
+            scale: 0.68;
+        `}
     }
-`;function kz({language:t,onChangeLanguage:i}){const{pathname:r}=rn(),{isAdmin:s}=Yc(),{isOwner:u}=Mr(),{isStudent:m}=_i(),p=s?"/admin":u?"/owner":m?"/student":"/login",b=r==="/login"||r.startsWith("/signup")||r.startsWith("/admin")||r.startsWith("/owner")||r.startsWith("/student"),y=r==="/";return h.jsxs(Sz,{children:[h.jsxs(Tz,{children:[h.jsx(vz,{language:t,breakSubtitleOnMobile:!y}),h.jsxs(Ez,{children:[h.jsx(up,{navName:t==="eng"?"Map":"지도",clicked:r==="/",link:"/",onClick:()=>{}}),h.jsx(up,{navName:t==="eng"?"My page":"마이페이지",clicked:b,link:p,onClick:()=>{}}),h.jsx(up,{navName:t==="eng"?"Stores":"전체 매장",clicked:r.startsWith("/stores"),link:"/stores",onClick:()=>{}})]})]}),h.jsx(Cz,{$hideOnMobileMap:r==="/",children:h.jsx(Az,{language:t,onChangeLanguage:i})})]})}const jz=x.div`
+`;function kz({language:t,onChangeLanguage:i}){const{pathname:r}=rn(),{isAdmin:s}=Yc(),{isOwner:u}=Mr(),{isStudent:m}=_i(),p=s?"/admin":u?"/owner":m?"/student":"/login",b=r==="/login"||r.startsWith("/signup")||r.startsWith("/admin")||r.startsWith("/owner")||r.startsWith("/student"),y=r!=="/";return h.jsxs(Sz,{$innerMobile:y,children:[h.jsxs(Tz,{$innerMobile:y,children:[h.jsx(vz,{language:t,compactOnMobile:y}),h.jsxs(Ez,{children:[h.jsx(up,{navName:t==="eng"?"Map":"지도",clicked:r==="/",link:"/",onClick:()=>{}}),h.jsx(up,{navName:t==="eng"?"My page":"마이페이지",clicked:b,link:p,onClick:()=>{}}),h.jsx(up,{navName:t==="eng"?"Stores":"전체 매장",clicked:r.startsWith("/stores"),link:"/stores",onClick:()=>{}})]})]}),h.jsx(Cz,{$hideOnMobileMap:r==="/",children:h.jsx(Az,{$innerMobile:y,language:t,onChangeLanguage:i})})]})}const jz=x.div`
     display: flex;
     align-items: center;
     gap: 0.5rem;
