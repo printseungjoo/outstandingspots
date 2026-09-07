@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /signup
+Disallow: /student
+Disallow: /owner
+Disallow: /admin
+
+Sitemap: https://outstandingspots.com/sitemap.xml
