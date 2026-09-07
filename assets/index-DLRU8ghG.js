@@ -820,21 +820,11 @@ Try again`))}),()=>y.abort()},[]);const m=y=>{r(_=>[..._,y])},p=y=>{r(_=>_.map(E
     min-width: 0;
     padding: 0.8rem 0 0.8rem 0;
     cursor: pointer;
-
-    @media (max-width: 767px) {
-        gap: 0.45rem;
-        padding: 0.4rem 0;
-    }
 `,fz=x.img`
     width: 2.4rem;
     height: 2.4rem;
     flex-shrink: 0;
     object-fit: contain;
-
-    @media (max-width: 767px) {
-        width: 2rem;
-        height: 2rem;
-    }
 `,hz=x.div`
     display: flex;
     flex-direction: column;
@@ -845,21 +835,11 @@ Try again`))}),()=>y.abort()},[]);const m=y=>{r(_=>[..._,y])},p=y=>{r(_=>_.map(E
     font-weight: bold;
     margin: 0;
     line-height: 1.5;
-
-    @media (max-width: 767px) {
-        font-size: 1.05rem;
-        line-height: 1.2;
-    }
 `,pz=x.p`
     color: gray;
     margin: 0;
     font-size: 0.75rem;
     text-align: left;
-
-    @media (max-width: 767px) {
-        font-size: 0.68rem;
-        line-height: 1.25;
-    }
 `,gz=x.br`
     display: none;
 
@@ -903,11 +883,6 @@ Try again`))}),()=>y.abort()},[]);const m=y=>{r(_=>[..._,y])},p=y=>{r(_=>_.map(E
     overflow: visible;
     border-bottom: 4px solid #A79AF5;
     padding: 0 0.8rem;
-
-    @media (max-width: 767px) {
-        min-height: 0;
-        border-bottom-width: 3px;
-    }
 `,Tz=x.div`
     display: flex;
     align-items: center;
@@ -990,8 +965,6 @@ Try again`))}),()=>y.abort()},[]);const m=y=>{r(_=>[..._,y])},p=y=>{r(_=>_.map(E
 
     @media (max-width: 767px) {
         justify-content: center;
-        min-height: 0;
-        padding: 0.4rem 0.8rem;
     }
 `;function Bz({language:t}){return h.jsxs(Dz,{children:[h.jsx(Rz,{}),h.jsx(Nz,{language:t})]})}const Uz=x.div`
     z-index: 2;
@@ -2126,7 +2099,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
 `),t.removeAttribute(r),s()}).catch(u)}else s()}else s()})}function mR(t){return Promise.all([X_(t,"::before"),X_(t,"::after")])}function pR(t){return t.parentNode!==document.head&&!~QL.indexOf(t.tagName.toUpperCase())&&!t.getAttribute(wg)&&(!t.parentNode||t.parentNode.tagName!=="svg")}var gR=function(i){return!!i&&PS.some(function(r){return i.includes(r)})},vR=function(i){if(!i)return[];var r=new Set,s=i.split(/,(?![^()]*\))/).map(function(y){return y.trim()});s=s.flatMap(function(y){return y.includes("(")?y:y.split(",").map(function(_){return _.trim()})});var u=Qd(s),m;try{for(u.s();!(m=u.n()).done;){var p=m.value;if(gR(p)){var b=PS.reduce(function(y,_){return y.replace(_,"")},p);b!==""&&b!=="*"&&r.add(b)}}}catch(y){u.e(y)}finally{u.f()}return r};function J_(t){var i=arguments.length>1&&arguments[1]!==void 0?arguments[1]:!1;if(za){var r;if(i)r=t;else if(Ee.searchPseudoElementsFullScan)r=t.querySelectorAll("*");else{var s=new Set,u=Qd(document.styleSheets),m;try{for(u.s();!(m=u.n()).done;){var p=m.value;try{var b=Qd(p.cssRules),y;try{for(b.s();!(y=b.n()).done;){var _=y.value,E=vR(_.selectorText),T=Qd(E),j;try{for(T.s();!(j=T.n()).done;){var M=j.value;s.add(M)}}catch(R){T.e(R)}finally{T.f()}}}catch(R){b.e(R)}finally{b.f()}}catch(R){Ee.searchPseudoElementsWarnings&&console.warn("Font Awesome: cannot parse stylesheet: ".concat(p.href," (").concat(R.message,`)
 If it declares any Font Awesome CSS pseudo-elements, they will not be rendered as SVG icons. Add crossorigin="anonymous" to the <link>, enable searchPseudoElementsFullScan for slower but more thorough DOM parsing, or suppress this warning by setting searchPseudoElementsWarnings to false.`))}}}catch(R){u.e(R)}finally{u.f()}if(!s.size)return;var z=Array.from(s).join(", ");try{r=t.querySelectorAll(z)}catch{}}return new Promise(function(R,U){var B=el(r).filter(pR).map(mR),$=L0.begin("searchPseudoElements");iT(),Promise.all(B).then(function(){$(),Lg(),R()}).catch(function(){$(),Lg(),U()})})}}var yR={hooks:function(){return{mutationObserverCallbacks:function(r){return r.pseudoElementsCallback=J_,r}}},provides:function(i){i.pseudoElements2svg=function(r){var s=r.node,u=s===void 0?gt:s;Ee.searchPseudoElements&&J_(u)}}},Q_=!1,bR={mixout:function(){return{dom:{unwatch:function(){iT(),Q_=!0}}}},hooks:function(){return{bootstrap:function(){q_(Ag("mutationObserverCallbacks",{}))},noAuto:function(){K3()},watch:function(r){var s=r.observeMutationsRoot;Q_?Lg():q_(Ag("mutationObserverCallbacks",{observeMutationsRoot:s}))}}}},ex=function(i){var r={size:16,x:0,y:0,flipX:!1,flipY:!1,rotate:0};return i.toLowerCase().split(" ").reduce(function(s,u){var m=u.toLowerCase().split("-"),p=m[0],b=m.slice(1).join("-");if(p&&b==="h")return s.flipX=!0,s;if(p&&b==="v")return s.flipY=!0,s;if(b=parseFloat(b),isNaN(b))return s;switch(p){case"grow":s.size=s.size+b;break;case"shrink":s.size=s.size-b;break;case"left":s.x=s.x-b;break;case"right":s.x=s.x+b;break;case"up":s.y=s.y-b;break;case"down":s.y=s.y+b;break;case"rotate":s.rotate=s.rotate+b;break}return s},r)},_R={mixout:function(){return{parse:{transform:function(r){return ex(r)}}}},hooks:function(){return{parseNodeAttributes:function(r,s){var u=s.getAttribute("data-fa-transform");return u&&(r.transform=ex(u)),r}}},provides:function(i){i.generateAbstractTransformGrouping=function(r){var s=r.main,u=r.transform,m=r.containerWidth,p=r.iconWidth,b={transform:"translate(".concat(m/2," 256)")},y="translate(".concat(u.x*32,", ").concat(u.y*32,") "),_="scale(".concat(u.size/16*(u.flipX?-1:1),", ").concat(u.size/16*(u.flipY?-1:1),") "),E="rotate(".concat(u.rotate," 0 0)"),T={transform:"".concat(y," ").concat(_," ").concat(E)},j={transform:"translate(".concat(p/2*-1," -256)")},M={outer:b,inner:T,path:j};return{tag:"g",attributes:de({},M.outer),children:[{tag:"g",attributes:de({},M.inner),children:[{tag:s.icon.tag,children:s.icon.children,attributes:de(de({},s.icon.attributes),M.path)}]}]}}}},yp={x:0,y:0,width:"100%",height:"100%"};function tx(t){var i=arguments.length>1&&arguments[1]!==void 0?arguments[1]:!0;return t.attributes&&(t.attributes.fill||i)&&(t.attributes.fill="black"),t}function xR(t){return t.tag==="g"?t.children:[t]}var wR={hooks:function(){return{parseNodeAttributes:function(r,s){var u=s.getAttribute("data-fa-mask"),m=u?$f(u.split(" ").map(function(p){return p.trim()})):JS();return m.prefix||(m.prefix=Lr()),r.mask=m,r.maskId=s.getAttribute("data-fa-mask-id"),r}}},provides:function(i){i.generateAbstractMask=function(r){var s=r.children,u=r.attributes,m=r.main,p=r.mask,b=r.maskId,y=r.transform,_=m.width,E=m.icon,T=p.width,j=p.icon,M=h3({transform:y,containerWidth:T,iconWidth:_}),z={tag:"rect",attributes:de(de({},yp),{},{fill:"white"})},R=E.children?{children:E.children.map(tx)}:{},U={tag:"g",attributes:de({},M.inner),children:[tx(de({tag:E.tag,attributes:de(de({},E.attributes),M.path)},R))]},B={tag:"g",attributes:de({},M.outer),children:[U]},$="mask-".concat(b||M_()),K="clip-".concat(b||M_()),ue={tag:"mask",attributes:de(de({},yp),{},{id:$,maskUnits:"userSpaceOnUse",maskContentUnits:"userSpaceOnUse"}),children:[z,B]},J={tag:"defs",children:[{tag:"clipPath",attributes:{id:K},children:xR(j)},ue]};return s.push(J,{tag:"rect",attributes:de({fill:"currentColor","clip-path":"url(#".concat(K,")"),mask:"url(#".concat($,")")},yp)}),{children:s,attributes:u}}}},SR={provides:function(i){var r=!1;zr.matchMedia&&(r=zr.matchMedia("(prefers-reduced-motion: reduce)").matches),i.missingIconAbstract=function(){var s=[],u={fill:"currentColor"},m={attributeType:"XML",repeatCount:"indefinite",dur:"2s"};s.push({tag:"path",attributes:de(de({},u),{},{d:"M156.5,447.7l-12.6,29.5c-18.7-9.5-35.9-21.2-51.5-34.9l22.7-22.7C127.6,430.5,141.5,440,156.5,447.7z M40.6,272H8.5 c1.4,21.2,5.4,41.7,11.7,61.1L50,321.2C45.1,305.5,41.8,289,40.6,272z M40.6,240c1.4-18.8,5.2-37,11.1-54.1l-29.5-12.6 C14.7,194.3,10,216.7,8.5,240H40.6z M64.3,156.5c7.8-14.9,17.2-28.8,28.1-41.5L69.7,92.3c-13.7,15.6-25.5,32.8-34.9,51.5 L64.3,156.5z M397,419.6c-13.9,12-29.4,22.3-46.1,30.4l11.9,29.8c20.7-9.9,39.8-22.6,56.9-37.6L397,419.6z M115,92.4 c13.9-12,29.4-22.3,46.1-30.4l-11.9-29.8c-20.7,9.9-39.8,22.6-56.8,37.6L115,92.4z M447.7,355.5c-7.8,14.9-17.2,28.8-28.1,41.5 l22.7,22.7c13.7-15.6,25.5-32.9,34.9-51.5L447.7,355.5z M471.4,272c-1.4,18.8-5.2,37-11.1,54.1l29.5,12.6 c7.5-21.1,12.2-43.5,13.6-66.8H471.4z M321.2,462c-15.7,5-32.2,8.2-49.2,9.4v32.1c21.2-1.4,41.7-5.4,61.1-11.7L321.2,462z M240,471.4c-18.8-1.4-37-5.2-54.1-11.1l-12.6,29.5c21.1,7.5,43.5,12.2,66.8,13.6V471.4z M462,190.8c5,15.7,8.2,32.2,9.4,49.2h32.1 c-1.4-21.2-5.4-41.7-11.7-61.1L462,190.8z M92.4,397c-12-13.9-22.3-29.4-30.4-46.1l-29.8,11.9c9.9,20.7,22.6,39.8,37.6,56.9 L92.4,397z M272,40.6c18.8,1.4,36.9,5.2,54.1,11.1l12.6-29.5C317.7,14.7,295.3,10,272,8.5V40.6z M190.8,50 c15.7-5,32.2-8.2,49.2-9.4V8.5c-21.2,1.4-41.7,5.4-61.1,11.7L190.8,50z M442.3,92.3L419.6,115c12,13.9,22.3,29.4,30.5,46.1 l29.8-11.9C470,128.5,457.3,109.4,442.3,92.3z M397,92.4l22.7-22.7c-15.6-13.7-32.8-25.5-51.5-34.9l-12.6,29.5 C370.4,72.1,384.4,81.5,397,92.4z"})});var p=de(de({},m),{},{attributeName:"opacity"}),b={tag:"circle",attributes:de(de({},u),{},{cx:"256",cy:"364",r:"28"}),children:[]};return r||b.children.push({tag:"animate",attributes:de(de({},m),{},{attributeName:"r",values:"28;14;28;28;14;28;"})},{tag:"animate",attributes:de(de({},p),{},{values:"1;0;1;1;0;1;"})}),s.push(b),s.push({tag:"path",attributes:de(de({},u),{},{opacity:"1",d:"M263.7,312h-16c-6.6,0-12-5.4-12-12c0-71,77.4-63.9,77.4-107.8c0-20-17.8-40.2-57.4-40.2c-29.1,0-44.3,9.6-59.2,28.7 c-3.9,5-11.1,6-16.2,2.4l-13.1-9.2c-5.6-3.9-6.9-11.8-2.6-17.2c21.2-27.2,46.4-44.7,91.2-44.7c52.3,0,97.4,29.8,97.4,80.2 c0,67.6-77.4,63.5-77.4,107.8C275.7,306.6,270.3,312,263.7,312z"}),children:r?[]:[{tag:"animate",attributes:de(de({},p),{},{values:"1;0;0;0;0;1;"})}]}),r||s.push({tag:"path",attributes:de(de({},u),{},{opacity:"0",d:"M232.5,134.5l7,168c0.3,6.4,5.6,11.5,12,11.5h9c6.4,0,11.7-5.1,12-11.5l7-168c0.3-6.8-5.2-12.5-12-12.5h-23 C237.7,122,232.2,127.7,232.5,134.5z"}),children:[{tag:"animate",attributes:de(de({},p),{},{values:"0;0;1;1;0;0;"})}]}),{tag:"g",attributes:{class:"missing"},children:s}}}},TR={hooks:function(){return{parseNodeAttributes:function(r,s){var u=s.getAttribute("data-fa-symbol"),m=u===null?!1:u===""?!0:u;return r.symbol=m,r}}}},ER=[g3,oR,sR,lR,cR,yR,bR,_R,wR,SR,TR];L3(ER,{mixoutsTo:In});In.noAuto;var Vs=In.config;In.library;In.dom;var oT=In.parse;In.findIconDefinition;In.toHtml;var CR=In.icon;In.layer;In.text;In.counter;function AR(t){return t=t-0,t===t}function sT(t){return AR(t)?t:(t=t.replace(/[_-]+(.)?/g,(i,r)=>r?r.toUpperCase():""),t.charAt(0).toLowerCase()+t.slice(1))}var kR=(t,i)=>Wn.createElement("stop",{key:`${i}-${t.offset}`,offset:t.offset,stopColor:t.color,...t.opacity!==void 0&&{stopOpacity:t.opacity}});function jR(t){return t.charAt(0).toUpperCase()+t.slice(1)}var As=new Map,OR=1e3;function zR(t){if(As.has(t))return As.get(t);const i={};let r=0;const s=t.length;for(;r<s;){const u=t.indexOf(";",r),m=u===-1?s:u,p=t.slice(r,m).trim();if(p){const b=p.indexOf(":");if(b>0){const y=p.slice(0,b).trim(),_=p.slice(b+1).trim();if(y&&_){const E=sT(y);i[E.startsWith("webkit")?jR(E):E]=_}}}r=m+1}if(As.size===OR){const u=As.keys().next().value;u&&As.delete(u)}return As.set(t,i),i}function lT(t,i,r={}){if(typeof i=="string")return i;const s=(i.children||[]).map(T=>{let j=T;return("fill"in r||r.gradientFill)&&T.tag==="path"&&"fill"in T.attributes&&(j={...T,attributes:{...T.attributes,fill:void 0}}),lT(t,j)}),u=i.attributes||{},m={};for(const[T,j]of Object.entries(u))switch(!0){case T==="class":{m.className=j;break}case T==="style":{m.style=zR(String(j));break}case T.startsWith("aria-"):case T.startsWith("data-"):{m[T.toLowerCase()]=j;break}default:m[sT(T)]=j}const{style:p,role:b,"aria-label":y,gradientFill:_,...E}=r;if(p&&(m.style=m.style?{...m.style,...p}:p),b&&(m.role=b),y&&(m["aria-label"]=y,m["aria-hidden"]="false"),_){m.fill=`url(#${_.id})`;const{type:T,stops:j=[],...M}=_;s.unshift(t(T==="linear"?"linearGradient":"radialGradient",{...M,id:_.id},j.map(kR)))}return t(i.tag,{...m,...E},...s)}var LR=lT.bind(null,Wn.createElement),nx=(t,i)=>{const r=k.useId();return t||(i?r:void 0)},RR=class{constructor(i="react-fontawesome"){this.enabled=!1;let r=!1;try{r=typeof process<"u"&&!1}catch{}this.scope=i,this.enabled=r}log(...i){this.enabled&&console.log(`[${this.scope}]`,...i)}warn(...i){this.enabled&&console.warn(`[${this.scope}]`,...i)}error(...i){this.enabled&&console.error(`[${this.scope}]`,...i)}},PR="searchPseudoElementsFullScan"in Vs&&typeof Vs.searchPseudoElementsFullScan=="boolean"?"7.0.0":"6.0.0",MR=Number.parseInt(PR)>=7,IR=()=>MR,Ac="fa",qt={beat:"fa-beat",fade:"fa-fade",beatFade:"fa-beat-fade",bounce:"fa-bounce",shake:"fa-shake",spin:"fa-spin",spinPulse:"fa-spin-pulse",spinReverse:"fa-spin-reverse",pulse:"fa-pulse",flip360:"fa-flip-360",buzz:"fa-buzz",float:"fa-float",jello:"fa-jello",spinSnap:"fa-spin-snap",spinSnap4:"fa-spin-snap-4",spinSnap8:"fa-spin-snap-8",swing:"fa-swing",wag:"fa-wag"},NR={left:"fa-pull-left",right:"fa-pull-right"},DR={90:"fa-rotate-90",180:"fa-rotate-180",270:"fa-rotate-270"},BR={"2xs":"fa-2xs",xs:"fa-xs",sm:"fa-sm",lg:"fa-lg",xl:"fa-xl","2xl":"fa-2xl","1x":"fa-1x","2x":"fa-2x","3x":"fa-3x","4x":"fa-4x","5x":"fa-5x","6x":"fa-6x","7x":"fa-7x","8x":"fa-8x","9x":"fa-9x","10x":"fa-10x"},di={border:"fa-border",fixedWidth:"fa-fw",flip:"fa-flip",flipHorizontal:"fa-flip-horizontal",flipVertical:"fa-flip-vertical",inverse:"fa-inverse",rotateBy:"fa-rotate-by",swapOpacity:"fa-swap-opacity",widthAuto:"fa-width-auto",canvasSquare:"fa-canvas-square",canvasRoomy:"fa-canvas-roomy"};function UR(t){const i=Vs.cssPrefix||Vs.familyPrefix||Ac;return i===Ac?t:t.replace(new RegExp(String.raw`(?<=^|\s)${Ac}-`,"g"),`${i}-`)}function FR(t){const{beat:i,fade:r,beatFade:s,bounce:u,shake:m,spin:p,spinPulse:b,spinReverse:y,pulse:_,fixedWidth:E,inverse:T,border:j,flip:M,size:z,rotation:R,pull:U,swapOpacity:B,rotateBy:$,widthAuto:K,canvasSquare:ue,canvasRoomy:J,flip360:se,buzz:Q,float:he,jello:Ce,spinSnap:Ue,spinSnap4:ve,spinSnap8:ke,swing:ge,wag:ae,className:je}=t,D=[];return je&&D.push(...je.split(" ")),i&&D.push(qt.beat),r&&D.push(qt.fade),s&&D.push(qt.beatFade),u&&D.push(qt.bounce),m&&D.push(qt.shake),p&&D.push(qt.spin),y&&D.push(qt.spinReverse),b&&D.push(qt.spinPulse),_&&D.push(qt.pulse),E&&D.push(di.fixedWidth),T&&D.push(di.inverse),j&&D.push(di.border),M===!0&&D.push(di.flip),(M==="horizontal"||M==="both")&&D.push(di.flipHorizontal),(M==="vertical"||M==="both")&&D.push(di.flipVertical),z!=null&&D.push(BR[z]),R!=null&&R!==0&&D.push(DR[R]),U!=null&&D.push(NR[U]),B&&D.push(di.swapOpacity),IR()?($&&D.push(di.rotateBy),K&&D.push(di.widthAuto),ue&&D.push(di.canvasSquare),J&&D.push(di.canvasRoomy),se&&D.push(qt.flip360),Q&&D.push(qt.buzz),he&&D.push(qt.float),Ce&&D.push(qt.jello),Ue&&D.push(qt.spinSnap),ve&&D.push(qt.spinSnap4),ke&&D.push(qt.spinSnap8),ge&&D.push(qt.swing),ae&&D.push(qt.wag),(Vs.cssPrefix||Vs.familyPrefix||Ac)===Ac?D:D.map(UR)):D}var HR=t=>typeof t=="object"&&"icon"in t&&!!t.icon;function ix(t){if(t)return HR(t)?t:oT.icon(t)}function $R(t){return Object.keys(t)}var ax=new RR("FontAwesomeIcon"),cT={border:!1,className:"",mask:void 0,maskId:void 0,fixedWidth:!1,inverse:!1,flip:!1,icon:void 0,listItem:!1,pull:void 0,pulse:!1,rotation:void 0,rotateBy:!1,size:void 0,spin:!1,spinPulse:!1,spinReverse:!1,beat:!1,fade:!1,beatFade:!1,bounce:!1,shake:!1,symbol:!1,title:"",titleId:void 0,transform:void 0,swapOpacity:!1,widthAuto:!1,canvasSquare:!1,canvasRoomy:!1,flip360:!1,buzz:!1,float:!1,jello:!1,spinSnap:!1,spinSnap4:!1,spinSnap8:!1,swing:!1,wag:!1},VR=new Set(Object.keys(cT)),Kn=Wn.forwardRef((t,i)=>{const r={...cT,...t},{icon:s,mask:u,symbol:m,title:p,titleId:b,maskId:y,transform:_}=r,E=nx(y,!!u),T=nx(b,!!p),j=ix(s);if(!j)return ax.error("Icon lookup is undefined",s),null;const M=FR(r),z=typeof _=="string"?oT.transform(_):_,R=ix(u),U=CR(j,{...M.length>0&&{classes:M},...z&&{transform:z},...R&&{mask:R},symbol:m,title:p,titleId:T,maskId:E});if(!U)return ax.error("Could not find icon",j),null;const{abstract:B}=U,$={ref:i};for(const K of $R(r))VR.has(K)||($[K]=r[K]);return LR(B[0],$)});Kn.displayName="FontAwesomeIcon";const ZR=x.div`
     width: 100%;
-    height: 5svh;
+    height: 5vh;
     min-height: 2.6rem;
     border: 0;
     outline: none;
@@ -2154,7 +2127,7 @@ If it declares any Font Awesome CSS pseudo-elements, they will not be rendered a
     }
 `,YR=x.div`
     width: 100%;
-    height: 5svh;
+    height: 5vh;
     min-height: 2.6rem;
     border: 0;
     outline: none;
@@ -2185,7 +2158,7 @@ If it declares any Font Awesome CSS pseudo-elements, they will not be rendered a
     }
 `;function XR({loginRole:t,onAdminCheckChange:i,onIdChange:r,onPasswordChange:s}){const{language:u}=Re(),[m,p]=k.useState(!1),[b,y]=k.useState([!1,!1]),_="outstandingadmin",E="forbettersunyforbetterlife",T=M=>{const z=M.target.value;r(z);const U=[t==="store"&&z===_,b[1]];y(U),i(U)},j=M=>{const z=M.target.value;s(z);const R=t==="store"&&z===E,U=[b[0],R];y(U),i(U)};return h.jsxs(h.Fragment,{children:[h.jsxs(ZR,{children:[h.jsx(qR,{icon:Tn.fad.user}),h.jsx(GR,{type:"text",placeholder:u==="eng"?"Enter your ID":"ID를 입력해주세요",onChange:T})]}),h.jsxs(YR,{children:[h.jsx(uT,{icon:Tn.fas.lock}),h.jsx(KR,{type:m?"text":"password",placeholder:u==="eng"?"Enter your password":"비밀번호를 입력해주세요",onChange:j}),h.jsx(WR,{icon:Tn.far.eye,onClick:()=>p(M=>!M)})]})]})}const JR=x.button`
     width: 100%;
-    height: 5svh;
+    height: 5vh;
     min-height: 2.6rem;
     border-radius: 0;
     outline: none;
@@ -2196,7 +2169,7 @@ If it declares any Font Awesome CSS pseudo-elements, they will not be rendered a
     justify-content: center;
 `;function QR({onClick:t}){const{language:i}=Re();return h.jsx(JR,{type:"button",onClick:t,children:i==="eng"?"Login":"로그인"})}const eP=x.button`
     width: 100%;
-    height: 5svh;
+    height: 5vh;
     min-height: 2.6rem;
     border-radius: 0;
     outline: none;
@@ -2225,13 +2198,9 @@ If it declares any Font Awesome CSS pseudo-elements, they will not be rendered a
         height: auto;
         padding: 1.6rem 0 1.3rem;
     }
-
-    @media (max-width: 767px) {
-        padding: 0.85rem 0 0.75rem;
-    }
 `,cP=x.img`
     width: 3vw;
-    height: 6svh;
+    height: 6vh;
     min-width: 2.5rem;
     min-height: 2.5rem;
     border-radius: 50%;
@@ -2265,8 +2234,7 @@ If it declares any Font Awesome CSS pseudo-elements, they will not be rendered a
     margin-top: 0.5rem;
 
     @media (max-width: 767px) {
-        padding: 0.65rem 1.1rem;
-        gap: 0.65rem;
+        padding: 1rem 1.2rem;
     }
 `,fP=x.p`
     font-size: 0.8rem;
@@ -2305,12 +2273,6 @@ If it declares any Font Awesome CSS pseudo-elements, they will not be rendered a
         padding: 1rem;
         gap: 0.9rem;
         overflow: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    @media (max-width: 767px) {
-        padding: 0.55rem 0.8rem;
-        gap: 0.55rem;
     }
 `,gP=x.img`
     position: absolute;
@@ -2363,11 +2325,6 @@ If it declares any Font Awesome CSS pseudo-elements, they will not be rendered a
     padding: 0.55rem 0.4rem;
     font-size: 0.88rem;
     cursor: pointer;
-
-    @media (max-width: 767px) {
-        padding: 0.42rem 0.4rem;
-        font-size: 0.82rem;
-    }
 `,lx=x.div`
     display: contents;
 
@@ -6038,10 +5995,6 @@ If it declares any Font Awesome CSS pseudo-elements, they will not be rendered a
   display: flex;
   flex-direction: column;
   overflow: hidden;
-
-  @supports (-webkit-touch-callout: none) {
-    height: -webkit-fill-available;
-  }
 `,S9=x.div`
   flex: 1;
   min-height: 0;
