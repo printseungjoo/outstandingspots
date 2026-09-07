@@ -2,13 +2,19 @@ import styled from 'styled-components';
 
 import type Language from '../../types/Language';
 
-const HeaderTitleStyled = styled.div`
+const HeaderTitleStyled = styled.div<{ $compactOnMobile?: boolean }>`
     display: flex;
     align-items: center;
     gap: 0.6rem;
     min-width: 0;
     padding: 0.8rem 0 0.8rem 0;
     cursor: pointer;
+
+    @media (max-width: 767px) {
+        ${({ $compactOnMobile }) => $compactOnMobile && `
+            padding: 0.45rem 0;
+        `}
+    }
 `;
 
 const HeaderIcon = styled.img`
@@ -50,11 +56,12 @@ const MobileBreak = styled.br<{ $show: boolean }>`
 interface HeaderTitleProps {
     language: Language;
     breakSubtitleOnMobile?: boolean;
+    compactOnMobile?: boolean;
 }
 
-export function HeaderTitle({ language, breakSubtitleOnMobile = false }: HeaderTitleProps) {
+export function HeaderTitle({ language, breakSubtitleOnMobile = false, compactOnMobile = false }: HeaderTitleProps) {
     return(
-        <HeaderTitleStyled onClick = {() => window.location.reload()}>
+        <HeaderTitleStyled $compactOnMobile = { compactOnMobile } onClick = {() => window.location.reload()}>
             <HeaderIcon src = '/headerIcon.png' alt = 'Header icon' />
             <HeaderTitleDiv>
                 <BoldText> Outstanding Spots </BoldText>
