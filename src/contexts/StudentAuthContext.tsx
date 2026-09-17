@@ -1,8 +1,8 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 
 import type Student from '../types/Student';
-import { prependRecentView as nextRecentViews } from '../lib/studentsApi';
+import { fetchStudentSession, prependRecentView as nextRecentViews, logoutStudentSession } from '../lib/studentsApi';
 
 interface StudentAuthContextValue {
     student: Student | null;
@@ -52,6 +52,40 @@ const StudentAuthContext = createContext<StudentAuthContextValue | null>(null);
 export function StudentAuthProvider({ children }: { children: ReactNode }) {
     const [student, setStudent] = useState<Student | null>(readStoredStudent);
 
+    useEffect(() => {
+        let cancelled = false;
+        fetchStudentSession()
+            .then((nextStudent) => {
+                if (cancelled) return;
+                if (!nextStudent) {
+                    writeStoredStudent(null);
+                    setStudent(null);
+                    return;
+                }
+                setStudent((current) => {
+                    const incoming = normalizeStudent(nextStudent);
+                    const merged: Student = current
+                        ? {
+                            ...incoming,
+                            recentViews: isNewerRecentViews(current.recentViews, incoming.recentViews)
+                                ? current.recentViews
+                                : incoming.recentViews
+                        }
+                        : incoming;
+                    writeStoredStudent(merged);
+                    return merged;
+                });
+            })
+            .catch(() => {
+                if (cancelled) return;
+                writeStoredStudent(null);
+                setStudent(null);
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, []);
+
     const loginStudent = (nextStudent: Student) => {
         const normalized = normalizeStudent(nextStudent);
         writeStoredStudent(normalized);
@@ -91,6 +125,7 @@ export function StudentAuthProvider({ children }: { children: ReactNode }) {
     };
 
     const logoutStudent = () => {
+        void logoutStudentSession();
         writeStoredStudent(null);
         setStudent(null);
     };

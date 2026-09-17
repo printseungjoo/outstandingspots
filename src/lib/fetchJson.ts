@@ -1,6 +1,8 @@
+import { withApi } from './csrf';
+
 export default async function fetchJson<T>(url: string, options: RequestInit = {}): Promise<T> {
     try {
-        const response = await fetch(url, options);
+        const response = await fetch(url, withApi(options));
         if (!response.ok) {
             throw new Error(`HTTP 에러: ${response.status}`);
         }

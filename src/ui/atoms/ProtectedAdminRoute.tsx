@@ -8,7 +8,10 @@ interface ProtectedAdminRouteProps {
 }
 
 export function ProtectedAdminRoute({ children }: ProtectedAdminRouteProps) {
-    const { isAdmin } = useAdminAuth();
+    const { isAdmin, isCheckingAdmin } = useAdminAuth();
+    if (isCheckingAdmin) {
+        return null;
+    }
     if (!isAdmin) {
         return <Navigate to = "/login" replace />;
     }

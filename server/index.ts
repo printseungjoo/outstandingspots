@@ -9,51 +9,87 @@ import crypto from 'crypto';
 import { connectDB } from './config/ConnectDB';
 import categoryModel from './models/CategoryModels';
 import storeModel from './models/StoreModels';
+import photoModel from './models/PhotoModels';
 import type { StoreInterface } from './types/StoreInterface';
 import type { CategoryInterface } from './types/CategoryInterface';
 import type { OwnerInterface, OwnerStatus } from './types/OwnerInterface';
 import ownerModel from './models/OwnerModels';
 import studentModel from './models/StudentModels';
 import { verifyPhoneVerification, type FirebaseRequest } from './middlewares/verifyPhoneVerification';
-import { verifyAdmin } from './middlewares/verifyAdmin';
+import { requireAdmin, requireAdminOrOwner, requireOwner, requireOwnerSelf, requireStoreWrite, requireStudent, requireStudentSelf } from './middlewares/requireSession';
+import { logoutSession, requireAllowedOrigin } from './middlewares/csrf';
+import type { AuthedRequest } from './types/AuthRequest';
+import { rateLimit } from './middlewares/rateLimit';
+import { createCsrfToken, issueSession, readSessionCookie, safeEqual } from './lib/sessionToken';
+import { ALLOWED_ORIGINS } from './lib/origins';
+import { validateStoreWrite } from './lib/validateStore';
 import { sendStudentEmailCode, verifyStudentEmailCode, isAllowedSchoolEmail, normalizeSchoolEmail, isSchoolEmailVerified, clearVerifiedSchoolEmail } from './lib/studentEmailOtp';
 
 dotenv.config({ path: path.join(__dirname, '.env') });
 
 const app = express();
 const PORT = process.env.PORT ? Number(process.env.PORT) : 8080;
-
-const allowedOrigins = [
-    "https://outstandingspots.com",
-    "https://www.outstandingspots.com",
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-];
+const loginLimit = rateLimit({ windowMs: 15 * 60 * 1000, max: 20 });
+const signupLimit = rateLimit({ windowMs: 15 * 60 * 1000, max: 8 });
+const writeLimit = rateLimit({ windowMs: 15 * 60 * 1000, max: 30 });
 
 app.use(
     cors({
         origin: (origin, cb) => {
             if (!origin) return cb(null, true);
-            if (allowedOrigins.includes(origin)) return cb(null, true);
+            if (ALLOWED_ORIGINS.includes(origin)) return cb(null, true);
             return cb(null, false);
         },
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-        allowedHeaders: ['Content-Type', 'Authorization'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
         credentials: true,
-        optionsSuccessStatus: 204,
+        optionsSuccessStatus: 204
     })
 );
 
-app.use(express.json());
+app.disable('x-powered-by');
+app.set('trust proxy', 1);
+app.use(requireAllowedOrigin);
+app.use(express.json({ limit: '200kb' }));
 
 const photosDir = path.join(process.cwd(), 'uploads');
 fs.mkdirSync(photosDir, { recursive: true });
-app.use('/photos', express.static(photosDir, {
-    setHeaders(res) {
-        res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-        res.setHeader('Access-Control-Allow-Origin', '*');
-    },
-}));
+
+function photoContentType(filename: string, fallback = 'image/png') {
+    if (filename.endsWith('.jpg') || filename.endsWith('.jpeg')) return 'image/jpeg';
+    if (filename.endsWith('.webp')) return 'image/webp';
+    if (filename.endsWith('.png')) return 'image/png';
+    return fallback;
+}
+
+function toPhotoBuffer(data: unknown) {
+    if (Buffer.isBuffer(data)) return data;
+    if (data instanceof Uint8Array) return Buffer.from(data);
+    return Buffer.from(data as ArrayBuffer);
+}
+
+function sendPhoto(res: Response, data: Buffer, contentType: string) {
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    res.send(data);
+}
+
+function toPhotoPath(photo: string) {
+    if (!photo) return '';
+    if (photo.startsWith('http://') || photo.startsWith('https://')) {
+        try {
+            const url = new URL(photo);
+            if (url.pathname.startsWith('/photos/')) {
+                return url.pathname;
+            }
+        } catch {
+            return photo;
+        }
+    }
+    return photo;
+}
 
 connectDB();
 
@@ -77,7 +113,7 @@ function toStoreResponse(store: {
 }): StoreInterface {
     return {
         _id: String(store._id),
-        photo: store.photo ?? '',
+        photo: toPhotoPath(store.photo ?? ''),
         category: {
             kor: store.category?.kor ?? '',
             eng: store.category?.eng ?? '',
@@ -314,7 +350,39 @@ app.get("/stores", async (_req: Request, res: Response) => {
     }
 });
 
-app.post('/photos', express.raw({
+app.get('/photos/:filename', async (req: Request, res: Response) => {
+    const rawName = req.params.filename;
+    const requested = Array.isArray(rawName) ? rawName[0] : rawName;
+    const filename = path.basename(requested ?? '');
+    if (!filename || filename !== requested) {
+        return res.status(400).json({ error: '잘못된 파일 이름입니다.' });
+    }
+    const filePath = path.join(photosDir, filename);
+    try {
+        const data = await fs.promises.readFile(filePath);
+        photoModel.updateOne(
+            { filename },
+            { $setOnInsert: { filename, contentType: photoContentType(filename), data } },
+            { upsert: true }
+        ).catch(() => undefined);
+        return sendPhoto(res, data, photoContentType(filename));
+    } catch {
+        try {
+            const stored = await photoModel.findOne({ filename }).lean();
+            if (!stored?.data) {
+                return res.status(404).json({ error: '이미지를 찾을 수 없습니다.' });
+            }
+            const data = toPhotoBuffer(stored.data);
+            fs.promises.writeFile(filePath, data).catch(() => undefined);
+            return sendPhoto(res, data, stored.contentType || photoContentType(filename));
+        } catch (error) {
+            console.error('이미지를 불러오는 데에 오류가 발생했습니다:', error);
+            return res.status(500).json({ error: '이미지를 불러오지 못했습니다.' });
+        }
+    }
+});
+
+app.post('/photos', writeLimit, requireAdminOrOwner, express.raw({
     type: (req) => (req.headers['content-type'] ?? '').startsWith('image/'),
     limit: '8mb',
 }), async (req: Request, res: Response) => {
@@ -326,7 +394,12 @@ app.post('/photos', express.raw({
         const ext = mime.includes('jpeg') || mime.includes('jpg') ? 'jpg'
             : mime.includes('webp') ? 'webp' : 'png';
         const filename = `${crypto.randomUUID()}.${ext}`;
-        await fs.promises.writeFile(path.join(photosDir, filename), req.body);
+        await photoModel.create({
+            filename,
+            contentType: mime,
+            data: req.body
+        });
+        await fs.promises.writeFile(path.join(photosDir, filename), req.body).catch(() => undefined);
         res.status(201).json({ photo: `/photos/${filename}` });
     } catch (error) {
         console.error('이미지 업로드에 오류가 발생했습니다:', error);
@@ -334,9 +407,39 @@ app.post('/photos', express.raw({
     }
 });
 
-app.post('/stores', async (req: Request, res: Response) => {
+app.post('/admin/login', loginLimit, (req: Request, res: Response) => {
+    const id = typeof req.body?.id === 'string' ? req.body.id : '';
+    const password = typeof req.body?.password === 'string' ? req.body.password : '';
+    const expectedId = process.env.ADMIN_ID ?? '';
+    const expectedPassword = process.env.ADMIN_PASSWORD ?? '';
+    if (!expectedId || !expectedPassword || !process.env.AUTH_SECRET) {
+        return res.status(500).json({ error: '관리자 인증이 설정되지 않았습니다.' });
+    }
+    if (!safeEqual(id, expectedId) || !safeEqual(password, expectedPassword)) {
+        return res.status(401).json({ error: '아이디 또는 비밀번호가 올바르지 않습니다.' });
+    }
     try {
-        const created = await storeModel.create(req.body);
+        const csrfToken = issueSession(req, res, 'admin', 'admin');
+        res.json({ ok: true, csrfToken });
+    } catch (error) {
+        console.error('관리자 로그인에 오류가 발생했습니다:', error);
+        res.status(500).json({ error: '관리자 인증이 설정되지 않았습니다.' });
+    }
+});
+
+app.post('/admin/logout', logoutSession('admin'));
+
+app.get('/admin/session', requireAdmin, (req: Request, res: Response) => {
+    res.json({ ok: true, csrfToken: createCsrfToken(readSessionCookie(req, 'admin')) });
+});
+
+app.post('/stores', writeLimit, requireAdmin, async (req: Request, res: Response) => {
+    try {
+        const parsed = validateStoreWrite(req.body, false);
+        if (!parsed.ok) {
+            return res.status(400).json({ error: parsed.error });
+        }
+        const created = await storeModel.create(parsed.value);
         storesCache = null;
         storesCacheTime = 0;
         res.status(201).json(toStoreResponse(created.toObject()));
@@ -346,21 +449,15 @@ app.post('/stores', async (req: Request, res: Response) => {
     }
 });
 
-app.patch('/stores/:id', async (req: Request, res: Response) => {
+app.patch('/stores/:id', writeLimit, requireStoreWrite, async (req: Request, res: Response) => {
     try {
-        const allowed = [
-            'photo', 'category', 'name', 'branch', 'naverMap', 'lat', 'lon',
-            'discount', 'description', 'openTime', 'closeTime', 'theme', 'address'
-        ] as const;
-        const $set: Record<string, unknown> = {};
-        for (const key of allowed) {
-            if (req.body?.[key] !== undefined) {
-                $set[key] = req.body[key];
-            }
+        const parsed = validateStoreWrite(req.body, true);
+        if (!parsed.ok) {
+            return res.status(400).json({ error: parsed.error });
         }
         const updated = await storeModel.findByIdAndUpdate(
             req.params.id,
-            { $set },
+            { $set: parsed.value },
             { new: true, runValidators: true },
         ).lean();
         if (!updated) {
@@ -375,7 +472,7 @@ app.patch('/stores/:id', async (req: Request, res: Response) => {
     }
 });
 
-app.delete('/stores/:id', async (req: Request, res: Response) => {
+app.delete('/stores/:id', writeLimit, requireAdmin, async (req: Request, res: Response) => {
     try {
         const deleted = await storeModel.findByIdAndDelete(req.params.id).lean();
         if (!deleted) {
@@ -390,7 +487,7 @@ app.delete('/stores/:id', async (req: Request, res: Response) => {
     }
 });
 
-app.post('/owners/login', async (req: Request, res: Response) => {
+app.post('/owners/login', loginLimit, async (req: Request, res: Response) => {
     try {
         const id = typeof req.body?.id === 'string' ? req.body.id.trim() : '';
         const password = typeof req.body?.password === 'string' ? req.body.password : '';
@@ -405,14 +502,35 @@ app.post('/owners/login', async (req: Request, res: Response) => {
         if (status === 'pending' || status === 'rejected') {
             return res.status(403).json({ status });
         }
-        res.json(toOwnerAdminResponse(owner));
+        const csrfToken = issueSession(req, res, 'owner', String(owner._id));
+        res.json({ ...toOwnerAdminResponse(owner), csrfToken });
     } catch (error) {
         console.error('owners 로그인에 오류가 발생했습니다:', error);
         res.status(400).json({ error: 'owners 로그인에 실패하였습니다.' });
     }
 });
 
-app.get('/owners', verifyAdmin, async (_req: Request, res: Response) => {
+app.post('/owners/logout', logoutSession('owner'));
+
+app.get('/owners/session', requireOwner, async (req: AuthedRequest, res: Response) => {
+    try {
+        const owner = await ownerModel.findById(req.auth?.id, '-password')
+            .populate('storeId', 'name branch')
+            .lean();
+        if (!owner) {
+            return res.status(401).json({ error: '로그인이 필요합니다.' });
+        }
+        res.json({
+            ...toOwnerAdminResponse(owner),
+            csrfToken: createCsrfToken(readSessionCookie(req, 'owner'))
+        });
+    } catch (error) {
+        console.error('owners 세션 확인에 오류가 발생했습니다:', error);
+        res.status(401).json({ error: '로그인이 필요합니다.' });
+    }
+});
+
+app.get('/owners', requireAdmin, async (_req: Request, res: Response) => {
     try {
         const owners = await ownerModel.find({}, '-password')
             .populate('storeId', 'name branch')
@@ -425,7 +543,7 @@ app.get('/owners', verifyAdmin, async (_req: Request, res: Response) => {
     }
 });
 
-app.patch('/owners/:id', verifyAdmin, async (req: Request, res: Response) => {
+app.patch('/owners/:id', requireAdmin, async (req: Request, res: Response) => {
     try {
         const status = typeof req.body?.status === 'string' ? req.body.status : '';
         if (status !== 'pending' && status !== 'approved' && status !== 'rejected') {
@@ -446,7 +564,7 @@ app.patch('/owners/:id', verifyAdmin, async (req: Request, res: Response) => {
     }
 });
 
-app.patch('/owners/:id/profile', async (req: Request, res: Response) => {
+app.patch('/owners/:id/profile', requireOwnerSelf, async (req: Request, res: Response) => {
     try {
         const name = typeof req.body?.name === 'string' ? req.body.name.trim() : '';
         if (!name) {
@@ -467,7 +585,7 @@ app.patch('/owners/:id/profile', async (req: Request, res: Response) => {
     }
 });
 
-app.patch('/owners/:id/phone', verifyPhoneVerification, async (req: FirebaseRequest, res: Response) => {
+app.patch('/owners/:id/phone', verifyPhoneVerification, requireOwnerSelf, async (req: FirebaseRequest, res: Response) => {
     try {
         const firebaseUser = req.firebaseUser;
         if (!firebaseUser?.uid || !firebaseUser.phoneNumber) {
@@ -492,7 +610,7 @@ app.patch('/owners/:id/phone', verifyPhoneVerification, async (req: FirebaseRequ
     }
 });
 
-app.patch('/owners/:id/password', async (req: Request, res: Response) => {
+app.patch('/owners/:id/password', requireOwnerSelf, async (req: Request, res: Response) => {
     try {
         const currentPassword = typeof req.body?.currentPassword === 'string' ? req.body.currentPassword : '';
         const newPassword = typeof req.body?.newPassword === 'string' ? req.body.newPassword : '';
@@ -520,7 +638,7 @@ app.patch('/owners/:id/password', async (req: Request, res: Response) => {
     }
 });
 
-app.delete('/owners/:id', async (req: Request, res: Response) => {
+app.delete('/owners/:id', requireOwnerSelf, async (req: Request, res: Response) => {
     try {
         const deleted = await ownerModel.findByIdAndDelete(req.params.id).lean();
         if (!deleted) {
@@ -533,7 +651,7 @@ app.delete('/owners/:id', async (req: Request, res: Response) => {
     }
 });
 
-app.post('/owners', verifyPhoneVerification, async (req: FirebaseRequest, res: Response) => {
+app.post('/owners', signupLimit, verifyPhoneVerification, async (req: FirebaseRequest, res: Response) => {
     try {
         const firebaseUser = req.firebaseUser;
         if (!firebaseUser?.uid || !firebaseUser.phoneNumber) {
@@ -578,7 +696,7 @@ app.get('/students', (_req: Request, res: Response) => {
     res.status(401).json({ error: '권한이 없습니다.' });
 });
 
-app.post('/students/login', async (req: Request, res: Response) => {
+app.post('/students/login', loginLimit, async (req: Request, res: Response) => {
     try {
         const id = typeof req.body?.id === 'string' ? req.body.id.trim() : '';
         const password = typeof req.body?.password === 'string' ? req.body.password : '';
@@ -589,10 +707,29 @@ app.post('/students/login', async (req: Request, res: Response) => {
         if (!student || typeof student.password !== 'string' || !verifyOwnerPassword(password, student.password)) {
             return res.status(401).json({ error: 'INVALID_CREDENTIALS' });
         }
-        res.json(toStudentResponse(student));
+        const csrfToken = issueSession(req, res, 'student', String(student._id));
+        res.json({ ...toStudentResponse(student), csrfToken });
     } catch (error) {
         console.error('students 로그인에 오류가 발생했습니다:', error);
         res.status(400).json({ error: 'STUDENT_LOGIN_FAILED' });
+    }
+});
+
+app.post('/students/logout', logoutSession('student'));
+
+app.get('/students/session', requireStudent, async (req: AuthedRequest, res: Response) => {
+    try {
+        const student = await studentModel.findById(req.auth?.id, '-password').lean();
+        if (!student) {
+            return res.status(401).json({ error: '로그인이 필요합니다.' });
+        }
+        res.json({
+            ...toStudentResponse(student),
+            csrfToken: createCsrfToken(readSessionCookie(req, 'student'))
+        });
+    } catch (error) {
+        console.error('students 세션 확인에 오류가 발생했습니다:', error);
+        res.status(401).json({ error: '로그인이 필요합니다.' });
     }
 });
 
@@ -605,7 +742,7 @@ function enqueueRecentView<T>(studentId: string, task: () => Promise<T>) {
     return current;
 }
 
-app.post('/students/:id/recent-views', async (req: Request, res: Response) => {
+app.post('/students/:id/recent-views', requireStudentSelf, async (req: Request, res: Response) => {
     try {
         const storeId = typeof req.body?.storeId === 'string' ? req.body.storeId.trim() : '';
         if (!storeId) {
@@ -643,7 +780,7 @@ app.post('/students/:id/recent-views', async (req: Request, res: Response) => {
     }
 });
 
-app.post('/students/:id/favorites', async (req: Request, res: Response) => {
+app.post('/students/:id/favorites', requireStudentSelf, async (req: Request, res: Response) => {
     try {
         const storeId = typeof req.body?.storeId === 'string' ? req.body.storeId.trim() : '';
         if (!storeId) {
@@ -668,7 +805,7 @@ app.post('/students/:id/favorites', async (req: Request, res: Response) => {
     }
 });
 
-app.patch('/students/:id/profile', async (req: Request, res: Response) => {
+app.patch('/students/:id/profile', requireStudentSelf, async (req: Request, res: Response) => {
     try {
         const nickname = typeof req.body?.nickname === 'string' ? req.body.nickname.trim() : '';
         if (!nickname) {
@@ -689,7 +826,7 @@ app.patch('/students/:id/profile', async (req: Request, res: Response) => {
     }
 });
 
-app.patch('/students/:id/password', async (req: Request, res: Response) => {
+app.patch('/students/:id/password', requireStudentSelf, async (req: Request, res: Response) => {
     try {
         const currentPassword = typeof req.body?.currentPassword === 'string' ? req.body.currentPassword : '';
         const newPassword = typeof req.body?.newPassword === 'string' ? req.body.newPassword : '';
@@ -717,7 +854,7 @@ app.patch('/students/:id/password', async (req: Request, res: Response) => {
     }
 });
 
-app.delete('/students/:id', async (req: Request, res: Response) => {
+app.delete('/students/:id', requireStudentSelf, async (req: Request, res: Response) => {
     try {
         const deleted = await studentModel.findByIdAndDelete(req.params.id).lean();
         if (!deleted) {
@@ -730,7 +867,7 @@ app.delete('/students/:id', async (req: Request, res: Response) => {
     }
 });
 
-app.delete('/students/:id/favorites/:storeId', async (req: Request, res: Response) => {
+app.delete('/students/:id/favorites/:storeId', requireStudentSelf, async (req: Request, res: Response) => {
     try {
         const updated = await studentModel.findByIdAndUpdate(
             req.params.id,
@@ -747,7 +884,7 @@ app.delete('/students/:id/favorites/:storeId', async (req: Request, res: Respons
     }
 });
 
-app.post('/students/email/code', async (req: Request, res: Response) => {
+app.post('/students/email/code', signupLimit, async (req: Request, res: Response) => {
     try {
         const email = typeof req.body?.email === 'string' ? req.body.email : '';
         await sendStudentEmailCode(email);
@@ -771,7 +908,7 @@ app.post('/students/email/code', async (req: Request, res: Response) => {
     }
 });
 
-app.post('/students/email/verify', async (req: Request, res: Response) => {
+app.post('/students/email/verify', signupLimit, async (req: Request, res: Response) => {
     try {
         const email = typeof req.body?.email === 'string' ? req.body.email : '';
         const code = typeof req.body?.code === 'string' ? req.body.code : '';
@@ -787,7 +924,7 @@ app.post('/students/email/verify', async (req: Request, res: Response) => {
     }
 });
 
-app.post('/students', async (req: Request, res: Response) => {
+app.post('/students', signupLimit, async (req: Request, res: Response) => {
     try {
         const nickname = typeof req.body?.nickname === 'string' ? req.body.nickname.trim() : '';
         const email = typeof req.body?.email === 'string' ? normalizeSchoolEmail(req.body.email) : '';

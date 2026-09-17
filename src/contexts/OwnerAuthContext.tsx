@@ -1,7 +1,8 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 
 import type Owner from '../types/Owner';
+import { fetchOwnerSession, logoutOwnerSession } from '../lib/ownersApi';
 
 interface OwnerAuthContextValue {
     owner: Owner | null;
@@ -35,6 +36,24 @@ const OwnerAuthContext = createContext<OwnerAuthContextValue | null>(null);
 export function OwnerAuthProvider({ children }: { children: ReactNode }) {
     const [owner, setOwner] = useState<Owner | null>(readStoredOwner);
 
+    useEffect(() => {
+        let cancelled = false;
+        fetchOwnerSession()
+            .then((nextOwner) => {
+                if (cancelled) return;
+                writeStoredOwner(nextOwner);
+                setOwner(nextOwner);
+            })
+            .catch(() => {
+                if (cancelled) return;
+                writeStoredOwner(null);
+                setOwner(null);
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, []);
+
     const loginOwner = (nextOwner: Owner) => {
         writeStoredOwner(nextOwner);
         setOwner(nextOwner);
@@ -46,6 +65,7 @@ export function OwnerAuthProvider({ children }: { children: ReactNode }) {
     };
 
     const logoutOwner = () => {
+        void logoutOwnerSession();
         writeStoredOwner(null);
         setOwner(null);
     };
