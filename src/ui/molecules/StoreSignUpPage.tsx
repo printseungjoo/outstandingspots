@@ -231,13 +231,13 @@ const SignUpButton = styled.button`
 
 function getSignupErrorMessage(error: unknown, language: Language) {
     const message = error instanceof Error ? error.message : '';
-    if (message.includes('아이디')) {
+    if (message === 'DUPLICATE_ID' || message === '이미 있는 아이디입니다.') {
         return language === 'eng' ? 'This ID is already in use.' : '이미 있는 아이디입니다.';
     }
-    if (message.includes('이미 가입된 전화번호') || message.includes('이미 사용 중인 전화번호')) {
+    if (message === 'DUPLICATE_PHONE' || message === '이미 가입된 전화번호입니다.' || message === '이미 사용 중인 전화번호입니다.') {
         return language === 'eng' ? 'This phone number is already registered.' : '이미 가입된 전화번호입니다.';
     }
-    if (message.includes('이미 가입')) {
+    if (message === 'DUPLICATE_ACCOUNT' || message === '이미 가입된 계정입니다.') {
         return language === 'eng' ? 'This account is already registered.' : '이미 가입된 계정입니다.';
     }
     if (message.includes('서버') && message.includes('Firebase')) {

@@ -241,26 +241,57 @@ function toKoreanNationalPhone(phone: string) {
 }
 
 function getMongoErrorCode(error: unknown) {
-    if (error && typeof error === 'object' && 'code' in error) {
-        return (error as { code: unknown }).code;
+    const sources = collectMongoErrorSources(error);
+    for (const source of sources) {
+        if (source && typeof source === 'object' && 'code' in source) {
+            return (source as { code: unknown }).code;
+        }
     }
     return undefined;
 }
 
-function getMongoDuplicateField(error: unknown) {
-    if (!error || typeof error !== 'object') {
-        return undefined;
-    }
-    const keyPattern = (error as { keyPattern?: Record<string, unknown> }).keyPattern;
-    if (keyPattern && typeof keyPattern === 'object') {
-        const field = Object.keys(keyPattern)[0];
-        if (field) {
-            return field;
+function collectMongoErrorSources(error: unknown) {
+    const sources: unknown[] = [error];
+    if (error && typeof error === 'object') {
+        const wrapped = error as { cause?: unknown; errorResponse?: unknown };
+        if (wrapped.cause) {
+            sources.push(wrapped.cause);
+        }
+        if (wrapped.errorResponse) {
+            sources.push(wrapped.errorResponse);
         }
     }
-    const keyValue = (error as { keyValue?: Record<string, unknown> }).keyValue;
-    if (keyValue && typeof keyValue === 'object') {
-        return Object.keys(keyValue)[0];
+    return sources;
+}
+
+function getMongoDuplicateField(error: unknown) {
+    for (const source of collectMongoErrorSources(error)) {
+        if (!source || typeof source !== 'object') {
+            continue;
+        }
+        const keyPattern = (source as { keyPattern?: Record<string, unknown> }).keyPattern;
+        if (keyPattern && typeof keyPattern === 'object') {
+            const field = Object.keys(keyPattern)[0];
+            if (field) {
+                return field;
+            }
+        }
+        const keyValue = (source as { keyValue?: Record<string, unknown> }).keyValue;
+        if (keyValue && typeof keyValue === 'object') {
+            const field = Object.keys(keyValue)[0];
+            if (field) {
+                return field;
+            }
+        }
+        const message = typeof (source as { errmsg?: unknown }).errmsg === 'string'
+            ? (source as { errmsg: string }).errmsg
+            : typeof (source as { message?: unknown }).message === 'string'
+                ? (source as { message: string }).message
+                : '';
+        const matched = message.match(/index:\s+([\w.]+)/);
+        if (matched?.[1]) {
+            return matched[1].replace(/_\d+$/, '');
+        }
     }
     return undefined;
 }
@@ -632,15 +663,15 @@ app.post('/owners', signupLimit, verifyPhoneVerification, async (req: FirebaseRe
         const normalizedPhone = toKoreanNationalPhone(firebaseUser.phoneNumber);
         const duplicateId = await ownerModel.findOne({ id }).select('_id').lean();
         if (duplicateId) {
-            return res.status(409).json({ error: '이미 있는 아이디입니다.' });
+            return res.status(409).json({ error: 'DUPLICATE_ID' });
         }
         const duplicatePhone = await ownerModel.findOne({ phone: normalizedPhone }).select('_id').lean();
         if (duplicatePhone) {
-            return res.status(409).json({ error: '이미 가입된 전화번호입니다.' });
+            return res.status(409).json({ error: 'DUPLICATE_PHONE' });
         }
         const duplicateUid = await ownerModel.findOne({ firebaseUid: firebaseUser.uid }).select('_id').lean();
         if (duplicateUid) {
-            return res.status(409).json({ error: '이미 가입된 전화번호입니다.' });
+            return res.status(409).json({ error: 'DUPLICATE_PHONE' });
         }
         const created = await ownerModel.create({
             name,
@@ -658,12 +689,12 @@ app.post('/owners', signupLimit, verifyPhoneVerification, async (req: FirebaseRe
         if (getMongoErrorCode(error) === 11000) {
             const field = getMongoDuplicateField(error);
             if (field === 'id') {
-                return res.status(409).json({ error: '이미 있는 아이디입니다.' });
+                return res.status(409).json({ error: 'DUPLICATE_ID' });
             }
             if (field === 'phone' || field === 'firebaseUid') {
-                return res.status(409).json({ error: '이미 가입된 전화번호입니다.' });
+                return res.status(409).json({ error: 'DUPLICATE_PHONE' });
             }
-            return res.status(409).json({ error: '이미 가입된 계정입니다.' });
+            return res.status(409).json({ error: 'DUPLICATE_ACCOUNT' });
         }
         res.status(400).json({ error: 'owners 생성에 실패하였습니다.' });
     }
