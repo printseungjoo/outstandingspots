@@ -29,13 +29,13 @@ function getEmailErrorMessage(error: unknown, language: 'kor' | 'eng') {
     }
     if (message === 'SMTP_NOT_CONFIGURED') {
         return language === 'eng'
-            ? 'Email sending is not configured on the server. Set SMTP_HOST, SMTP_USER, and SMTP_PASS in server/.env, then restart the API.'
-            : '서버에 메일 발송 설정이 없습니다. server/.env에 SMTP_HOST, SMTP_USER, SMTP_PASS를 넣고 API를 재시작해 주세요.';
+            ? 'Email sending is not configured. Set RESEND_API_KEY and RESEND_FROM on the API server, then restart it.'
+            : '메일 발송 설정이 없습니다. API 서버에 RESEND_API_KEY와 RESEND_FROM을 넣고 재시작해 주세요.';
     }
     if (message === 'SMTP_SEND_FAILED') {
         return language === 'eng'
-            ? 'Could not send the email. Check the SMTP username and app password.'
-            : '메일을 보내지 못했습니다. SMTP 계정과 앱 비밀번호를 확인해 주세요.';
+            ? 'Could not send the email. Check the Resend API key and verified FROM domain.'
+            : '메일을 보내지 못했습니다. Resend API 키와 인증된 FROM 도메인을 확인해 주세요.';
     }
     if (message === 'HTTP 404' || message.includes('Cannot POST')) {
         return language === 'eng'

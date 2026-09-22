@@ -1,5 +1,4 @@
 import crypto from 'crypto';
-import nodemailer from 'nodemailer';
 
 import studentEmailVerificationModel from '../models/StudentEmailVerificationModels';
 
@@ -35,22 +34,41 @@ function hashCode(code: string, salt: string) {
     return crypto.scryptSync(code, salt, 32);
 }
 
-function getTransporter() {
-    const host = process.env.SMTP_HOST?.trim();
-    const user = process.env.SMTP_USER?.trim();
-    const pass = process.env.SMTP_PASS?.trim();
-    const port = Number(process.env.SMTP_PORT ?? 587);
-    if (!host || !user || !pass) {
+function readFromAddress() {
+    const raw = (process.env.RESEND_FROM ?? process.env.SMTP_FROM ?? '').trim();
+    return raw.replace(/^["']|["']$/g, '').trim();
+}
+
+async function sendVerificationEmail(to: string, code: string) {
+    const apiKey = process.env.RESEND_API_KEY?.trim();
+    const from = readFromAddress();
+    if (!apiKey || !from) {
         throw new Error('SMTP_NOT_CONFIGURED');
     }
-    const options = {
-        host,
-        port,
-        secure: port === 465,
-        family: 4,
-        auth: { user, pass }
-    };
-    return nodemailer.createTransport(options);
+    const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${apiKey}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            from,
+            to: [to],
+            subject: '[Outstanding Spots] 이메일 인증번호 / Email verification code',
+            text: [
+                `인증번호: ${code}`,
+                '10분 안에 입력해 주세요.',
+                '',
+                `Verification code: ${code}`,
+                'Please enter it within 10 minutes.'
+            ].join('\n')
+        })
+    });
+    if (!response.ok) {
+        const body = await response.text().catch(() => '');
+        console.error(body);
+        throw new Error('SMTP_SEND_FAILED');
+    }
 }
 
 export async function sendStudentEmailCode(email: string) {
@@ -62,24 +80,14 @@ export async function sendStudentEmailCode(email: string) {
     if (existing && Date.now() - existing.lastSentAt < RESEND_GAP_MS) {
         throw new Error('TOO_MANY_REQUESTS');
     }
-    const transporter = getTransporter();
     const code = String(crypto.randomInt(100000, 1000000));
     const salt = crypto.randomBytes(16).toString('hex');
-    const from = process.env.SMTP_FROM?.trim() || process.env.SMTP_USER?.trim() || '';
     try {
-        await transporter.sendMail({
-            from,
-            to: normalized,
-            subject: '[Outstanding Spots] 이메일 인증번호 / Email verification code',
-            text: [
-                `인증번호: ${code}`,
-                '10분 안에 입력해 주세요.',
-                '',
-                `Verification code: ${code}`,
-                'Please enter it within 10 minutes.'
-            ].join('\n'),
-        });
+        await sendVerificationEmail(normalized, code);
     } catch (error) {
+        if (error instanceof Error && (error.message === 'SMTP_NOT_CONFIGURED' || error.message === 'SMTP_SEND_FAILED')) {
+            throw error;
+        }
         console.error(error);
         throw new Error('SMTP_SEND_FAILED');
     }
