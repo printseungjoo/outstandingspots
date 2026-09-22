@@ -25,7 +25,11 @@ function headerOrigin(req: Request) {
 
 export function isBrowserDocumentRequest(req: Request) {
     const accept = req.headers.accept;
-    return typeof accept === 'string' && accept.includes('text/html');
+    if (typeof accept !== 'string' || !accept) {
+        return false;
+    }
+    const first = accept.split(',')[0]?.trim().toLowerCase() ?? '';
+    return first.startsWith('text/html');
 }
 
 export function isAllowedOrigin(req: Request) {

@@ -8,6 +8,10 @@ export function rejectBrowserDocument(req: Request, res: Response, next: NextFun
     if (method !== 'GET' && method !== 'HEAD') {
         return next();
     }
+    const path = req.path || '';
+    if (/^\/photos\/[^/]+\.(png|jpe?g|webp)$/i.test(path)) {
+        return next();
+    }
     if (isBrowserDocumentRequest(req)) {
         return res.status(404).type('text/plain').send('Not Found');
     }
