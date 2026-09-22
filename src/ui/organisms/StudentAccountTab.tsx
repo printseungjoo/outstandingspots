@@ -8,7 +8,8 @@ import { useLanguage } from '../../contexts/LanguageContext';
 import { useStudentAuth } from '../../contexts/StudentAuthContext';
 import { isValidOwnerPassword } from '../../lib/ownersApi';
 import { deleteStudent, loginStudent, patchStudentNickname, patchStudentPassword } from '../../lib/studentsApi';
-import { ToBeContinuedAlert } from '../atoms/ToBeContinuedAlert';
+
+const guideUrl = (import.meta.env.VITE_GUIDE_URL as string | undefined) ?? '';
 
 const Page = styled.div`
     width: 100%;
@@ -621,14 +622,14 @@ export function StudentAccountTab() {
                     </WithdrawActions>
                 </WithdrawBox>
                 <GuideCard>
-                    <CardTitle> { language === 'eng' ? 'Web guide (PDF)' : '웹 사용 설명서(PDF)' } </CardTitle>
+                    <CardTitle> { language === 'eng' ? 'Korean Web User Guide' : '한글 웹 사용 설명서' } </CardTitle>
                     <GuideText>
                         { language === 'eng'
-                            ? 'Open the user guide PDF.'
-                            : '웹 사용 설명서 PDF를 확인할 수 있습니다.' }
+                            ? 'You can view the Korean web user guide.'
+                            : '한글 웹 사용 설명서를 확인할 수 있습니다.' }
                     </GuideText>
                     <ButtonRight>
-                        <PrimaryButton type = 'button' onClick = {() => ToBeContinuedAlert()}>
+                        <PrimaryButton type = 'button' onClick = {() => window.open(guideUrl, '_blank', 'noopener,noreferrer')}>
                             { language === 'eng' ? 'Open' : '열기' }
                         </PrimaryButton>
                     </ButtonRight>
