@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useStudentAuth } from '../../contexts/StudentAuthContext';
 import { removeStudentFavorite } from '../../lib/studentsApi';
-import { resolvePhotoUrl } from '../../lib/storesApi';
+import { hostedPhotoImgProps } from '../../lib/storesApi';
 import type Store from '../../types/Store';
 
 const TableWrap = styled.div`
@@ -192,7 +192,7 @@ export function StudentFavoritesTable({ stores }: StudentFavoritesTableProps) {
                         {stores.map((store) => (
                             <tr key = { store._id }>
                                 <Td>
-                                    <StorePhoto src = { resolvePhotoUrl(store.photo) } alt = { language === 'eng' ? store.name.eng : store.name.kor } />
+                                    <StorePhoto { ...hostedPhotoImgProps(store.photo) } alt = { language === 'eng' ? store.name.eng : store.name.kor } />
                                 </Td>
                                 <Td> { language === 'eng' ? `${store.name.eng} ${store.branch.eng}` : `${store.name.kor} ${store.branch.kor}` } </Td>
                                 <Td> { language === 'eng' ? store.theme?.eng : store.theme?.kor } </Td>
@@ -214,7 +214,7 @@ export function StudentFavoritesTable({ stores }: StudentFavoritesTableProps) {
                 {stores.map((store) => (
                     <StoreCard key = { store._id }>
                         <CardTop>
-                            <CardPhoto src = { resolvePhotoUrl(store.photo) } alt = { language === 'eng' ? store.name.eng : store.name.kor } />
+                            <CardPhoto { ...hostedPhotoImgProps(store.photo) } alt = { language === 'eng' ? store.name.eng : store.name.kor } />
                             <CardInfo>
                                 <CardName> { language === 'eng' ? `${store.name.eng} ${store.branch.eng}` : `${store.name.kor} ${store.branch.kor}` } </CardName>
                                 <CardMeta> { language === 'eng' ? 'Theme' : '테마' }: { language === 'eng' ? store.theme?.eng : store.theme?.kor } </CardMeta>

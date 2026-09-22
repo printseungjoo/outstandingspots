@@ -23,6 +23,18 @@ export function resolvePhotoUrl(photo: string | undefined) {
     return `${origin}${photo.startsWith('/') ? photo : `/${photo}`}`;
 }
 
+export function hostedPhotoImgProps(photo: string | undefined) {
+    const src = resolvePhotoUrl(photo);
+    if (!src || src.startsWith('data:') || src.startsWith('blob:') || !src.includes('/photos/')) {
+        return { src };
+    }
+    return {
+        src,
+        crossOrigin: 'anonymous' as const,
+        referrerPolicy: 'no-referrer' as const
+    };
+}
+
 export async function uploadStorePhoto(blob: Blob) {
     const { photo } = await fetchJson<{ photo: string }>(`${baseUrl}/photos`, {
         method: 'POST',
