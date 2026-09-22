@@ -2,14 +2,12 @@ import express from 'express';
 import type { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 
 import { connectDB } from './config/ConnectDB';
 import categoryModel from './models/CategoryModels';
 import storeModel from './models/StoreModels';
-import photoModel from './models/PhotoModels';
 import type { StoreInterface } from './types/StoreInterface';
 import type { CategoryInterface } from './types/CategoryInterface';
 import type { OwnerInterface, OwnerStatus } from './types/OwnerInterface';
@@ -23,6 +21,7 @@ import { rateLimit } from './middlewares/rateLimit';
 import { createCsrfToken, issueSession, readSessionCookie, safeEqual } from './lib/sessionToken';
 import { ALLOWED_ORIGINS, isAllowedOrigin } from './lib/origins';
 import { validateStoreWrite } from './lib/validateStore';
+import { CloudinaryConfigError, uploadImageToCloudinary } from './lib/cloudinaryUpload';
 import { sendStudentEmailCode, verifyStudentEmailCode, isAllowedSchoolEmail, normalizeSchoolEmail, isSchoolEmailVerified, clearVerifiedSchoolEmail } from './lib/studentEmailOtp';
 
 dotenv.config({ path: path.join(__dirname, '.env') });
@@ -52,29 +51,6 @@ app.set('trust proxy', 1);
 app.use(rejectBrowserDocument);
 app.use(requireAllowedOrigin);
 app.use(express.json({ limit: '200kb' }));
-
-const photosDir = path.join(process.cwd(), 'uploads');
-fs.mkdirSync(photosDir, { recursive: true });
-
-function photoContentType(filename: string, fallback = 'image/png') {
-    if (filename.endsWith('.jpg') || filename.endsWith('.jpeg')) return 'image/jpeg';
-    if (filename.endsWith('.webp')) return 'image/webp';
-    if (filename.endsWith('.png')) return 'image/png';
-    return fallback;
-}
-
-function toPhotoBuffer(data: unknown) {
-    if (Buffer.isBuffer(data)) return data;
-    if (data instanceof Uint8Array) return Buffer.from(data);
-    return Buffer.from(data as ArrayBuffer);
-}
-
-function sendPhoto(res: Response, data: Buffer, contentType: string) {
-    res.setHeader('Content-Type', contentType);
-    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-    res.send(data);
-}
 
 function toPhotoPath(photo: string) {
     if (!photo) return '';
@@ -360,36 +336,8 @@ app.get('/photos', (_req: Request, res: Response) => {
     res.status(404).type('text/plain').send('Not Found');
 });
 
-app.get('/photos/*filename', async (req: Request, res: Response) => {
-    const rawName = req.params.filename;
-    const requested = Array.isArray(rawName) ? rawName[0] : rawName;
-    const filename = path.basename(requested ?? '');
-    if (!filename || filename !== requested) {
-        return res.status(400).json({ error: '잘못된 파일 이름입니다.' });
-    }
-    const filePath = path.join(photosDir, filename);
-    try {
-        const data = await fs.promises.readFile(filePath);
-        photoModel.updateOne(
-            { filename },
-            { $setOnInsert: { filename, contentType: photoContentType(filename), data } },
-            { upsert: true }
-        ).catch(() => undefined);
-        return sendPhoto(res, data, photoContentType(filename));
-    } catch {
-        try {
-            const stored = await photoModel.findOne({ filename }).lean();
-            if (!stored?.data) {
-                return res.status(404).json({ error: '이미지를 찾을 수 없습니다.' });
-            }
-            const data = toPhotoBuffer(stored.data);
-            fs.promises.writeFile(filePath, data).catch(() => undefined);
-            return sendPhoto(res, data, stored.contentType || photoContentType(filename));
-        } catch (error) {
-            console.error('이미지를 불러오는 데에 오류가 발생했습니다:', error);
-            return res.status(500).json({ error: '이미지를 불러오지 못했습니다.' });
-        }
-    }
+app.get('/photos/*filename', (_req: Request, res: Response) => {
+    res.status(404).type('text/plain').send('Not Found');
 });
 
 app.post('/photos', writeLimit, requireAdminOrOwner, express.raw({
@@ -400,19 +348,18 @@ app.post('/photos', writeLimit, requireAdminOrOwner, express.raw({
         if (!Buffer.isBuffer(req.body) || req.body.length === 0) {
             return res.status(400).json({ error: '이미지가 없습니다.' });
         }
-        const mime = req.headers['content-type'] ?? 'image/png';
-        const ext = mime.includes('jpeg') || mime.includes('jpg') ? 'jpg'
-            : mime.includes('webp') ? 'webp' : 'png';
-        const filename = `${crypto.randomUUID()}.${ext}`;
-        await photoModel.create({
-            filename,
-            contentType: mime,
-            data: req.body
-        });
-        await fs.promises.writeFile(path.join(photosDir, filename), req.body).catch(() => undefined);
-        res.status(201).json({ photo: `/photos/${filename}` });
+        const mime = (req.headers['content-type'] ?? 'image/png').split(';')[0].trim().toLowerCase();
+        const uploadMime = mime === 'image/jpg' ? 'image/jpeg' : mime;
+        if (uploadMime !== 'image/png' && uploadMime !== 'image/jpeg' && uploadMime !== 'image/webp') {
+            return res.status(400).json({ error: '이미지가 없습니다.' });
+        }
+        const photo = await uploadImageToCloudinary(req.body, uploadMime);
+        res.status(201).json({ photo });
     } catch (error) {
         console.error('이미지 업로드에 오류가 발생했습니다:', error);
+        if (error instanceof CloudinaryConfigError) {
+            return res.status(500).json({ error: '이미지 업로드가 설정되지 않았습니다.' });
+        }
         res.status(500).json({ error: '이미지 업로드에 실패하였습니다.' });
     }
 });

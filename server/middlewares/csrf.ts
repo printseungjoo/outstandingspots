@@ -3,18 +3,9 @@ import type { NextFunction, Request, Response } from 'express';
 import { isAllowedMutationOrigin, isBrowserDocumentRequest } from '../lib/origins';
 import { clearSessionCookie, csrfHeaderMatches, readSessionCookie, type SessionRole } from '../lib/sessionToken';
 
-function requestPath(req: Request) {
-    const raw = req.originalUrl || req.url || req.path || '';
-    return raw.split('?')[0];
-}
-
 export function rejectBrowserDocument(req: Request, res: Response, next: NextFunction) {
     const method = req.method.toUpperCase();
     if (method !== 'GET' && method !== 'HEAD') {
-        return next();
-    }
-    const path = requestPath(req);
-    if (path === '/photos' || path.startsWith('/photos/')) {
         return next();
     }
     if (isBrowserDocumentRequest(req)) {

@@ -1,3 +1,5 @@
+import { cloudinaryCloudName } from './cloudinaryUpload';
+
 const JUNK = new Set([
     'asd',
     'string',
@@ -37,16 +39,38 @@ function isValidTime(value: string) {
     return /^([01]\d|2[0-3]):[0-5]\d$/.test(value);
 }
 
+function isHostedPhotoPath(pathname: string) {
+    return /^\/photos\/[0-9a-fA-F-]{36}\.(png|jpg|jpeg|webp)$/.test(pathname);
+}
+
+function isCloudinaryPhotoUrl(url: URL) {
+    if (url.protocol !== 'https:') {
+        return false;
+    }
+    const hostOk = url.hostname === 'res.cloudinary.com' || url.hostname.endsWith('.res.cloudinary.com');
+    if (!hostOk || !url.pathname.includes('/image/upload/')) {
+        return false;
+    }
+    const cloudName = cloudinaryCloudName();
+    if (cloudName && !url.pathname.startsWith(`/${cloudName}/`)) {
+        return false;
+    }
+    return true;
+}
+
 function isValidPhoto(value: string) {
-    if (isJunk(value) || value.length > 500) {
+    if (isJunk(value)) {
         return false;
     }
     if (value.startsWith('/photos/')) {
-        return /^\/photos\/[0-9a-fA-F-]{36}\.(png|jpg|jpeg|webp)$/.test(value);
+        return value.length <= 500 && isHostedPhotoPath(value);
     }
     try {
         const url = new URL(value);
-        return (url.protocol === 'https:' || url.protocol === 'http:') && url.pathname.startsWith('/photos/');
+        if (isHostedPhotoPath(url.pathname)) {
+            return value.length <= 500 && (url.protocol === 'https:' || url.protocol === 'http:');
+        }
+        return value.length <= 2000 && isCloudinaryPhotoUrl(url);
     } catch {
         return false;
     }
@@ -102,7 +126,12 @@ export function validateStoreWrite(body: unknown, partial: boolean): { ok: true;
         if (!isValidPhoto(photo)) {
             return { ok: false, error: '사진 정보가 올바르지 않습니다.' };
         }
-        value.photo = photo.startsWith('/photos/') ? photo : new URL(photo).pathname;
+        if (photo.startsWith('/photos/')) {
+            value.photo = photo;
+        } else {
+            const url = new URL(photo);
+            value.photo = isHostedPhotoPath(url.pathname) ? url.pathname : photo;
+        }
     } else if (!partial) {
         return { ok: false, error: '사진 정보가 올바르지 않습니다.' };
     }
