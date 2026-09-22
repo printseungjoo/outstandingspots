@@ -361,7 +361,7 @@ app.get('/photos', (_req: Request, res: Response) => {
     res.status(404).type('text/plain').send('Not Found');
 });
 
-app.get('/photos/:filename', async (req: Request, res: Response) => {
+app.get('/photos/*filename', async (req: Request, res: Response) => {
     const rawName = req.params.filename;
     const requested = Array.isArray(rawName) ? rawName[0] : rawName;
     const filename = path.basename(requested ?? '');
