@@ -14,7 +14,7 @@ export function rejectBrowserDocument(req: Request, res: Response, next: NextFun
         return next();
     }
     const path = requestPath(req);
-    if (/\/photos\/[^/]+/i.test(path)) {
+    if (path === '/photos' || path.startsWith('/photos/')) {
         return next();
     }
     if (isBrowserDocumentRequest(req)) {

@@ -6,7 +6,7 @@ import { NaverMaps } from '../atoms/NaverMaps';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useOwnerAuth } from '../../contexts/OwnerAuthContext';
 import { useStores } from '../../contexts/StoresContext';
-import { hostedPhotoImgProps } from '../../lib/storesApi';
+import { resolvePhotoUrl } from '../../lib/storesApi';
 
 const OwnerStoreViewTabStyled = styled.div`
     width: 100%;
@@ -381,7 +381,7 @@ export function OwnerStoreViewTab() {
         <OwnerStoreViewTabStyled>
             <OwnerStoreViewTop />
             <SummaryCard>
-                <StorePhoto { ...hostedPhotoImgProps(store.photo) } alt = { language === 'eng' ? store.name.eng : store.name.kor } />
+                <StorePhoto src = { resolvePhotoUrl(store.photo) } alt = { language === 'eng' ? store.name.eng : store.name.kor } />
                 <SummaryInfo>
                     <SummaryRow>
                         <StoreName>

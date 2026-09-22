@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { hostedPhotoImgProps } from '../../lib/storesApi';
+import { resolvePhotoUrl } from '../../lib/storesApi';
 
 const Photo = styled.div`
     display: flex;
@@ -15,9 +15,8 @@ const Photo = styled.div`
     box-sizing: border-box;
 
     @media (max-width: 767px) {
-        aspect-ratio: 4 / 3;
+        aspect-ratio: calc((100vw * 0.92 * 0.90) / 16vh);
         margin-top: 0.8rem;
-        min-height: 9rem;
     }
 `;
 
@@ -25,7 +24,6 @@ const ImgStyled = styled.img`
     width: 100%;
     height: 100%;
     object-fit: contain;
-    display: block;
 `;
 
 interface PhotosProps {
@@ -36,7 +34,7 @@ interface PhotosProps {
 export function Photos({ photoSrc, storeAltName }: PhotosProps) {
     return(
         <Photo>
-            <ImgStyled { ...hostedPhotoImgProps(photoSrc) } alt = { storeAltName } />
+            <ImgStyled src = { resolvePhotoUrl(photoSrc) } alt = { storeAltName } />
         </Photo>
     )
 }

@@ -3,7 +3,6 @@ import type { ChangeEvent } from 'react';
 import styled from 'styled-components';
 
 import { useLanguage } from '../../contexts/LanguageContext';
-import { hostedPhotoImgProps } from '../../lib/storesApi';
 
 const UploadImageStyled = styled.div`
     display: flex;
@@ -146,9 +145,7 @@ export function UploadImage({ onChangePhoto, initialPreviewUrl }: UploadImagePro
             <ImageFileInput type = 'file' accept = 'image/*' id = 'imageFileInput' onChange = { handleChange } />
             <VisibleImageFileInput htmlFor = 'imageFileInput'>
                 {previewUrl
-                    ? <PreviewImg
-                        { ...hostedPhotoImgProps(previewUrl) }
-                        alt = { language === 'eng' ? 'Store preview' : '매장 미리보기' } />
+                    ? <PreviewImg src = { previewUrl } alt = { language === 'eng' ? 'Store preview' : '매장 미리보기' } />
                     : (language === 'eng' ? 'Upload Image' : '이미지 업로드')}
             </VisibleImageFileInput>
         </UploadImageStyled>

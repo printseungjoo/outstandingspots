@@ -72,8 +72,6 @@ function toPhotoBuffer(data: unknown) {
 function sendPhoto(res: Response, data: Buffer, contentType: string) {
     res.setHeader('Content-Type', contentType);
     res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.removeHeader('Access-Control-Allow-Credentials');
     res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
     res.send(data);
 }

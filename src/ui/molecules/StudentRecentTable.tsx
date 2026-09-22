@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 
 import { useLanguage } from '../../contexts/LanguageContext';
-import { hostedPhotoImgProps } from '../../lib/storesApi';
+import { resolvePhotoUrl } from '../../lib/storesApi';
 import type Store from '../../types/Store';
 
 const TableWrap = styled.div`
@@ -171,7 +171,7 @@ export function StudentRecentTable({ stores }: StudentRecentTableProps) {
                         {stores.map((store) => (
                             <tr key = { store._id }>
                                 <Td>
-                                    <StorePhoto { ...hostedPhotoImgProps(store.photo) } alt = { language === 'eng' ? store.name.eng : store.name.kor } />
+                                    <StorePhoto src = { resolvePhotoUrl(store.photo) } alt = { language === 'eng' ? store.name.eng : store.name.kor } />
                                 </Td>
                                 <Td> { language === 'eng' ? `${store.name.eng} ${store.branch.eng}` : `${store.name.kor} ${store.branch.kor}` } </Td>
                                 <Td> { language === 'eng' ? store.theme?.eng : store.theme?.kor } </Td>
@@ -190,7 +190,7 @@ export function StudentRecentTable({ stores }: StudentRecentTableProps) {
                 {stores.map((store) => (
                     <StoreCard key = { store._id }>
                         <CardTop>
-                            <CardPhoto { ...hostedPhotoImgProps(store.photo) } alt = { language === 'eng' ? store.name.eng : store.name.kor } />
+                            <CardPhoto src = { resolvePhotoUrl(store.photo) } alt = { language === 'eng' ? store.name.eng : store.name.kor } />
                             <CardInfo>
                                 <CardName> { language === 'eng' ? `${store.name.eng} ${store.branch.eng}` : `${store.name.kor} ${store.branch.kor}` } </CardName>
                                 <CardMeta> { language === 'eng' ? 'Theme' : '테마' }: { language === 'eng' ? store.theme?.eng : store.theme?.kor } </CardMeta>
