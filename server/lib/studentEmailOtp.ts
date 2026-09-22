@@ -43,12 +43,14 @@ function getTransporter() {
     if (!host || !user || !pass) {
         throw new Error('SMTP_NOT_CONFIGURED');
     }
-    return nodemailer.createTransport({
+    const options = {
         host,
         port,
         secure: port === 465,
+        family: 4,
         auth: { user, pass }
-    });
+    };
+    return nodemailer.createTransport(options);
 }
 
 export async function sendStudentEmailCode(email: string) {
