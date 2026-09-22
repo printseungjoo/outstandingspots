@@ -23,6 +23,15 @@ function headerOrigin(req: Request) {
     }
 }
 
-export function isAllowedMutationOrigin(req: Request) {
+export function isBrowserDocumentRequest(req: Request) {
+    const accept = req.headers.accept;
+    return typeof accept === 'string' && accept.includes('text/html');
+}
+
+export function isAllowedOrigin(req: Request) {
     return ALLOWED_ORIGINS.includes(headerOrigin(req));
+}
+
+export function isAllowedMutationOrigin(req: Request) {
+    return isAllowedOrigin(req);
 }

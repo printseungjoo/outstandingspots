@@ -1,7 +1,18 @@
 import type { NextFunction, Request, Response } from 'express';
 
-import { isAllowedMutationOrigin } from '../lib/origins';
+import { isAllowedMutationOrigin, isBrowserDocumentRequest } from '../lib/origins';
 import { clearSessionCookie, csrfHeaderMatches, readSessionCookie, type SessionRole } from '../lib/sessionToken';
+
+export function rejectBrowserDocument(req: Request, res: Response, next: NextFunction) {
+    const method = req.method.toUpperCase();
+    if (method !== 'GET' && method !== 'HEAD') {
+        return next();
+    }
+    if (isBrowserDocumentRequest(req)) {
+        return res.status(404).type('text/plain').send('Not Found');
+    }
+    return next();
+}
 
 export function requireAllowedOrigin(req: Request, res: Response, next: NextFunction) {
     const method = req.method.toUpperCase();

@@ -17,11 +17,11 @@ import ownerModel from './models/OwnerModels';
 import studentModel from './models/StudentModels';
 import { verifyPhoneVerification, type FirebaseRequest } from './middlewares/verifyPhoneVerification';
 import { requireAdmin, requireAdminOrOwner, requireOwner, requireOwnerSelf, requireStoreWrite, requireStudent, requireStudentSelf } from './middlewares/requireSession';
-import { logoutSession, requireAllowedOrigin } from './middlewares/csrf';
+import { logoutSession, rejectBrowserDocument, requireAllowedOrigin } from './middlewares/csrf';
 import type { AuthedRequest } from './types/AuthRequest';
 import { rateLimit } from './middlewares/rateLimit';
 import { createCsrfToken, issueSession, readSessionCookie, safeEqual } from './lib/sessionToken';
-import { ALLOWED_ORIGINS } from './lib/origins';
+import { ALLOWED_ORIGINS, isAllowedOrigin } from './lib/origins';
 import { validateStoreWrite } from './lib/validateStore';
 import { sendStudentEmailCode, verifyStudentEmailCode, isAllowedSchoolEmail, normalizeSchoolEmail, isSchoolEmailVerified, clearVerifiedSchoolEmail } from './lib/studentEmailOtp';
 
@@ -49,6 +49,7 @@ app.use(
 
 app.disable('x-powered-by');
 app.set('trust proxy', 1);
+app.use(rejectBrowserDocument);
 app.use(requireAllowedOrigin);
 app.use(express.json({ limit: '200kb' }));
 
@@ -307,7 +308,10 @@ let categoriesCache: CategoryInterface[] | null = null;
 let categoriesCacheTime = 0;
 const CATEGORIES_CACHE_DURATION = 60 * 1000;
 
-app.get('/categories', async (_req: Request, res: Response) => {
+app.get('/categories', async (req: Request, res: Response) => {
+    if (!isAllowedOrigin(req)) {
+        return res.status(404).send('Not Found');
+    }
     try {
         const now = Date.now();
         if (categoriesCache && now - categoriesCacheTime < CATEGORIES_CACHE_DURATION) {
@@ -334,7 +338,10 @@ let storesCache: StoreInterface[] | null = null;
 let storesCacheTime = 0;
 const STORES_CACHE_DURATION = 60 * 1000;
 
-app.get("/stores", async (_req: Request, res: Response) => {
+app.get("/stores", async (req: Request, res: Response) => {
+    if (!isAllowedOrigin(req)) {
+        return res.status(404).send('Not Found');
+    }
     try {
         const now = Date.now();
         if (storesCache && now - storesCacheTime < STORES_CACHE_DURATION) {
