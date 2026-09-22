@@ -629,12 +629,25 @@ app.post('/owners', signupLimit, verifyPhoneVerification, async (req: FirebaseRe
         if (!store) {
             return res.status(400).json({ error: '매장을 찾을 수 없습니다.' });
         }
+        const normalizedPhone = toKoreanNationalPhone(firebaseUser.phoneNumber);
+        const duplicateId = await ownerModel.findOne({ id }).select('_id').lean();
+        if (duplicateId) {
+            return res.status(409).json({ error: '이미 있는 아이디입니다.' });
+        }
+        const duplicatePhone = await ownerModel.findOne({ phone: normalizedPhone }).select('_id').lean();
+        if (duplicatePhone) {
+            return res.status(409).json({ error: '이미 가입된 전화번호입니다.' });
+        }
+        const duplicateUid = await ownerModel.findOne({ firebaseUid: firebaseUser.uid }).select('_id').lean();
+        if (duplicateUid) {
+            return res.status(409).json({ error: '이미 가입된 전화번호입니다.' });
+        }
         const created = await ownerModel.create({
             name,
             id,
             password: hashOwnerPassword(password),
             storeId,
-            phone: toKoreanNationalPhone(firebaseUser.phoneNumber),
+            phone: normalizedPhone,
             firebaseUid: firebaseUser.uid,
             phoneVerified: true,
             status: 'pending'
@@ -643,6 +656,13 @@ app.post('/owners', signupLimit, verifyPhoneVerification, async (req: FirebaseRe
     } catch (error) {
         console.error('owners 생성에 오류가 발생했습니다:', error);
         if (getMongoErrorCode(error) === 11000) {
+            const field = getMongoDuplicateField(error);
+            if (field === 'id') {
+                return res.status(409).json({ error: '이미 있는 아이디입니다.' });
+            }
+            if (field === 'phone' || field === 'firebaseUid') {
+                return res.status(409).json({ error: '이미 가입된 전화번호입니다.' });
+            }
             return res.status(409).json({ error: '이미 가입된 계정입니다.' });
         }
         res.status(400).json({ error: 'owners 생성에 실패하였습니다.' });
