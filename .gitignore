@@ -25,6 +25,10 @@ dist-ssr
 
 *storybook.log
 storybook-static
+
+test-results
+playwright-report
+blob-report
   
 .env
 .vercel
