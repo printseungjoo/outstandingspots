@@ -163,6 +163,10 @@ export function PhoneVerification({ phone, onPhoneChange, onVerified }: PhoneVer
         }
         try {
             setLoading(true);
+            if (firebaseAuth.currentUser) {
+                await firebaseAuth.signOut();
+            }
+            resetRecaptchaVerifier();
             const phoneNumber = convertPhoneToE164(phone);
             const verifier = getRecaptchaVerifier();
             const result = await signInWithPhoneNumber(firebaseAuth, phoneNumber, verifier);

@@ -53,15 +53,61 @@ const PreviewImg = styled.img`
     object-fit: contain;
 `;
 
-const DESKTOP_VIEWPORT_WIDTH = 1440;
-const DESKTOP_VIEWPORT_HEIGHT = 900;
-const STORE_PHOTO_ASPECT = (0.25 * DESKTOP_VIEWPORT_WIDTH * 0.92 * 0.90) / (0.20 * DESKTOP_VIEWPORT_HEIGHT);
-const STORE_PHOTO_WIDTH = 464;
-const STORE_PHOTO_HEIGHT = Math.round(STORE_PHOTO_WIDTH / STORE_PHOTO_ASPECT);
+const MAX_PHOTO_SIDE = 1200;
 
 interface UploadImageProps {
     onChangePhoto: (blob: Blob | null) => void;
     initialPreviewUrl?: string;
+}
+
+function canvasToPng(canvas: HTMLCanvasElement) {
+    return new Promise<Blob | null>((resolve) => {
+        canvas.toBlob((blob) => resolve(blob), 'image/png');
+    });
+}
+
+function loadImageFile(file: File) {
+    return new Promise<HTMLImageElement>((resolve, reject) => {
+        const img = new Image();
+        const objectUrl = URL.createObjectURL(file);
+        img.onload = () => {
+            URL.revokeObjectURL(objectUrl);
+            resolve(img);
+        };
+        img.onerror = (error) => {
+            URL.revokeObjectURL(objectUrl);
+            reject(error);
+        };
+        img.src = objectUrl;
+    });
+}
+
+async function adjustImage(file: File | undefined): Promise<Blob | null> {
+    if (!file) return null;
+    let width = 0;
+    let height = 0;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return file;
+    try {
+        const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
+        width = bitmap.width;
+        height = bitmap.height;
+        const scale = Math.min(1, MAX_PHOTO_SIDE / Math.max(width, height));
+        canvas.width = Math.max(1, Math.round(width * scale));
+        canvas.height = Math.max(1, Math.round(height * scale));
+        ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+        bitmap.close();
+    } catch {
+        const img = await loadImageFile(file);
+        width = img.naturalWidth || img.width;
+        height = img.naturalHeight || img.height;
+        const scale = Math.min(1, MAX_PHOTO_SIDE / Math.max(width, height));
+        canvas.width = Math.max(1, Math.round(width * scale));
+        canvas.height = Math.max(1, Math.round(height * scale));
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    }
+    return await canvasToPng(canvas) ?? file;
 }
 
 export function UploadImage({ onChangePhoto, initialPreviewUrl }: UploadImageProps) {
@@ -73,55 +119,22 @@ export function UploadImage({ onChangePhoto, initialPreviewUrl }: UploadImagePro
         setPreviewUrl(initialPreviewUrl ?? null);
     }, [initialPreviewUrl]);
 
-    useEffect(() => {
-        return () => {
-            if (previewUrl?.startsWith('blob:')) {
-                URL.revokeObjectURL(previewUrl);
-            }
-        };
-    }, [previewUrl]);
-
-    function adjustImage(file: File | undefined): Promise<Blob | null> {
-        return new Promise((resolve, reject) => {
-            if (!file) {
-                resolve(null);
-                return;
-            }
-            const img = new Image();
-            img.crossOrigin = 'anonymous';
-            const objectUrl = URL.createObjectURL(file);
-            img.src = objectUrl;
-            img.onload = () => {
-                const width = STORE_PHOTO_WIDTH;
-                const height = STORE_PHOTO_HEIGHT;
-                const canvas = document.createElement('canvas');
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                ctx?.drawImage(img, 0, 0, width, height);
-                canvas.toBlob((blob) => {
-                    URL.revokeObjectURL(objectUrl);
-                    resolve(blob);
-                }, 'image/png');
-            }
-            img.onerror = (error) => {
-                URL.revokeObjectURL(objectUrl);
-                reject(error);
-            }
-        })
-    }
-
     async function handleChange(e: ChangeEvent<HTMLInputElement>) {
-        const blob = await adjustImage(e.target.files?.[0]);
-        onChangePhoto(blob);
-        if (!blob) return;
-        const nextUrl = URL.createObjectURL(blob);
-        setPreviewUrl((prev) => {
-            if (prev?.startsWith('blob:')) {
-                URL.revokeObjectURL(prev);
-            }
-            return nextUrl;
-        });
+        try {
+            const blob = await adjustImage(e.target.files?.[0]);
+            onChangePhoto(blob);
+            if (!blob) return;
+            const nextUrl = URL.createObjectURL(blob);
+            setPreviewUrl((prev) => {
+                if (prev?.startsWith('blob:')) {
+                    URL.revokeObjectURL(prev);
+                }
+                return nextUrl;
+            });
+        } catch (error) {
+            console.error(error);
+            onChangePhoto(null);
+        }
     }
 
     return(

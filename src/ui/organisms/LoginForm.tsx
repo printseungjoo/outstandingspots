@@ -11,6 +11,7 @@ import { useStudentAuth } from '../../contexts/StudentAuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { loginOwner, OwnerLoginError } from '../../lib/ownersApi';
 import { loginStudent } from '../../lib/studentsApi';
+import { loginAdmin as loginAdminAccount } from '../../lib/adminApi';
 
 const LoginFormStyled = styled.div`
     width: 25%;
@@ -103,7 +104,6 @@ export function LoginForm({ who,onlyForWho, loginRole }: LoginFormProps) {
     const { loginStudent: setStudentSession } = useStudentAuth();
     const { language } = useLanguage();
     const navigate = useNavigate();
-    const [isAdmin, setIsAdmin] = useState<boolean[]>([false, false]);
     const [id, setId] = useState('');
     const [password, setPassword] = useState('');
 
@@ -138,14 +138,16 @@ export function LoginForm({ who,onlyForWho, loginRole }: LoginFormProps) {
         if (loginRole !== 'store') {
             return;
         }
-        if (isAdmin[0] && isAdmin[1]) {
-            loginAdmin();
-            navigate('/admin');
-            return;
-        }
         if (!id.trim() || !password) {
             alert(language === 'eng' ? 'Please enter your ID and password.' : '아이디와 비밀번호를 입력해주세요.');
             return;
+        }
+        try {
+            await loginAdminAccount(id.trim(), password);
+            loginAdmin();
+            navigate('/admin');
+            return;
+        } catch {
         }
         try {
             const owner = await loginOwner(id.trim(), password);
@@ -169,8 +171,7 @@ export function LoginForm({ who,onlyForWho, loginRole }: LoginFormProps) {
             <ColoredMyPageIcon src = '/coloredMyPageIcon.png' alt = 'coloredMyPageIcon'/>
             <BoldText> { who } </BoldText>
             <LoginDiv>
-                <LoginIdPassword loginRole = { loginRole } onAdminCheckChange = { setIsAdmin }
-                    onIdChange = { setId } onPasswordChange = { setPassword } />
+                <LoginIdPassword onIdChange = { setId } onPasswordChange = { setPassword } />
                 <LoginButton onClick = {() => { void handleLogin(); }} />
                 <BlackThinLine />
                 <SignUpButton onClick = {() => navigate(loginRole === 'student' ? '/signup/student' : '/signup/store')} />

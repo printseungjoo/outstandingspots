@@ -9,7 +9,7 @@ import { useAdminAuth } from '../../contexts/AdminAuthContext';
 import { useOwnerAuth } from '../../contexts/OwnerAuthContext';
 import { useStudentAuth } from '../../contexts/StudentAuthContext';
 
-const HeaderStyled = styled.div`
+const HeaderStyled = styled.div<{ $innerMobile?: boolean }>`
     width: 100%;
     flex-shrink: 0;
     min-height: 8svh;
@@ -19,12 +19,24 @@ const HeaderStyled = styled.div`
     overflow: visible;
     border-bottom: 4px solid #A79AF5;
     padding: 0 0.8rem;
+
+    @media (max-width: 767px) {
+        ${({ $innerMobile }) => $innerMobile && `
+            align-items: center;
+            min-height: 0;
+        `}
+    }
 `;
 
-const HeaderLeftDiv = styled.div`
+const HeaderLeftDiv = styled.div<{ $innerMobile?: boolean }>`
     display: flex;
     align-items: center;
     gap: 1.5rem;
+    min-width: 0;
+
+    @media (max-width: 767px) {
+        ${({ $innerMobile }) => $innerMobile && `flex: 1;`}
+    }
 `;
 
 const NavBars = styled.div`
@@ -50,7 +62,7 @@ const HeaderRightDiv = styled.div<{ $hideOnMobileMap?: boolean }>`
     }
 `;
 
-const LanguageButtonsPlus = styled(LanguageButtons)`
+const LanguageButtonsPlus = styled(LanguageButtons)<{ $innerMobile?: boolean }>`
     position: relative;
     z-index: 2;
     right: 0;
@@ -58,7 +70,20 @@ const LanguageButtonsPlus = styled(LanguageButtons)`
     scale: 0.7;
 
     @media (max-width: 767px) {
-        scale: 0.8;
+        ${({ $innerMobile }) => $innerMobile ? `
+            scale: none;
+            transform: none;
+            flex-shrink: 0;
+            align-self: center;
+            padding: 0.12rem 0.16rem;
+
+            button {
+                padding: 0.22rem 0.34rem;
+                font-size: 0.72rem;
+            }
+        ` : `
+            scale: 0.8;
+        `}
     }
 `;
 
@@ -75,12 +100,12 @@ export function Header({ language, onChangeLanguage }: HeaderProps) {
     
     const myPageLink = isAdmin ? '/admin' : isOwner ? '/owner' : isStudent ? '/student' : '/login';
     const myPageClicked = pathname === '/login' || pathname.startsWith('/signup') || pathname.startsWith('/admin') || pathname.startsWith('/owner') || pathname.startsWith('/student');
-    const hideLanguageOnMobile = pathname === '/';
+    const innerMobileHeader = pathname !== '/';
 
     return(
-        <HeaderStyled>
-            <HeaderLeftDiv>
-                <HeaderTitle language = { language } breakSubtitleOnMobile = { !hideLanguageOnMobile } />
+        <HeaderStyled $innerMobile = { innerMobileHeader }>
+            <HeaderLeftDiv $innerMobile = { innerMobileHeader }>
+                <HeaderTitle language = { language } compactOnMobile = { innerMobileHeader } />
                 <NavBars>
                     <NavBar navName = {language === 'eng' ? 'Map' : '지도'} clicked = { pathname === '/' } link = "/" onClick = {() => {}} />
                     <NavBar navName = {language === 'eng' ? 'My page' : '마이페이지'} clicked = { myPageClicked } link = { myPageLink } onClick = {() => {}} />
@@ -88,7 +113,7 @@ export function Header({ language, onChangeLanguage }: HeaderProps) {
                 </NavBars>
             </HeaderLeftDiv>
             <HeaderRightDiv $hideOnMobileMap = { pathname === '/' }>
-                <LanguageButtonsPlus language = { language } onChangeLanguage = { onChangeLanguage } />
+                <LanguageButtonsPlus $innerMobile = { innerMobileHeader } language = { language } onChangeLanguage = { onChangeLanguage } />
             </HeaderRightDiv>
         </HeaderStyled>
     )

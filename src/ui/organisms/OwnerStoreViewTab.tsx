@@ -463,10 +463,6 @@ export function OwnerStoreViewTab() {
                     <CardScroll>
                     <FieldList>
                         <FieldRow>
-                            <FieldLabel>{language === 'eng' ? 'Address (KOR/ENG)' : '주소 (한/영)'}</FieldLabel>
-                            <FieldValue>{`${store.address.kor} / ${store.address.eng}`}</FieldValue>
-                        </FieldRow>
-                        <FieldRow>
                             <FieldLabel>{language === 'eng' ? 'Latitude' : '위도'}</FieldLabel>
                             <FieldValue>{store.lat}</FieldValue>
                         </FieldRow>

@@ -1,6 +1,7 @@
 import fetchJson from './fetchJson';
 import type Owner from '../types/Owner';
 import type { OwnerStatus } from '../types/Owner';
+import { clearCsrfToken, takeCsrfToken, withApi } from './csrf';
 
 const baseUrl = (import.meta.env.VITE_API_URL as string | undefined) ?? '';
 
@@ -13,14 +14,14 @@ export type OwnerSignupBody = {
 };
 
 export async function signupOwner(owner: OwnerSignupBody, firebasePhoneToken: string) {
-    const response = await fetch(`${baseUrl}/owners`, {
+    const response = await fetch(`${baseUrl}/owners`, withApi({
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${firebasePhoneToken}`,
+            Authorization: `Bearer ${firebasePhoneToken}`
         },
         body: JSON.stringify(owner)
-    });
+    }));
     const data = await response.json().catch(() => ({} as { error?: string }));
     if (!response.ok) {
         throw new Error(typeof data.error === 'string' ? data.error : `HTTP ${response.status}`);
@@ -38,21 +39,42 @@ export class OwnerLoginError extends Error {
 }
 
 export async function loginOwner(id: string, password: string) {
-    const response = await fetch(`${baseUrl}/owners/login`, {
+    const response = await fetch(`${baseUrl}/owners/login`, withApi({
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({ id, password })
-    });
-    const data = await response.json().catch(() => ({} as { status?: string; error?: string }));
+    }));
+    const data = await response.json().catch(() => ({} as { status?: string; error?: string; csrfToken?: string }));
     if (response.status === 403 && (data.status === 'pending' || data.status === 'rejected')) {
         throw new OwnerLoginError(data.status);
     }
     if (!response.ok) {
         throw new OwnerLoginError('invalid');
     }
-    return data as Owner;
+    return takeCsrfToken('owner', data) as Owner;
+}
+
+export async function logoutOwnerSession() {
+    await fetch(`${baseUrl}/owners/logout`, withApi({
+        method: 'POST'
+    }));
+    clearCsrfToken('owner');
+}
+
+export async function fetchOwnerSession() {
+    const response = await fetch(`${baseUrl}/owners/session`, withApi());
+    if (!response.ok) {
+        clearCsrfToken('owner');
+        return null;
+    }
+    const data = await response.json().catch(() => null);
+    if (!data) {
+        clearCsrfToken('owner');
+        return null;
+    }
+    return takeCsrfToken('owner', data) as Owner;
 }
 
 export async function fetchOwners() {
@@ -64,7 +86,7 @@ export function isValidOwnerPassword(value: string) {
 }
 
 async function ownerRequest<T>(url: string, options: RequestInit) {
-    const response = await fetch(url, options);
+    const response = await fetch(url, withApi(options));
     const data = await response.json().catch(() => ({} as { error?: string }));
     if (!response.ok) {
         throw new Error(typeof data.error === 'string' ? data.error : `HTTP ${response.status}`);
@@ -75,7 +97,9 @@ async function ownerRequest<T>(url: string, options: RequestInit) {
 export async function patchOwnerName(ownerId: string, name: string) {
     return ownerRequest<Owner>(`${baseUrl}/owners/${ownerId}/profile`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify({ name })
     });
 }
@@ -94,7 +118,9 @@ export async function patchOwnerPhone(ownerId: string, firebasePhoneToken: strin
 export async function patchOwnerPassword(ownerId: string, currentPassword: string, newPassword: string) {
     const data = await ownerRequest<{ ok?: boolean; error?: string }>(`${baseUrl}/owners/${ownerId}/password`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify({ currentPassword, newPassword })
     });
     if (!data.ok) {
@@ -113,7 +139,7 @@ export async function patchOwnerStatus(ownerId: string, status: OwnerStatus) {
     return fetchJson<Owner>(`${baseUrl}/owners/${ownerId}`, {
         method: 'PATCH',
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({ status })
     });

@@ -1,21 +1,24 @@
 import styled from 'styled-components';
 
-import type Language from '../../types/Language';
-import { ToBeContinuedAlert } from './ToBeContinuedAlert';
+import { useLanguage } from '../../contexts/LanguageContext';
 
-const FooterRightTextStyled = styled.button`
+const guideUrl = (import.meta.env.VITE_GUIDE_URL as string | undefined) ?? '';
+
+const FooterRightTextStyled = styled.div`
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    height: 80%;
-    padding: 0;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
 
     @media (max-width: 767px) {
         display: none;
     }
+`;
+
+const GuideLink = styled.a`
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: inherit;
 `;
 
 const FileIcon = styled.img`
@@ -23,21 +26,31 @@ const FileIcon = styled.img`
     height: 1.5rem;
 `;
 
-const Text = styled.p`
+const BlackText = styled.p`
+    font-weight: bold;
     color: black;
     font-size: 0.9rem;
     margin: 0;
 `;
 
-interface FooterRightTextProps {
-    language: Language;
-}
+const PurpleText = styled.span`
+    font-weight: bold;
+    color: #796BEE;
+    font-size: 0.9rem;
+`;
 
-export function FooterRightText({ language }: FooterRightTextProps) {
+export function FooterRightText() {
+    const { language } = useLanguage();
+
     return(
         <FooterRightTextStyled>
-            <FileIcon src = '/fileIcon.png' alt = 'file icon' />
-            <Text onClick = {() => ToBeContinuedAlert()}> {language === 'eng' ? 'Web guide (PDF)' : '웹 사용 설명서 (PDF)'} </Text>
+            <GuideLink href = { guideUrl } target = '_blank' rel = 'noopener noreferrer'>
+                <FileIcon src = '/fileIcon.png' alt = { language === 'eng' ? 'Korean web user guide' : '한글 웹 사용 설명서' } />
+                <BlackText>
+                    { language === 'eng' ? 'Korean Web ' : '한글 웹 ' }
+                    <PurpleText> { language === 'eng' ? 'User Guide' : '사용 설명서' } </PurpleText>
+                </BlackText>
+            </GuideLink>
         </FooterRightTextStyled>
     )
 }

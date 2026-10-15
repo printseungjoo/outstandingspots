@@ -34,8 +34,7 @@ interface PhotosProps {
 export function Photos({ photoSrc, storeAltName }: PhotosProps) {
     return(
         <Photo>
-            <ImgStyled src = { resolvePhotoUrl(photoSrc) } alt = { storeAltName }>
-            </ImgStyled>
+            <ImgStyled src = { resolvePhotoUrl(photoSrc) } alt = { storeAltName } />
         </Photo>
     )
 }

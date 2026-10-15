@@ -2,7 +2,6 @@ import express from 'express';
 import type { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 
@@ -15,44 +14,58 @@ import type { OwnerInterface, OwnerStatus } from './types/OwnerInterface';
 import ownerModel from './models/OwnerModels';
 import studentModel from './models/StudentModels';
 import { verifyPhoneVerification, type FirebaseRequest } from './middlewares/verifyPhoneVerification';
+import { requireAdmin, requireAdminOrOwner, requireOwner, requireOwnerSelf, requireStoreWrite, requireStudent, requireStudentSelf } from './middlewares/requireSession';
+import { logoutSession, rejectBrowserDocument, requireAllowedOrigin } from './middlewares/csrf';
+import type { AuthedRequest } from './types/AuthRequest';
+import { rateLimit } from './middlewares/rateLimit';
+import { createCsrfToken, issueSession, readSessionCookie, safeEqual } from './lib/sessionToken';
+import { ALLOWED_ORIGINS, isAllowedOrigin } from './lib/origins';
+import { validateStoreWrite } from './lib/validateStore';
+import { CloudinaryConfigError, uploadImageToCloudinary } from './lib/cloudinaryUpload';
 import { sendStudentEmailCode, verifyStudentEmailCode, isAllowedSchoolEmail, normalizeSchoolEmail, isSchoolEmailVerified, clearVerifiedSchoolEmail } from './lib/studentEmailOtp';
 
 dotenv.config({ path: path.join(__dirname, '.env') });
 
 const app = express();
 const PORT = process.env.PORT ? Number(process.env.PORT) : 8080;
-
-const allowedOrigins = [
-    "https://outstandingspots.com",
-    "https://www.outstandingspots.com",
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-];
+const loginLimit = rateLimit({ windowMs: 15 * 60 * 1000, max: 20 });
+const signupLimit = rateLimit({ windowMs: 15 * 60 * 1000, max: 8 });
+const writeLimit = rateLimit({ windowMs: 15 * 60 * 1000, max: 30 });
 
 app.use(
     cors({
         origin: (origin, cb) => {
             if (!origin) return cb(null, true);
-            if (allowedOrigins.includes(origin)) return cb(null, true);
+            if (ALLOWED_ORIGINS.includes(origin)) return cb(null, true);
             return cb(null, false);
         },
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-        allowedHeaders: ['Content-Type', 'Authorization'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
         credentials: true,
-        optionsSuccessStatus: 204,
+        optionsSuccessStatus: 204
     })
 );
 
-app.use(express.json());
+app.disable('x-powered-by');
+app.set('trust proxy', 1);
+app.use(rejectBrowserDocument);
+app.use(requireAllowedOrigin);
+app.use(express.json({ limit: '200kb' }));
 
-const photosDir = path.join(process.cwd(), 'uploads');
-fs.mkdirSync(photosDir, { recursive: true });
-app.use('/photos', express.static(photosDir, {
-    setHeaders(res) {
-        res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-        res.setHeader('Access-Control-Allow-Origin', '*');
-    },
-}));
+function toPhotoPath(photo: string) {
+    if (!photo) return '';
+    if (photo.startsWith('http://') || photo.startsWith('https://')) {
+        try {
+            const url = new URL(photo);
+            if (url.pathname.startsWith('/photos/')) {
+                return url.pathname;
+            }
+        } catch {
+            return photo;
+        }
+    }
+    return photo;
+}
 
 connectDB();
 
@@ -76,7 +89,7 @@ function toStoreResponse(store: {
 }): StoreInterface {
     return {
         _id: String(store._id),
-        photo: store.photo ?? '',
+        photo: toPhotoPath(store.photo ?? ''),
         category: {
             kor: store.category?.kor ?? '',
             eng: store.category?.eng ?? '',
@@ -228,26 +241,57 @@ function toKoreanNationalPhone(phone: string) {
 }
 
 function getMongoErrorCode(error: unknown) {
-    if (error && typeof error === 'object' && 'code' in error) {
-        return (error as { code: unknown }).code;
+    const sources = collectMongoErrorSources(error);
+    for (const source of sources) {
+        if (source && typeof source === 'object' && 'code' in source) {
+            return (source as { code: unknown }).code;
+        }
     }
     return undefined;
 }
 
-function getMongoDuplicateField(error: unknown) {
-    if (!error || typeof error !== 'object') {
-        return undefined;
-    }
-    const keyPattern = (error as { keyPattern?: Record<string, unknown> }).keyPattern;
-    if (keyPattern && typeof keyPattern === 'object') {
-        const field = Object.keys(keyPattern)[0];
-        if (field) {
-            return field;
+function collectMongoErrorSources(error: unknown) {
+    const sources: unknown[] = [error];
+    if (error && typeof error === 'object') {
+        const wrapped = error as { cause?: unknown; errorResponse?: unknown };
+        if (wrapped.cause) {
+            sources.push(wrapped.cause);
+        }
+        if (wrapped.errorResponse) {
+            sources.push(wrapped.errorResponse);
         }
     }
-    const keyValue = (error as { keyValue?: Record<string, unknown> }).keyValue;
-    if (keyValue && typeof keyValue === 'object') {
-        return Object.keys(keyValue)[0];
+    return sources;
+}
+
+function getMongoDuplicateField(error: unknown) {
+    for (const source of collectMongoErrorSources(error)) {
+        if (!source || typeof source !== 'object') {
+            continue;
+        }
+        const keyPattern = (source as { keyPattern?: Record<string, unknown> }).keyPattern;
+        if (keyPattern && typeof keyPattern === 'object') {
+            const field = Object.keys(keyPattern)[0];
+            if (field) {
+                return field;
+            }
+        }
+        const keyValue = (source as { keyValue?: Record<string, unknown> }).keyValue;
+        if (keyValue && typeof keyValue === 'object') {
+            const field = Object.keys(keyValue)[0];
+            if (field) {
+                return field;
+            }
+        }
+        const message = typeof (source as { errmsg?: unknown }).errmsg === 'string'
+            ? (source as { errmsg: string }).errmsg
+            : typeof (source as { message?: unknown }).message === 'string'
+                ? (source as { message: string }).message
+                : '';
+        const matched = message.match(/index:\s+([\w.]+)/);
+        if (matched?.[1]) {
+            return matched[1].replace(/_\d+$/, '');
+        }
     }
     return undefined;
 }
@@ -270,7 +314,10 @@ let categoriesCache: CategoryInterface[] | null = null;
 let categoriesCacheTime = 0;
 const CATEGORIES_CACHE_DURATION = 60 * 1000;
 
-app.get('/categories', async (_req: Request, res: Response) => {
+app.get('/categories', async (req: Request, res: Response) => {
+    if (!isAllowedOrigin(req)) {
+        return res.status(404).send('Not Found');
+    }
     try {
         const now = Date.now();
         if (categoriesCache && now - categoriesCacheTime < CATEGORIES_CACHE_DURATION) {
@@ -297,7 +344,10 @@ let storesCache: StoreInterface[] | null = null;
 let storesCacheTime = 0;
 const STORES_CACHE_DURATION = 60 * 1000;
 
-app.get("/stores", async (_req: Request, res: Response) => {
+app.get("/stores", async (req: Request, res: Response) => {
+    if (!isAllowedOrigin(req)) {
+        return res.status(404).send('Not Found');
+    }
     try {
         const now = Date.now();
         if (storesCache && now - storesCacheTime < STORES_CACHE_DURATION) {
@@ -313,7 +363,15 @@ app.get("/stores", async (_req: Request, res: Response) => {
     }
 });
 
-app.post('/photos', express.raw({
+app.get('/photos', (_req: Request, res: Response) => {
+    res.status(404).type('text/plain').send('Not Found');
+});
+
+app.get('/photos/*filename', (_req: Request, res: Response) => {
+    res.status(404).type('text/plain').send('Not Found');
+});
+
+app.post('/photos', writeLimit, requireAdminOrOwner, express.raw({
     type: (req) => (req.headers['content-type'] ?? '').startsWith('image/'),
     limit: '8mb',
 }), async (req: Request, res: Response) => {
@@ -321,21 +379,55 @@ app.post('/photos', express.raw({
         if (!Buffer.isBuffer(req.body) || req.body.length === 0) {
             return res.status(400).json({ error: '이미지가 없습니다.' });
         }
-        const mime = req.headers['content-type'] ?? 'image/png';
-        const ext = mime.includes('jpeg') || mime.includes('jpg') ? 'jpg'
-            : mime.includes('webp') ? 'webp' : 'png';
-        const filename = `${crypto.randomUUID()}.${ext}`;
-        await fs.promises.writeFile(path.join(photosDir, filename), req.body);
-        res.status(201).json({ photo: `/photos/${filename}` });
+        const mime = (req.headers['content-type'] ?? 'image/png').split(';')[0].trim().toLowerCase();
+        const uploadMime = mime === 'image/jpg' ? 'image/jpeg' : mime;
+        if (uploadMime !== 'image/png' && uploadMime !== 'image/jpeg' && uploadMime !== 'image/webp') {
+            return res.status(400).json({ error: '이미지가 없습니다.' });
+        }
+        const photo = await uploadImageToCloudinary(req.body, uploadMime);
+        res.status(201).json({ photo });
     } catch (error) {
         console.error('이미지 업로드에 오류가 발생했습니다:', error);
+        if (error instanceof CloudinaryConfigError) {
+            return res.status(500).json({ error: '이미지 업로드가 설정되지 않았습니다.' });
+        }
         res.status(500).json({ error: '이미지 업로드에 실패하였습니다.' });
     }
 });
 
-app.post('/stores', async (req: Request, res: Response) => {
+app.post('/admin/login', loginLimit, (req: Request, res: Response) => {
+    const id = typeof req.body?.id === 'string' ? req.body.id : '';
+    const password = typeof req.body?.password === 'string' ? req.body.password : '';
+    const expectedId = process.env.ADMIN_ID ?? '';
+    const expectedPassword = process.env.ADMIN_PASSWORD ?? '';
+    if (!expectedId || !expectedPassword || !process.env.AUTH_SECRET) {
+        return res.status(500).json({ error: '관리자 인증이 설정되지 않았습니다.' });
+    }
+    if (!safeEqual(id, expectedId) || !safeEqual(password, expectedPassword)) {
+        return res.status(401).json({ error: '아이디 또는 비밀번호가 올바르지 않습니다.' });
+    }
     try {
-        const created = await storeModel.create(req.body);
+        const csrfToken = issueSession(req, res, 'admin', 'admin');
+        res.json({ ok: true, csrfToken });
+    } catch (error) {
+        console.error('관리자 로그인에 오류가 발생했습니다:', error);
+        res.status(500).json({ error: '관리자 인증이 설정되지 않았습니다.' });
+    }
+});
+
+app.post('/admin/logout', logoutSession('admin'));
+
+app.get('/admin/session', requireAdmin, (req: Request, res: Response) => {
+    res.json({ ok: true, csrfToken: createCsrfToken(readSessionCookie(req, 'admin')) });
+});
+
+app.post('/stores', writeLimit, requireAdmin, async (req: Request, res: Response) => {
+    try {
+        const parsed = validateStoreWrite(req.body, false);
+        if (!parsed.ok) {
+            return res.status(400).json({ error: parsed.error });
+        }
+        const created = await storeModel.create(parsed.value);
         storesCache = null;
         storesCacheTime = 0;
         res.status(201).json(toStoreResponse(created.toObject()));
@@ -345,21 +437,15 @@ app.post('/stores', async (req: Request, res: Response) => {
     }
 });
 
-app.patch('/stores/:id', async (req: Request, res: Response) => {
+app.patch('/stores/:id', writeLimit, requireStoreWrite, async (req: Request, res: Response) => {
     try {
-        const allowed = [
-            'photo', 'category', 'name', 'branch', 'naverMap', 'lat', 'lon',
-            'discount', 'description', 'openTime', 'closeTime', 'theme', 'address'
-        ] as const;
-        const $set: Record<string, unknown> = {};
-        for (const key of allowed) {
-            if (req.body?.[key] !== undefined) {
-                $set[key] = req.body[key];
-            }
+        const parsed = validateStoreWrite(req.body, true);
+        if (!parsed.ok) {
+            return res.status(400).json({ error: parsed.error });
         }
         const updated = await storeModel.findByIdAndUpdate(
             req.params.id,
-            { $set },
+            { $set: parsed.value },
             { new: true, runValidators: true },
         ).lean();
         if (!updated) {
@@ -374,7 +460,7 @@ app.patch('/stores/:id', async (req: Request, res: Response) => {
     }
 });
 
-app.delete('/stores/:id', async (req: Request, res: Response) => {
+app.delete('/stores/:id', writeLimit, requireAdmin, async (req: Request, res: Response) => {
     try {
         const deleted = await storeModel.findByIdAndDelete(req.params.id).lean();
         if (!deleted) {
@@ -389,7 +475,7 @@ app.delete('/stores/:id', async (req: Request, res: Response) => {
     }
 });
 
-app.post('/owners/login', async (req: Request, res: Response) => {
+app.post('/owners/login', loginLimit, async (req: Request, res: Response) => {
     try {
         const id = typeof req.body?.id === 'string' ? req.body.id.trim() : '';
         const password = typeof req.body?.password === 'string' ? req.body.password : '';
@@ -404,14 +490,35 @@ app.post('/owners/login', async (req: Request, res: Response) => {
         if (status === 'pending' || status === 'rejected') {
             return res.status(403).json({ status });
         }
-        res.json(toOwnerAdminResponse(owner));
+        const csrfToken = issueSession(req, res, 'owner', String(owner._id));
+        res.json({ ...toOwnerAdminResponse(owner), csrfToken });
     } catch (error) {
         console.error('owners 로그인에 오류가 발생했습니다:', error);
         res.status(400).json({ error: 'owners 로그인에 실패하였습니다.' });
     }
 });
 
-app.get('/owners', async (_req: Request, res: Response) => {
+app.post('/owners/logout', logoutSession('owner'));
+
+app.get('/owners/session', requireOwner, async (req: AuthedRequest, res: Response) => {
+    try {
+        const owner = await ownerModel.findById(req.auth?.id, '-password')
+            .populate('storeId', 'name branch')
+            .lean();
+        if (!owner) {
+            return res.status(401).json({ error: '로그인이 필요합니다.' });
+        }
+        res.json({
+            ...toOwnerAdminResponse(owner),
+            csrfToken: createCsrfToken(readSessionCookie(req, 'owner'))
+        });
+    } catch (error) {
+        console.error('owners 세션 확인에 오류가 발생했습니다:', error);
+        res.status(401).json({ error: '로그인이 필요합니다.' });
+    }
+});
+
+app.get('/owners', requireAdmin, async (_req: Request, res: Response) => {
     try {
         const owners = await ownerModel.find({}, '-password')
             .populate('storeId', 'name branch')
@@ -424,7 +531,7 @@ app.get('/owners', async (_req: Request, res: Response) => {
     }
 });
 
-app.patch('/owners/:id', async (req: Request, res: Response) => {
+app.patch('/owners/:id', requireAdmin, async (req: Request, res: Response) => {
     try {
         const status = typeof req.body?.status === 'string' ? req.body.status : '';
         if (status !== 'pending' && status !== 'approved' && status !== 'rejected') {
@@ -445,7 +552,7 @@ app.patch('/owners/:id', async (req: Request, res: Response) => {
     }
 });
 
-app.patch('/owners/:id/profile', async (req: Request, res: Response) => {
+app.patch('/owners/:id/profile', requireOwnerSelf, async (req: Request, res: Response) => {
     try {
         const name = typeof req.body?.name === 'string' ? req.body.name.trim() : '';
         if (!name) {
@@ -466,7 +573,7 @@ app.patch('/owners/:id/profile', async (req: Request, res: Response) => {
     }
 });
 
-app.patch('/owners/:id/phone', verifyPhoneVerification, async (req: FirebaseRequest, res: Response) => {
+app.patch('/owners/:id/phone', verifyPhoneVerification, requireOwnerSelf, async (req: FirebaseRequest, res: Response) => {
     try {
         const firebaseUser = req.firebaseUser;
         if (!firebaseUser?.uid || !firebaseUser.phoneNumber) {
@@ -491,7 +598,7 @@ app.patch('/owners/:id/phone', verifyPhoneVerification, async (req: FirebaseRequ
     }
 });
 
-app.patch('/owners/:id/password', async (req: Request, res: Response) => {
+app.patch('/owners/:id/password', requireOwnerSelf, async (req: Request, res: Response) => {
     try {
         const currentPassword = typeof req.body?.currentPassword === 'string' ? req.body.currentPassword : '';
         const newPassword = typeof req.body?.newPassword === 'string' ? req.body.newPassword : '';
@@ -519,7 +626,7 @@ app.patch('/owners/:id/password', async (req: Request, res: Response) => {
     }
 });
 
-app.delete('/owners/:id', async (req: Request, res: Response) => {
+app.delete('/owners/:id', requireOwnerSelf, async (req: Request, res: Response) => {
     try {
         const deleted = await ownerModel.findByIdAndDelete(req.params.id).lean();
         if (!deleted) {
@@ -532,7 +639,7 @@ app.delete('/owners/:id', async (req: Request, res: Response) => {
     }
 });
 
-app.post('/owners', verifyPhoneVerification, async (req: FirebaseRequest, res: Response) => {
+app.post('/owners', signupLimit, verifyPhoneVerification, async (req: FirebaseRequest, res: Response) => {
     try {
         const firebaseUser = req.firebaseUser;
         if (!firebaseUser?.uid || !firebaseUser.phoneNumber) {
@@ -553,12 +660,25 @@ app.post('/owners', verifyPhoneVerification, async (req: FirebaseRequest, res: R
         if (!store) {
             return res.status(400).json({ error: '매장을 찾을 수 없습니다.' });
         }
+        const normalizedPhone = toKoreanNationalPhone(firebaseUser.phoneNumber);
+        const duplicateId = await ownerModel.findOne({ id }).select('_id').lean();
+        if (duplicateId) {
+            return res.status(409).json({ error: 'DUPLICATE_ID' });
+        }
+        const duplicatePhone = await ownerModel.findOne({ phone: normalizedPhone }).select('_id').lean();
+        if (duplicatePhone) {
+            return res.status(409).json({ error: 'DUPLICATE_PHONE' });
+        }
+        const duplicateUid = await ownerModel.findOne({ firebaseUid: firebaseUser.uid }).select('_id').lean();
+        if (duplicateUid) {
+            return res.status(409).json({ error: 'DUPLICATE_PHONE' });
+        }
         const created = await ownerModel.create({
             name,
             id,
             password: hashOwnerPassword(password),
             storeId,
-            phone: toKoreanNationalPhone(firebaseUser.phoneNumber),
+            phone: normalizedPhone,
             firebaseUid: firebaseUser.uid,
             phoneVerified: true,
             status: 'pending'
@@ -567,13 +687,24 @@ app.post('/owners', verifyPhoneVerification, async (req: FirebaseRequest, res: R
     } catch (error) {
         console.error('owners 생성에 오류가 발생했습니다:', error);
         if (getMongoErrorCode(error) === 11000) {
-            return res.status(409).json({ error: '이미 가입된 계정입니다.' });
+            const field = getMongoDuplicateField(error);
+            if (field === 'id') {
+                return res.status(409).json({ error: 'DUPLICATE_ID' });
+            }
+            if (field === 'phone' || field === 'firebaseUid') {
+                return res.status(409).json({ error: 'DUPLICATE_PHONE' });
+            }
+            return res.status(409).json({ error: 'DUPLICATE_ACCOUNT' });
         }
         res.status(400).json({ error: 'owners 생성에 실패하였습니다.' });
     }
 });
 
-app.post('/students/login', async (req: Request, res: Response) => {
+app.get('/students', (_req: Request, res: Response) => {
+    res.status(401).json({ error: '권한이 없습니다.' });
+});
+
+app.post('/students/login', loginLimit, async (req: Request, res: Response) => {
     try {
         const id = typeof req.body?.id === 'string' ? req.body.id.trim() : '';
         const password = typeof req.body?.password === 'string' ? req.body.password : '';
@@ -584,10 +715,29 @@ app.post('/students/login', async (req: Request, res: Response) => {
         if (!student || typeof student.password !== 'string' || !verifyOwnerPassword(password, student.password)) {
             return res.status(401).json({ error: 'INVALID_CREDENTIALS' });
         }
-        res.json(toStudentResponse(student));
+        const csrfToken = issueSession(req, res, 'student', String(student._id));
+        res.json({ ...toStudentResponse(student), csrfToken });
     } catch (error) {
         console.error('students 로그인에 오류가 발생했습니다:', error);
         res.status(400).json({ error: 'STUDENT_LOGIN_FAILED' });
+    }
+});
+
+app.post('/students/logout', logoutSession('student'));
+
+app.get('/students/session', requireStudent, async (req: AuthedRequest, res: Response) => {
+    try {
+        const student = await studentModel.findById(req.auth?.id, '-password').lean();
+        if (!student) {
+            return res.status(401).json({ error: '로그인이 필요합니다.' });
+        }
+        res.json({
+            ...toStudentResponse(student),
+            csrfToken: createCsrfToken(readSessionCookie(req, 'student'))
+        });
+    } catch (error) {
+        console.error('students 세션 확인에 오류가 발생했습니다:', error);
+        res.status(401).json({ error: '로그인이 필요합니다.' });
     }
 });
 
@@ -600,7 +750,7 @@ function enqueueRecentView<T>(studentId: string, task: () => Promise<T>) {
     return current;
 }
 
-app.post('/students/:id/recent-views', async (req: Request, res: Response) => {
+app.post('/students/:id/recent-views', requireStudentSelf, async (req: Request, res: Response) => {
     try {
         const storeId = typeof req.body?.storeId === 'string' ? req.body.storeId.trim() : '';
         if (!storeId) {
@@ -638,7 +788,7 @@ app.post('/students/:id/recent-views', async (req: Request, res: Response) => {
     }
 });
 
-app.post('/students/:id/favorites', async (req: Request, res: Response) => {
+app.post('/students/:id/favorites', requireStudentSelf, async (req: Request, res: Response) => {
     try {
         const storeId = typeof req.body?.storeId === 'string' ? req.body.storeId.trim() : '';
         if (!storeId) {
@@ -663,7 +813,7 @@ app.post('/students/:id/favorites', async (req: Request, res: Response) => {
     }
 });
 
-app.patch('/students/:id/profile', async (req: Request, res: Response) => {
+app.patch('/students/:id/profile', requireStudentSelf, async (req: Request, res: Response) => {
     try {
         const nickname = typeof req.body?.nickname === 'string' ? req.body.nickname.trim() : '';
         if (!nickname) {
@@ -684,7 +834,7 @@ app.patch('/students/:id/profile', async (req: Request, res: Response) => {
     }
 });
 
-app.patch('/students/:id/password', async (req: Request, res: Response) => {
+app.patch('/students/:id/password', requireStudentSelf, async (req: Request, res: Response) => {
     try {
         const currentPassword = typeof req.body?.currentPassword === 'string' ? req.body.currentPassword : '';
         const newPassword = typeof req.body?.newPassword === 'string' ? req.body.newPassword : '';
@@ -712,7 +862,7 @@ app.patch('/students/:id/password', async (req: Request, res: Response) => {
     }
 });
 
-app.delete('/students/:id', async (req: Request, res: Response) => {
+app.delete('/students/:id', requireStudentSelf, async (req: Request, res: Response) => {
     try {
         const deleted = await studentModel.findByIdAndDelete(req.params.id).lean();
         if (!deleted) {
@@ -725,7 +875,7 @@ app.delete('/students/:id', async (req: Request, res: Response) => {
     }
 });
 
-app.delete('/students/:id/favorites/:storeId', async (req: Request, res: Response) => {
+app.delete('/students/:id/favorites/:storeId', requireStudentSelf, async (req: Request, res: Response) => {
     try {
         const updated = await studentModel.findByIdAndUpdate(
             req.params.id,
@@ -742,7 +892,7 @@ app.delete('/students/:id/favorites/:storeId', async (req: Request, res: Respons
     }
 });
 
-app.post('/students/email/code', async (req: Request, res: Response) => {
+app.post('/students/email/code', signupLimit, async (req: Request, res: Response) => {
     try {
         const email = typeof req.body?.email === 'string' ? req.body.email : '';
         await sendStudentEmailCode(email);
@@ -766,7 +916,7 @@ app.post('/students/email/code', async (req: Request, res: Response) => {
     }
 });
 
-app.post('/students/email/verify', async (req: Request, res: Response) => {
+app.post('/students/email/verify', signupLimit, async (req: Request, res: Response) => {
     try {
         const email = typeof req.body?.email === 'string' ? req.body.email : '';
         const code = typeof req.body?.code === 'string' ? req.body.code : '';
@@ -782,7 +932,7 @@ app.post('/students/email/verify', async (req: Request, res: Response) => {
     }
 });
 
-app.post('/students', async (req: Request, res: Response) => {
+app.post('/students', signupLimit, async (req: Request, res: Response) => {
     try {
         const nickname = typeof req.body?.nickname === 'string' ? req.body.nickname.trim() : '';
         const email = typeof req.body?.email === 'string' ? normalizeSchoolEmail(req.body.email) : '';

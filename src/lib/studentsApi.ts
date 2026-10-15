@@ -1,4 +1,5 @@
 import type Student from '../types/Student';
+import { clearCsrfToken, takeCsrfToken, withApi } from './csrf';
 
 const baseUrl = (import.meta.env.VITE_API_URL as string | undefined) ?? '';
 
@@ -10,24 +11,45 @@ export type StudentSignupBody = {
 };
 
 export async function loginStudent(id: string, password: string) {
-    const response = await fetch(`${baseUrl}/students/login`, {
+    const response = await fetch(`${baseUrl}/students/login`, withApi({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, password })
-    });
-    const data = await response.json().catch(() => ({} as { error?: string }));
+    }));
+    const data = await response.json().catch(() => ({} as { error?: string; csrfToken?: string }));
     if (!response.ok) {
         throw new Error(typeof data.error === 'string' ? data.error : `HTTP ${response.status}`);
     }
-    return data as Student;
+    return takeCsrfToken('student', data) as Student;
+}
+
+export async function logoutStudentSession() {
+    await fetch(`${baseUrl}/students/logout`, withApi({
+        method: 'POST'
+    }));
+    clearCsrfToken('student');
+}
+
+export async function fetchStudentSession() {
+    const response = await fetch(`${baseUrl}/students/session`, withApi());
+    if (!response.ok) {
+        clearCsrfToken('student');
+        return null;
+    }
+    const data = await response.json().catch(() => null);
+    if (!data) {
+        clearCsrfToken('student');
+        return null;
+    }
+    return takeCsrfToken('student', data) as Student;
 }
 
 export async function signupStudent(student: StudentSignupBody) {
-    const response = await fetch(`${baseUrl}/students`, {
+    const response = await fetch(`${baseUrl}/students`, withApi({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(student)
-    });
+    }));
     const data = await response.json().catch(() => ({} as { error?: string }));
     if (!response.ok) {
         throw new Error(typeof data.error === 'string' ? data.error : `HTTP ${response.status}`);
@@ -36,7 +58,7 @@ export async function signupStudent(student: StudentSignupBody) {
 }
 
 async function studentRequest<T>(url: string, options: RequestInit) {
-    const response = await fetch(url, options);
+    const response = await fetch(url, withApi(options));
     const data = await response.json().catch(() => ({} as { error?: string }));
     if (!response.ok) {
         throw new Error(typeof data.error === 'string' ? data.error : `HTTP ${response.status}`);

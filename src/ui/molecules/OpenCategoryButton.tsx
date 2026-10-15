@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { Categories } from '../atoms/Categories';
 import { Exits } from '../atoms/Exits';
 import type Language from '../../types/Language';
-import { ToBeContinuedAlert } from '../atoms/ToBeContinuedAlert';
 
 const CategoryButton = styled.div`
     position: relative;
@@ -23,18 +22,19 @@ const ExitsPlus = styled(Exits)`
 
 interface OpenCategoryButtonProps {
     categoryNameProp: string;
+    onSelectCategory: (category: string) => void;
     onRemoveCategory: (category: string) => void;   
     language: Language;
     categoryKoreanName: string;
     selectedCategory: string[];
 }
 
-export function OpenCategoryButton({ categoryNameProp, onRemoveCategory, categoryKoreanName, selectedCategory }: OpenCategoryButtonProps) {
+export function OpenCategoryButton({ categoryNameProp, onSelectCategory, onRemoveCategory, categoryKoreanName, selectedCategory }: OpenCategoryButtonProps) {
     const isSelected = selectedCategory.includes(categoryKoreanName);
 
     return (
         <CategoryButton>
-            <Categories categoryName = { categoryNameProp } clicked = { isSelected } onClick = {() => ToBeContinuedAlert()} />            
+            <Categories categoryName = { categoryNameProp } clicked = { isSelected } onClick = {() => onSelectCategory(categoryKoreanName)} />            
             {isSelected && <ExitsPlus onClick={() => onRemoveCategory(categoryKoreanName)} />}        
         </CategoryButton>
     )

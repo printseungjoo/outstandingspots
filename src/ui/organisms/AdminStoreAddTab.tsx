@@ -270,10 +270,8 @@ function buildStorePatch(original: Store, form: StoreAddForm, category: Store['c
     if (form.closeTime !== original.closeTime) {
         patch.closeTime = form.closeTime;
     }
-    if (form.lat.trim() !== String(original.lat)) {
+    if (form.lat.trim() !== String(original.lat) || form.lon.trim() !== String(original.lon)) {
         patch.lat = Number(form.lat);
-    }
-    if (form.lon.trim() !== String(original.lon)) {
         patch.lon = Number(form.lon);
     }
     return patch;

@@ -79,35 +79,20 @@ const LoginPasswordInput = styled.input`
 `;
 
 interface LoginIdPasswordProps {
-    loginRole: string;
-    onAdminCheckChange: (isAdmin: boolean[]) => void;
     onIdChange: (value: string) => void;
     onPasswordChange: (value: string) => void;
 }
 
-export function LoginIdPassword({ loginRole, onAdminCheckChange, onIdChange, onPasswordChange }: LoginIdPasswordProps) {
+export function LoginIdPassword({ onIdChange, onPasswordChange }: LoginIdPasswordProps) {
     const { language } = useLanguage();
     const [showPassword, setShowPassword] = useState<boolean>(false);
-    const [isAdmin, setIsAdmin] = useState<boolean[]>([false, false]);
-    const adminId = import.meta.env.VITE_ADMIN_ID;
-    const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD;
 
     const handleIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        onIdChange(value);
-        const idMatched = loginRole === 'store' && value === adminId;
-        const next = [idMatched, isAdmin[1]];
-        setIsAdmin(next);
-        onAdminCheckChange(next);
+        onIdChange(e.target.value);
     };
 
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        onPasswordChange(value);
-        const passwordMatched = loginRole === 'store' && value === adminPassword;
-        const next = [isAdmin[0], passwordMatched];
-        setIsAdmin(next);
-        onAdminCheckChange(next);
+        onPasswordChange(e.target.value);
     };
 
     return(
