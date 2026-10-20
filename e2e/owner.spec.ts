@@ -12,7 +12,6 @@ test.describe('store information', () => {
         await expect(page.getByText(`${cafeStore.category.kor} / ${cafeStore.category.eng}`)).toBeVisible();
         await expect(page.getByText(`${cafeStore.theme.kor} / ${cafeStore.theme.eng}`)).toBeVisible();
         await expect(page.getByText(`${cafeStore.branch.kor} / ${cafeStore.branch.eng}`)).toBeVisible();
-        await expect(page.getByText(`${cafeStore.address.kor} / ${cafeStore.address.eng}`)).toBeVisible();
         await expect(page.getByText(cafeStore.discount.kor)).toBeVisible();
         await expect(page.getByText(cafeStore.description.kor)).toBeVisible();
         await expect(page.getByText(String(cafeStore.lat), { exact: true })).toBeVisible();

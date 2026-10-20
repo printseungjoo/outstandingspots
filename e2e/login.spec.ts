@@ -116,12 +116,13 @@ test.describe('owner login', () => {
 });
 
 test.describe('admin login', () => {
-    test('enters the admin page with the admin account without calling the API', async ({ page, api }) => {
+    test('enters the admin page with the admin account', async ({ page, api }) => {
         const form = loginForm(page, '사장님 로그인');
         await form.getByPlaceholder('ID를 입력해주세요').fill(ADMIN_ID);
         await form.getByPlaceholder('비밀번호를 입력해주세요').fill(ADMIN_PASSWORD);
         await form.getByRole('button', { name: '로그인' }).click();
         await expect(page).toHaveURL(/\/admin$/);
+        expect(api.find('POST', '/admin/login')?.body).toEqual({ id: ADMIN_ID, password: ADMIN_PASSWORD });
         expect(api.find('POST', '/owners/login')).toBeUndefined();
     });
 

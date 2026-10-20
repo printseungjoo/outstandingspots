@@ -34,10 +34,11 @@ test('shows theme, discount and photo for each store', async ({ page }) => {
     await expect(cafeRow.getByRole('img', { name: cafeStore.name.kor })).toHaveAttribute('src', /\/e2e-api\/uploads\/cafe\.png$/);
 });
 
-test('has no admin actions', async ({ page }) => {
+test('has view actions instead of admin actions', async ({ page }) => {
     await expect(page.getByRole('button', { name: '수정' })).toHaveCount(0);
     await expect(page.getByRole('button', { name: '삭제' })).toHaveCount(0);
-    await expect(page.getByRole('columnheader', { name: '관리' })).toHaveCount(0);
+    await expect(page.getByRole('columnheader', { name: '관리' })).toBeVisible();
+    await expect(page.getByRole('button', { name: '보기' })).toHaveCount(3);
 });
 
 test('shows the total store count', async ({ page }) => {

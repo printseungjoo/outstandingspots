@@ -86,10 +86,10 @@ test.describe('with an admin session', () => {
         await expect(page.getByRole('link', { name: '마이페이지' })).toHaveAttribute('href', '/admin');
     });
 
-    test('loses the session after reload', async ({ page }) => {
+    test('keeps the session after reload', async ({ page }) => {
         await loginAsAdmin(page);
         await page.reload();
-        await expect(page).toHaveURL(/\/login$/);
+        await expect(page).toHaveURL(/\/admin$/);
     });
 
     test('logout returns to /login and closes the admin page', async ({ page }) => {

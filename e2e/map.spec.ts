@@ -1,6 +1,7 @@
 import type { Page } from '@playwright/test';
 
 import type Student from '../src/types/Student';
+import { isStoreOpen } from '../src/lib/isStoreOpen';
 import { barStore, cafeStore, foodStore, student } from './fixtures/data';
 import { expect, readSession, seedStudentSession, test } from './support/test';
 
@@ -62,10 +63,13 @@ test.describe('map page', () => {
         await expect(markers(page)).toHaveCount(3);
     });
 
-    test('open-now category is not ready yet', async ({ page, dialogs }) => {
+    test('filters markers to stores that are open now', async ({ page }) => {
         await page.goto('/');
         await categoryButton(page, '📢영업중').click();
-        await dialogs.expectMessage('개발 중입니다! To be continued!');
+        const openCount = [cafeStore, foodStore, barStore].filter((store) => (
+            isStoreOpen(store.openTime, store.closeTime)
+        )).length;
+        await expect(markers(page)).toHaveCount(openCount);
     });
 
     test('clicking a marker opens the store information', async ({ page }) => {
@@ -87,7 +91,7 @@ test.describe('map page', () => {
         await expect(page.getByText(cafeStore.discount.kor)).toBeVisible();
         await expect(markers(page)).toHaveCount(1);
 
-        await page.getByRole('button', { name: 'X' }).click();
+        await page.getByRole('button', { name: 'X', exact: true }).click();
         await expect(page.getByText(cafeStore.discount.kor)).toBeHidden();
         await expect(markers(page)).toHaveCount(3);
     });
@@ -150,7 +154,7 @@ test.describe('map page', () => {
         await expect(page.getByRole('link', { name: '카카오톡' })).toBeVisible();
         await expect(page.getByRole('link', { name: '개발자에게 문의하기' })).toBeVisible();
 
-        await page.getByRole('button', { name: 'X' }).click();
+        await page.getByRole('button', { name: 'X', exact: true }).click();
         await expect(page.getByText('Outstanding Spots란?')).toBeHidden();
     });
 });

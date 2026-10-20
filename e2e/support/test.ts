@@ -3,7 +3,7 @@ import type { Page } from '@playwright/test';
 
 import type Owner from '../../src/types/Owner';
 import type Student from '../../src/types/Student';
-import { MockApi } from './mockApi';
+import { MockApi, mockApiFor } from './mockApi';
 import { ADMIN_ID, ADMIN_PASSWORD } from './constants';
 
 export class Dialogs {
@@ -58,10 +58,12 @@ async function seedSession(page: Page, key: string, value: unknown) {
 }
 
 export async function seedStudentSession(page: Page, student: Student) {
+    mockApiFor(page)?.setStudentSession(student);
     await seedSession(page, 'os-student', student);
 }
 
 export async function seedOwnerSession(page: Page, owner: Owner) {
+    mockApiFor(page)?.setOwnerSession(owner);
     await seedSession(page, 'os-owner', owner);
 }
 

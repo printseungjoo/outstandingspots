@@ -86,7 +86,7 @@ test.describe('school email verification', () => {
         await signupForm(page).email.fill(SCHOOL_EMAIL);
         await signupForm(page).sendCode.click();
 
-        await dialogs.expectMessage('서버에 메일 발송 설정이 없습니다. server/.env에 SMTP_HOST, SMTP_USER, SMTP_PASS를 넣고 API를 재시작해 주세요.');
+        await dialogs.expectMessage('메일 발송 설정이 없습니다. API 서버에 RESEND_API_KEY와 RESEND_FROM을 넣고 재시작해 주세요.');
         await expect(signupForm(page).code).toBeDisabled();
     });
 

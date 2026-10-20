@@ -2,6 +2,7 @@ import type { Page } from '@playwright/test';
 
 import type Student from '../src/types/Student';
 import { barStore, cafeStore, foodStore, student, STUDENT_PASSWORD } from './fixtures/data';
+import { GUIDE_URL } from './support/constants';
 import { expect, fieldInput, readSession, seedStudentSession, test } from './support/test';
 
 function rows(page: Page) {
@@ -261,9 +262,12 @@ test.describe('account management', () => {
         await expect(input).toHaveAttribute('type', 'text');
     });
 
-    test('opens the guide placeholder', async ({ page, dialogs }) => {
+    test('opens the Korean user guide', async ({ page }) => {
+        const popupPromise = page.waitForEvent('popup');
         await page.getByRole('button', { name: '열기' }).click();
-        await dialogs.expectMessage('개발 중입니다! To be continued!');
+        const popup = await popupPromise;
+        await expect(popup).toHaveURL(GUIDE_URL);
+        await popup.close();
     });
 
     test('keeps the account when withdrawal is cancelled', async ({ page, api, dialogs }) => {

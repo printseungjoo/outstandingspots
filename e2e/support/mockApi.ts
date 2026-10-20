@@ -1,11 +1,18 @@
-import type { BrowserContext, Request, Route } from '@playwright/test';
+import type { BrowserContext, Page, Request, Route } from '@playwright/test';
 
 import type Category from '../../src/types/Category';
 import type Owner from '../../src/types/Owner';
 import type Store from '../../src/types/Store';
 import type Student from '../../src/types/Student';
 import * as data from '../fixtures/data';
-import { API_PREFIX, APP_PORT } from './constants';
+import { ADMIN_ID, ADMIN_PASSWORD, API_PREFIX, APP_PORT } from './constants';
+
+const CSRF_TOKEN = 'e2e-csrf';
+const installed = new WeakMap<BrowserContext, MockApi>();
+
+export function mockApiFor(page: Page) {
+    return installed.get(page.context());
+}
 
 export const PNG_1X1 = Buffer.from(
     'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
@@ -80,6 +87,11 @@ function readBody(request: Request) {
 export class MockApi {
     state: MockState;
     requests: LoggedRequest[] = [];
+    session = {
+        admin: false,
+        ownerId: null as string | null,
+        studentId: null as string | null
+    };
     private overrides: Array<{ method: string; pattern: string; handler: MockHandler }> = [];
 
     constructor() {
@@ -92,6 +104,40 @@ export class MockApi {
             studentPasswords: { [data.student.id]: data.STUDENT_PASSWORD },
             geocode: { ...data.GEOCODE_RESULT }
         };
+    }
+
+    setAdminSession(value: boolean) {
+        this.session.admin = value;
+    }
+
+    setOwnerSession(owner: Owner | null) {
+        if (!owner) {
+            this.session.ownerId = null;
+            return;
+        }
+        const next = clone(owner);
+        this.session.ownerId = next._id;
+        const index = this.state.owners.findIndex((item) => item._id === next._id);
+        if (index >= 0) {
+            this.state.owners[index] = next;
+            return;
+        }
+        this.state.owners.push(next);
+    }
+
+    setStudentSession(student: Student | null) {
+        if (!student) {
+            this.session.studentId = null;
+            return;
+        }
+        const next = clone(student);
+        this.session.studentId = next._id;
+        const index = this.state.students.findIndex((item) => item._id === next._id);
+        if (index >= 0) {
+            this.state.students[index] = next;
+            return;
+        }
+        this.state.students.push(next);
     }
 
     override(method: string, pattern: string, handler: MockHandler) {
@@ -107,6 +153,7 @@ export class MockApi {
     }
 
     async install(context: BrowserContext) {
+        installed.set(context, this);
         await context.route('**/*', (route) => this.handle(route));
     }
 
@@ -117,6 +164,10 @@ export class MockApi {
         try {
             if (isApp && url.pathname.startsWith(API_PREFIX)) {
                 await this.handleApi(route, request, url.pathname.slice(API_PREFIX.length) || '/');
+                return;
+            }
+            if (isApp && url.pathname === '/e2e-guide') {
+                await route.fulfill({ contentType: 'text/html', body: '<html><body>guide</body></html>' });
                 return;
             }
             if (isApp) {
@@ -207,6 +258,23 @@ export class MockApi {
                 state.stores = state.stores.filter((store) => store._id !== params.id);
                 return { body: { _id: params.id } };
             }],
+            ['POST', '/admin/login', ({ body }) => {
+                const { id, password } = body as { id: string; password: string };
+                if (id !== ADMIN_ID || password !== ADMIN_PASSWORD) {
+                    return { status: 401, body: { error: 'INVALID_ADMIN' } };
+                }
+                this.session.admin = true;
+                return { body: { ok: true, csrfToken: CSRF_TOKEN } };
+            }],
+            ['POST', '/admin/logout', () => {
+                this.session.admin = false;
+                return { body: { ok: true } };
+            }],
+            ['GET', '/admin/session', () => (
+                this.session.admin
+                    ? { body: { ok: true, csrfToken: CSRF_TOKEN } }
+                    : { status: 401, body: { error: 'UNAUTHORIZED' } }
+            )],
             ['POST', '/owners/login', ({ body }) => {
                 const { id, password } = body as { id: string; password: string };
                 const owner = state.owners.find((item) => item.id === id);
@@ -216,7 +284,22 @@ export class MockApi {
                 if (owner.status !== 'approved') {
                     return { status: 403, body: { status: owner.status } };
                 }
-                return { body: owner };
+                this.session.ownerId = owner._id;
+                return { body: { ...owner, csrfToken: CSRF_TOKEN } };
+            }],
+            ['POST', '/owners/logout', () => {
+                this.session.ownerId = null;
+                return { body: { ok: true } };
+            }],
+            ['GET', '/owners/session', () => {
+                if (!this.session.ownerId) {
+                    return { status: 401, body: { error: 'UNAUTHORIZED' } };
+                }
+                const owner = this.findOwner(this.session.ownerId);
+                if (!owner) {
+                    return { status: 401, body: { error: 'UNAUTHORIZED' } };
+                }
+                return { body: { ...owner, csrfToken: CSRF_TOKEN } };
             }],
             ['GET', '/owners', () => ({ body: state.owners })],
             ['POST', '/owners', () => ({ status: 201, body: { ok: true } })],
@@ -234,6 +317,9 @@ export class MockApi {
             }],
             ['PATCH', '/owners/:id/password', () => ({ body: { ok: true } })],
             ['DELETE', '/owners/:id', ({ params }) => {
+                if (this.session.ownerId === params.id) {
+                    this.session.ownerId = null;
+                }
                 state.owners = state.owners.filter((owner) => owner._id !== params.id);
                 return { body: { _id: params.id } };
             }],
@@ -243,7 +329,22 @@ export class MockApi {
                 if (!found || state.studentPasswords[id] !== password) {
                     return { status: 401, body: { error: 'INVALID_CREDENTIALS' } };
                 }
-                return { body: found };
+                this.session.studentId = found._id;
+                return { body: { ...found, csrfToken: CSRF_TOKEN } };
+            }],
+            ['POST', '/students/logout', () => {
+                this.session.studentId = null;
+                return { body: { ok: true } };
+            }],
+            ['GET', '/students/session', () => {
+                if (!this.session.studentId) {
+                    return { status: 401, body: { error: 'UNAUTHORIZED' } };
+                }
+                const found = this.findStudent(this.session.studentId);
+                if (!found) {
+                    return { status: 401, body: { error: 'UNAUTHORIZED' } };
+                }
+                return { body: { ...found, csrfToken: CSRF_TOKEN } };
             }],
             ['POST', '/students', () => ({ status: 201, body: { ok: true } })],
             ['POST', '/students/email/code', () => ({ body: { ok: true } })],
@@ -281,6 +382,9 @@ export class MockApi {
             }],
             ['PATCH', '/students/:id/password', () => ({ body: { ok: true } })],
             ['DELETE', '/students/:id', ({ params }) => {
+                if (this.session.studentId === params.id) {
+                    this.session.studentId = null;
+                }
                 state.students = state.students.filter((item) => item._id !== params.id);
                 return { body: { _id: params.id } };
             }]
