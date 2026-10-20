@@ -30,3 +30,4 @@ blob-report
 .env
 .vercel
 server/uploads
+.next
