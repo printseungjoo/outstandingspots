@@ -2,8 +2,9 @@ import fetchJson from './fetchJson';
 import type Owner from '../types/Owner';
 import type { OwnerStatus } from '../types/Owner';
 import { clearCsrfToken, takeCsrfToken, withApi } from './csrf';
+import { API_URL } from './constants';
 
-const baseUrl = (import.meta.env.VITE_API_URL as string | undefined) ?? '';
+const baseUrl = API_URL;
 
 export type OwnerSignupBody = {
     name: string;

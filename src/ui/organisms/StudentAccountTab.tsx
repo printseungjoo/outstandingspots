@@ -8,8 +8,9 @@ import { useLanguage } from '../../contexts/LanguageContext';
 import { useStudentAuth } from '../../contexts/StudentAuthContext';
 import { isValidOwnerPassword } from '../../lib/ownersApi';
 import { deleteStudent, loginStudent, patchStudentNickname, patchStudentPassword } from '../../lib/studentsApi';
+import { GUIDE_URL } from '../../lib/constants';
 
-const guideUrl = (import.meta.env.VITE_GUIDE_URL as string | undefined) ?? '';
+const guideUrl = GUIDE_URL;
 
 const Page = styled.div`
     width: 100%;

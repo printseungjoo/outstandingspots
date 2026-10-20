@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 
 import type Category from '../types/Category';
 import fetchJson from '../lib/fetchJson';
+import { API_URL } from '../lib/constants';
 
 interface CategoryContextValue {
     categories: Category[];
@@ -10,7 +11,7 @@ interface CategoryContextValue {
 
 const CategoryContext = createContext<CategoryContextValue | null>(null);
 
-const baseUrl = import.meta.env.VITE_API_URL;
+const baseUrl = API_URL;
 
 export function CategoryProvider({ children }: { children: ReactNode }) {
     const [categories, setCategories] = useState<Category[]>([]);

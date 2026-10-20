@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
-import { ADMIN_ID, ADMIN_PASSWORD, API_URL, APP_ORIGIN, APP_PORT, GUIDE_URL } from './e2e/support/constants';
+import { API_URL, APP_ORIGIN, APP_PORT, GUIDE_URL } from './e2e/support/constants';
 
 export default defineConfig({
     testDir: './e2e',
@@ -33,10 +33,8 @@ export default defineConfig({
         reuseExistingServer: false,
         timeout: 120000,
         env: {
-            VITE_API_URL: API_URL,
-            VITE_ADMIN_ID: ADMIN_ID,
-            VITE_ADMIN_PASSWORD: ADMIN_PASSWORD,
-            VITE_GUIDE_URL: GUIDE_URL
+            NEXT_PUBLIC_API_URL: API_URL,
+            NEXT_PUBLIC_GUIDE_URL: GUIDE_URL
         }
     }
 });

@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import type Store from '../types/Store';
 import fetchJson from '../lib/fetchJson';
 import { deleteStore as deleteStoreRequest } from '../lib/storesApi';
+import { API_URL } from '../lib/constants';
 
 export const SUCCESS_MESSAGE = '즐거운 이용 되세요!\nEnjoy the service!';
 
@@ -17,7 +18,7 @@ interface StoresContextValue {
 
 const StoresContext = createContext<StoresContextValue | null>(null);
 
-const baseUrl = import.meta.env.VITE_API_URL;
+const baseUrl = API_URL;
 
 export function StoresProvider({ children }: { children: ReactNode }) {
     const [stores, setStores] = useState<Store[]>([]);

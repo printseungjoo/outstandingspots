@@ -1,8 +1,9 @@
 import styled from 'styled-components';
 
 import { useLanguage } from '../../contexts/LanguageContext';
+import { GUIDE_URL } from '../../lib/constants';
 
-const guideUrl = (import.meta.env.VITE_GUIDE_URL as string | undefined) ?? '';
+const guideUrl = GUIDE_URL;
 
 const FooterRightTextStyled = styled.div`
     display: flex;
