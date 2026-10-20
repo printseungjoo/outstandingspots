@@ -56,10 +56,10 @@ test.describe('map page', () => {
         await categoryButton(page, '주점').click();
         await expect(markers(page)).toHaveCount(2);
 
-        await categoryButton(page, '카페').locator('..').getByRole('button', { name: 'X' }).click();
+        await categoryButton(page, '카페').locator('..').getByRole('button', { name: 'X', exact: true }).click();
         await expect(markers(page)).toHaveCount(1);
 
-        await categoryButton(page, '주점').locator('..').getByRole('button', { name: 'X' }).click();
+        await categoryButton(page, '주점').locator('..').getByRole('button', { name: 'X', exact: true }).click();
         await expect(markers(page)).toHaveCount(3);
     });
 

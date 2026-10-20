@@ -28,7 +28,7 @@ export default defineConfig({
         }
     ],
     webServer: {
-        command: `npx vite --host 127.0.0.1 --port ${APP_PORT} --strictPort`,
+        command: `npx next dev --hostname 127.0.0.1 --port ${APP_PORT}`,
         url: APP_ORIGIN,
         reuseExistingServer: false,
         timeout: 120000,
