@@ -34,7 +34,7 @@ function getSeo(pathname: string, language: 'kor' | 'eng') {
                 ? '전체 매장 | Outstanding Spots'
                 : 'All Stores | Outstanding Spots',
             description: isKorean
-                ? 'SUNY Korea 주변 제휴 매장 목록과 할인 혜택을 확인하세요.'
+                ? '한국뉴욕주립대학교 주변 제휴 매장 목록과 할인 혜택을 확인하세요.'
                 : 'Browse partner stores and discounts near SUNY Korea.',
             robots: 'index,follow',
             path: '/stores',
@@ -43,10 +43,10 @@ function getSeo(pathname: string, language: 'kor' | 'eng') {
     if (pathname === '/') {
         return {
             title: isKorean
-                ? 'Outstanding Spots | SUNY Korea 주변 제휴 매장'
+                ? 'Outstanding Spots | 한국뉴욕주립대학교 주변 제휴 매장'
                 : 'Outstanding Spots | Partner Stores near SUNY Korea',
             description: isKorean
-                ? 'SUNY Korea 주변 제휴 매장 지도와 할인 정보를 한눈에 확인하세요.'
+                ? '한국뉴욕주립대학교 주변 제휴 매장 지도와 할인 정보를 한눈에 확인하세요.'
                 : 'Find partner stores and discounts near SUNY Korea on the Outstanding Spots map.',
             robots: 'index,follow',
             path: '/',
@@ -56,7 +56,7 @@ function getSeo(pathname: string, language: 'kor' | 'eng') {
     return {
         title: 'Outstanding Spots',
         description: isKorean
-            ? 'SUNY Korea 주변 제휴 매장 안내 서비스입니다.'
+            ? '한국뉴욕주립대학교 주변 제휴 매장 안내 서비스입니다.'
             : 'Partner store guide for SUNY Korea.',
         robots: 'noindex,nofollow',
         path: pathname,
