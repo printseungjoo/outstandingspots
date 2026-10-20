@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from 'next'
 import Script from 'next/script'
 
+import StyledComponentsRegistry from './registry'
+
 export const metadata: Metadata = {
   title: 'Outstanding Spots | SUNY Korea 제휴 매장',
   description: '한국뉴욕주립대학교 학생들을 위한 주변 제휴 매장 및 학생 할인 안내 서비스',
@@ -63,7 +65,9 @@ export default function RootLayout({
           gtag('js', new Date());
           gtag('config', 'G-GBE7VNK22K');
         `}</Script>
-        { children }
+        <StyledComponentsRegistry>
+          { children }
+        </StyledComponentsRegistry>
       </body>
     </html>
   )
