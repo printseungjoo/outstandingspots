@@ -5,7 +5,10 @@ const nextConfig: NextConfig = {
   compiler: {
     styledComponents: true
   },
-  devIndicators: false
+  devIndicators: false,
+  images: {
+    unoptimized: true
+  }
 }
 
 export default nextConfig

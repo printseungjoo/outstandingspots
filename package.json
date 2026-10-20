@@ -8,12 +8,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite --port 5173",
-    "build": "vite build",
+    "build": "next build",
+    "start": "npx --yes serve out -l 5173",
     "lint": "eslint .",
     "preview": "vite preview",
     "test:e2e": "playwright test",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist --cname outstandingspots.com"
+    "postbuild": "node -e \"import { copyFileSync } from 'fs'; copyFileSync('out/index.html', 'out/404.html')\"",
+    "deploy": "gh-pages -d out --cname outstandingspots.com"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.3.1",

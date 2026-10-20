@@ -31,3 +31,4 @@ blob-report
 .vercel
 server/uploads
 .next
+out
