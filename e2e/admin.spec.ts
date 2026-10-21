@@ -66,7 +66,7 @@ test.describe('store management', () => {
 
     test('opens the edit page for a store', async ({ page }) => {
         await storeRow(page, cafeStore.name.kor).getByRole('button', { name: '수정' }).click();
-        await expect(page).toHaveURL(new RegExp(`/admin/store/edit/${cafeStore._id}$`));
+        await expect(page).toHaveURL(new RegExp(`/admin/store/edit\\?storeId=${cafeStore._id}$`));
     });
 });
 
@@ -210,7 +210,7 @@ test.describe('add store', () => {
 test.describe('edit store', () => {
     test.beforeEach(async ({ page }) => {
         await storeRow(page, cafeStore.name.kor).getByRole('button', { name: '수정' }).click();
-        await expect(page).toHaveURL(new RegExp(`/admin/store/edit/${cafeStore._id}$`));
+        await expect(page).toHaveURL(new RegExp(`/admin/store/edit\\?storeId=${cafeStore._id}$`));
     });
 
     test('fills the form with the current store', async ({ page }) => {
@@ -260,7 +260,7 @@ test.describe('edit store', () => {
     });
 
     test('returns to store management for an unknown store', async ({ page }) => {
-        await page.goto('/admin/store/edit/unknown-store');
+        await page.goto('/admin/store/edit?storeId=unknown-store');
         await expect(page).toHaveURL(/\/admin$/);
     });
 });

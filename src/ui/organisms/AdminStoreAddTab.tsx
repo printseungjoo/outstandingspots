@@ -2,7 +2,7 @@
 
 import styled from 'styled-components'
 import { useEffect, useRef, useState } from 'react'
-import { useParams, usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 import { UploadImage } from '../molecules/UploadImage';
 import { AdminStoreAddInput } from '../atoms/AdminStoreAddInput';
@@ -281,10 +281,7 @@ function buildStorePatch(original: Store, form: StoreAddForm, category: Store['c
 
 export function AdminStoreAddTab({ storeIdOverride, cancelTo = '/admin', afterSaveTo = '/admin' }: AdminStoreAddTabProps = {}) {
     const router = useRouter();
-    const params = useParams<{ storeId?: string }>();
-    const pathname = usePathname();
-    const pathMatch = pathname.match(/^\/admin\/store\/edit\/([^/]+)/);
-    const storeId = storeIdOverride ?? pathMatch?.[1] ?? params.storeId;
+    const storeId = storeIdOverride;
     const { language } = useLanguage();
     const { categories } = useCategories();
     const { stores, loadingState, addStore, updateStore } = useStores();

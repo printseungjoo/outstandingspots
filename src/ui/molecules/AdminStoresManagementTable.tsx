@@ -208,7 +208,7 @@ export function AdminStoresManagementTable({ stores, showActions = true }: Admin
                                 <Td> { language === 'eng' ? store.discount.eng : store.discount.kor } </Td>
                                 {showActions ? (
                                     <Td>
-                                        <ActionButton type = 'button' onClick = {() => router.push(`/admin/store/edit/${store._id}`)}>
+                                        <ActionButton type = 'button' onClick = {() => router.push(`/admin/store/edit?storeId=${encodeURIComponent(store._id)}`)}>
                                             { language === 'eng' ? 'Edit' : '수정' }
                                         </ActionButton>
                                         <ActionButton type = 'button' onClick = {() => { void handleDelete(store); }}>
@@ -234,7 +234,7 @@ export function AdminStoresManagementTable({ stores, showActions = true }: Admin
                         </CardTop>
                         {showActions ? (
                             <CardActions>
-                                <CardActionButton type = 'button' onClick = {() => router.push(`/admin/store/edit/${store._id}`)}>
+                                <CardActionButton type = 'button' onClick = {() => router.push(`/admin/store/edit?storeId=${encodeURIComponent(store._id)}`)}>
                                     { language === 'eng' ? 'Edit' : '수정' }
                                 </CardActionButton>
                                 <CardActionButton type = 'button' onClick = {() => { void handleDelete(store); }}>

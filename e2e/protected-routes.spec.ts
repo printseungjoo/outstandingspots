@@ -10,7 +10,7 @@ const protectedPaths = [
     '/owner/account',
     '/admin',
     '/admin/store/add',
-    '/admin/store/edit/store-cafe',
+    '/admin/store/edit?storeId=store-cafe',
     '/admin/owners'
 ];
 
