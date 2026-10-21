@@ -1,4 +1,5 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
 
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -145,7 +146,7 @@ const OwnerLogoutButton = styled.button`
 
 export function OwnerNav() {
     const { pathname } = useLocation();
-    const navigate = useNavigate();
+    const router = useRouter();
     const { language } = useLanguage();
     const { logoutOwner } = useOwnerAuth();
 
@@ -172,7 +173,7 @@ export function OwnerNav() {
                 </OwnerNavOption>
             </OwnerNavTop>
             <OwnerNavBottom>
-                <OwnerLogoutButton type = 'button' onClick = {() => { logoutOwner(); navigate('/login'); }}>
+                <OwnerLogoutButton type = 'button' onClick = {() => { logoutOwner(); router.push('/login'); }}>
                     {language === 'eng' ? 'Logout' : '로그아웃'}
                 </OwnerLogoutButton>
             </OwnerNavBottom>

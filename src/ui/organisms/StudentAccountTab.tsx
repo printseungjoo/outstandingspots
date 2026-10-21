@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -402,7 +402,7 @@ const WithdrawActions = styled.div`
 export function StudentAccountTab() {
     const { language } = useLanguage();
     const { student, updateStudent, logoutStudent } = useStudentAuth();
-    const navigate = useNavigate();
+    const router = useRouter();
     const [editingName, setEditingName] = useState(false);
     const [nameValue, setNameValue] = useState(student?.nickname ?? '');
     const [savingName, setSavingName] = useState(false);
@@ -496,7 +496,7 @@ export function StudentAccountTab() {
         try {
             await deleteStudent(signedInStudent._id);
             logoutStudent();
-            navigate('/login');
+            router.push('/login');
         } catch (error) {
             console.error(error);
             alert(language === 'eng' ? 'Failed to delete the account.' : '계정 탈퇴에 실패했습니다.');

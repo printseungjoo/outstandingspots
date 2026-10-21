@@ -1,6 +1,6 @@
 import { PhoneAuthProvider, RecaptchaVerifier, signInWithCredential, signInWithPhoneNumber, updatePhoneNumber, type ConfirmationResult } from 'firebase/auth';
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -460,7 +460,7 @@ export function OwnerAccountTab() {
     const { language } = useLanguage();
     const { owner, updateOwner, logoutOwner } = useOwnerAuth();
     const { stores } = useStores();
-    const navigate = useNavigate();
+    const router = useRouter();
 
     const store = stores.find((item) => item._id === owner?.storeId);
     const storeLabel = owner
@@ -682,7 +682,7 @@ export function OwnerAccountTab() {
         try {
             await deleteOwner(signedInOwner._id);
             logoutOwner();
-            navigate('/login');
+            router.push('/login');
         } catch (error) {
             console.error(error);
             alert(language === 'eng' ? 'Failed to delete the account.' : '계정 탈퇴에 실패했습니다.');

@@ -1,13 +1,9 @@
 import 'leaflet/dist/leaflet.css'
-import '../../src/index.css'
 import { CatchAllClient } from './CatchAllClient'
 
 export function generateStaticParams() {
   return [
     { slug: [] },
-    { slug: ['login'] },
-    { slug: ['signup', 'store'] },
-    { slug: ['signup', 'student'] },
     { slug: ['student'] },
     { slug: ['student', 'recent'] },
     { slug: ['student', 'account'] },

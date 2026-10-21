@@ -1,5 +1,5 @@
-import { Navigate } from 'react-router-dom';
 import type { ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { useStudentAuth } from '../../contexts/StudentAuthContext';
 
@@ -9,8 +9,10 @@ interface ProtectedStudentRouteProps {
 
 export function ProtectedStudentRoute({ children }: ProtectedStudentRouteProps) {
     const { isStudent } = useStudentAuth();
+    const router = useRouter();
     if (!isStudent) {
-        return <Navigate to = '/login' replace />;
+        router.replace('/login');
+        return null;
     }
     return children;
 }

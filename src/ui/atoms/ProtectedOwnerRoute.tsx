@@ -1,5 +1,5 @@
-import { Navigate } from 'react-router-dom';
 import type { ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { useOwnerAuth } from '../../contexts/OwnerAuthContext';
 
@@ -9,8 +9,10 @@ interface ProtectedOwnerRouteProps {
 
 export function ProtectedOwnerRoute({ children }: ProtectedOwnerRouteProps) {
     const { isOwner } = useOwnerAuth();
+    const router = useRouter();
     if (!isOwner) {
-        return <Navigate to = "/login" replace />;
+        router.replace('/login');
+        return null;
     }
     return children;
 }

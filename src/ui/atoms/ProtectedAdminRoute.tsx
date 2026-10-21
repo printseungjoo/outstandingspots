@@ -1,5 +1,5 @@
-import { Navigate } from 'react-router-dom';
 import type { ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { useAdminAuth } from '../../contexts/AdminAuthContext';
 
@@ -9,11 +9,13 @@ interface ProtectedAdminRouteProps {
 
 export function ProtectedAdminRoute({ children }: ProtectedAdminRouteProps) {
     const { isAdmin, isCheckingAdmin } = useAdminAuth();
+    const router = useRouter();
     if (isCheckingAdmin) {
         return null;
     }
     if (!isAdmin) {
-        return <Navigate to = "/login" replace />;
+        router.replace('/login');
+        return null;
     }
     return children;
 }

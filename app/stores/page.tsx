@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 
-import '../../src/index.css'
 import { StoresClient } from './StoresClient'
 
 export const metadata: Metadata = {

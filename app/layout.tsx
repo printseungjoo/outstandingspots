@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import Script from 'next/script'
 
+import '../src/index.css'
 import StyledComponentsRegistry from './registry'
 
 export const metadata: Metadata = {

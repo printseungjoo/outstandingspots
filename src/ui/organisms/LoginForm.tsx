@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 
 import { LoginIdPassword } from '../atoms/LoginIdPassword';
 import { LoginButton } from '../atoms/LoginButton';
@@ -103,7 +103,7 @@ export function LoginForm({ who,onlyForWho, loginRole }: LoginFormProps) {
     const { loginOwner: setOwnerSession } = useOwnerAuth();
     const { loginStudent: setStudentSession } = useStudentAuth();
     const { language } = useLanguage();
-    const navigate = useNavigate();
+    const router = useRouter();
     const [id, setId] = useState('');
     const [password, setPassword] = useState('');
 
@@ -116,7 +116,7 @@ export function LoginForm({ who,onlyForWho, loginRole }: LoginFormProps) {
             try {
                 const student = await loginStudent(id.trim(), password);
                 setStudentSession(student);
-                navigate('/student');
+                router.push('/student');
             } catch (error) {
                 const message = error instanceof Error ? error.message : '';
                 if (message === 'HTTP 404' || message.includes('Cannot POST')) {
@@ -145,14 +145,14 @@ export function LoginForm({ who,onlyForWho, loginRole }: LoginFormProps) {
         try {
             await loginAdminAccount(id.trim(), password);
             loginAdmin();
-            navigate('/admin');
+            router.push('/admin');
             return;
         } catch {
         }
         try {
             const owner = await loginOwner(id.trim(), password);
             setOwnerSession(owner);
-            navigate('/owner');
+            router.push('/owner');
         } catch (error) {
             if (error instanceof OwnerLoginError && error.status === 'pending') {
                 alert(language === 'eng' ? 'Please wait for admin approval.' : '관리자의 승인을 기다려주세요.');
@@ -174,7 +174,7 @@ export function LoginForm({ who,onlyForWho, loginRole }: LoginFormProps) {
                 <LoginIdPassword onIdChange = { setId } onPasswordChange = { setPassword } />
                 <LoginButton onClick = {() => { void handleLogin(); }} />
                 <BlackThinLine />
-                <SignUpButton onClick = {() => navigate(loginRole === 'student' ? '/signup/student' : '/signup/store')} />
+                <SignUpButton onClick = {() => router.push(loginRole === 'student' ? '/signup/student' : '/signup/store')} />
             </LoginDiv>
             <OnlyText> { onlyForWho } </OnlyText>
         </LoginFormStyled>

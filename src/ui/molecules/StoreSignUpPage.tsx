@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 
 import { useLanguage } from '../../contexts/LanguageContext';
 import { SignUpInput } from '../atoms/SignUpInput';
@@ -259,7 +259,7 @@ function getSignupErrorMessage(error: unknown, language: Language) {
 
 export function StoreSignUpPage() {
     const { language } = useLanguage();
-    const navigate = useNavigate();
+    const router = useRouter();
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [phoneToken, setPhoneToken] = useState('');
@@ -320,7 +320,7 @@ export function StoreSignUpPage() {
                 storeId: selectedStoreId
             }, freshToken);
             alert(language === 'eng' ? 'Sign up completed.' : '회원가입이 완료되었습니다.');
-            navigate('/login');
+            router.push('/login');
         } catch (error) {
             console.error(error);
             alert(getSignupErrorMessage(error, language));
@@ -357,7 +357,7 @@ export function StoreSignUpPage() {
                             value = { passwordCheck } onChange = { setPasswordCheck } matchWith = { password } />
                     </SignUpIdPasswordDiv>
                     <ButtonRow>
-                        <CancelButton type = 'button' onClick = {() => navigate('/login')}>
+                        <CancelButton type = 'button' onClick = {() => router.push('/login')}>
                             { language === 'eng' ? 'Cancel' : '취소' }
                         </CancelButton>
                         <SignUpButton type = 'submit' disabled = { isSubmitting }>

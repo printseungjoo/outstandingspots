@@ -5,7 +5,6 @@ import { BrowserRouter } from 'react-router-dom';
 
 import { AppShell } from './AppShell';
 import { MapPage } from './ui/templates/MapPage';
-import { LoginPage } from './ui/templates/LoginPage';
 import { AdminPage } from './ui/templates/AdminPage';
 import { OwnerPage } from './ui/templates/OwnerPage';
 import { OwnerStoreViewTab } from './ui/organisms/OwnerStoreViewTab';
@@ -21,8 +20,6 @@ import { StudentAccountTab } from './ui/organisms/StudentAccountTab';
 import { AdminStoreManagementTab } from './ui/organisms/AdminStoreManagementTab';
 import { AdminStoreAddTab } from './ui/organisms/AdminStoreAddTab';
 import { AdminOwnersManagementTab } from './ui/organisms/AdminOwnersManagementTab';
-import { StoreSignUpPage } from './ui/molecules/StoreSignUpPage';
-import { StudentSignUpPage } from './ui/molecules/StudentSignUpPage';
 
 function App() {
   return (
@@ -30,9 +27,6 @@ function App() {
       <AppShell>
         <Routes>
           <Route path = "/" element = {<MapPage />} />
-          <Route path = "/login" element = {<LoginPage />} />
-          <Route path = "/signup/store" element = {<StoreSignUpPage />} />
-          <Route path = "/signup/student" element = {<StudentSignUpPage />} />
           <Route path = "/student" element = {
             <ProtectedStudentRoute>
               <StudentPage />
