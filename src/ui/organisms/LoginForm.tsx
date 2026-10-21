@@ -1,17 +1,17 @@
-import styled from 'styled-components';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import styled from 'styled-components'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
-import { LoginIdPassword } from '../atoms/LoginIdPassword';
-import { LoginButton } from '../atoms/LoginButton';
-import { SignUpButton } from '../atoms/SignUpButton';
-import { useAdminAuth } from '../../contexts/AdminAuthContext';
-import { useOwnerAuth } from '../../contexts/OwnerAuthContext';
-import { useStudentAuth } from '../../contexts/StudentAuthContext';
-import { useLanguage } from '../../contexts/LanguageContext';
-import { loginOwner, OwnerLoginError } from '../../lib/ownersApi';
-import { loginStudent } from '../../lib/studentsApi';
-import { loginAdmin as loginAdminAccount } from '../../lib/adminApi';
+import { LoginIdPassword } from '../atoms/LoginIdPassword'
+import { LoginButton } from '../atoms/LoginButton'
+import { SignUpButton } from '../atoms/SignUpButton'
+import { useAdminAuth } from '../../contexts/AdminAuthContext'
+import { useOwnerAuth } from '../../contexts/OwnerAuthContext'
+import { useStudentAuth } from '../../contexts/StudentAuthContext'
+import { useLanguage } from '../../contexts/LanguageContext'
+import { loginOwner, OwnerLoginError } from '../../lib/ownersApi'
+import { loginStudent } from '../../lib/studentsApi'
+import { loginAdmin as loginAdminAccount } from '../../lib/adminApi'
 
 const LoginFormStyled = styled.div`
     width: 25%;
@@ -102,7 +102,7 @@ export function LoginForm({ who,onlyForWho, loginRole }: LoginFormProps) {
     const { loginAdmin } = useAdminAuth();
     const { loginOwner: setOwnerSession } = useOwnerAuth();
     const { loginStudent: setStudentSession } = useStudentAuth();
-    const { language } = useLanguage();
+    const { t } = useLanguage();
     const router = useRouter();
     const [id, setId] = useState('');
     const [password, setPassword] = useState('');
@@ -110,7 +110,7 @@ export function LoginForm({ who,onlyForWho, loginRole }: LoginFormProps) {
     const handleLogin = async () => {
         if (loginRole === 'student') {
             if (!id.trim() || !password) {
-                alert(language === 'eng' ? 'Please enter your ID and password.' : '아이디와 비밀번호를 입력해주세요.');
+                alert(t('pleaseEnterYourIdAndPassword'));
                 return;
             }
             try {
@@ -120,18 +120,14 @@ export function LoginForm({ who,onlyForWho, loginRole }: LoginFormProps) {
             } catch (error) {
                 const message = error instanceof Error ? error.message : '';
                 if (message === 'HTTP 404' || message.includes('Cannot POST')) {
-                    alert(language === 'eng'
-                        ? 'The login API is missing. Restart the API server in the server folder.'
-                        : '로그인 API가 없습니다. server 폴더에서 API 서버를 재시작해 주세요.');
+                    alert(t('theLoginApiIsMissingRestartTheApiServerIn'));
                     return;
                 }
                 if (message === 'Failed to fetch' || message.includes('NetworkError') || message.includes('fetch')) {
-                    alert(language === 'eng'
-                        ? 'The API server is not running. Start it with npm run dev in the server folder.'
-                        : 'API 서버가 꺼져 있습니다. server 폴더에서 npm run dev로 시작해 주세요.');
+                    alert(t('theApiServerIsNotRunningStartItWithNpm'));
                     return;
                 }
-                alert(language === 'eng' ? 'ID or password is incorrect.' : '아이디 또는 비밀번호가 올바르지 않습니다.');
+                alert(t('idOrPasswordIsIncorrect'));
             }
             return;
         }
@@ -139,7 +135,7 @@ export function LoginForm({ who,onlyForWho, loginRole }: LoginFormProps) {
             return;
         }
         if (!id.trim() || !password) {
-            alert(language === 'eng' ? 'Please enter your ID and password.' : '아이디와 비밀번호를 입력해주세요.');
+            alert(t('pleaseEnterYourIdAndPassword'));
             return;
         }
         try {
@@ -155,14 +151,14 @@ export function LoginForm({ who,onlyForWho, loginRole }: LoginFormProps) {
             router.push('/owner');
         } catch (error) {
             if (error instanceof OwnerLoginError && error.status === 'pending') {
-                alert(language === 'eng' ? 'Please wait for admin approval.' : '관리자의 승인을 기다려주세요.');
+                alert(t('pleaseWaitForAdminApproval'));
                 return;
             }
             if (error instanceof OwnerLoginError && error.status === 'rejected') {
-                alert(language === 'eng' ? 'Your registration was rejected by the admin.' : '관리자로부터 승인이 거절되었습니다.');
+                alert(t('yourRegistrationWasRejectedByTheAdmin'));
                 return;
             }
-            alert(language === 'eng' ? 'ID or password is incorrect.' : '아이디 또는 비밀번호가 올바르지 않습니다.');
+            alert(t('idOrPasswordIsIncorrect'));
         }
     };
 

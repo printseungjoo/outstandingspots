@@ -1,10 +1,10 @@
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import styled from 'styled-components';
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import styled from 'styled-components'
 
-import { useAdminAuth } from '../../contexts/AdminAuthContext';
-import { useOwnerAuth } from '../../contexts/OwnerAuthContext';
-import { useStudentAuth } from '../../contexts/StudentAuthContext';
+import { useAdminAuth } from '../../contexts/AdminAuthContext'
+import { useOwnerAuth } from '../../contexts/OwnerAuthContext'
+import { useStudentAuth } from '../../contexts/StudentAuthContext'
 
 const MobileNavBarDiv = styled.div`
     z-index: 2;

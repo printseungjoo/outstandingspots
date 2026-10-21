@@ -1,6 +1,6 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test'
 
-import { API_URL, APP_ORIGIN, APP_PORT, GUIDE_URL } from './e2e/support/constants';
+import { API_URL, APP_ORIGIN, APP_PORT, GUIDE_URL } from './e2e/support/constants'
 
 export default defineConfig({
     testDir: './e2e',

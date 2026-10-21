@@ -1,11 +1,12 @@
-import { useEffect, useMemo, useRef } from 'react';
-import styled from 'styled-components';
-import L from 'leaflet';
-import { MapContainer, TileLayer, useMap, Marker as LeafletMarker } from 'react-leaflet';
+import { getT } from '../../i18n'
+import { useEffect, useMemo, useRef } from 'react'
+import styled from 'styled-components'
+import L from 'leaflet'
+import { MapContainer, TileLayer, useMap, Marker as LeafletMarker } from 'react-leaflet'
 
-import { Marker } from './Marker';
-import type Store from '../../types/Store';
-import type Language from '../../types/Language';
+import { Marker } from './Marker'
+import type Store from '../../types/Store'
+import type Language from '../../types/Language'
 
 const MapWrapper = styled.div`
     width: 100%;
@@ -138,11 +139,12 @@ function MapUpdater({ selectedStore, userLocation, onUserMoveEnd }: MapUpdaterPr
 
 export function Map({ className, onSelectStore, selectedCategory, selectedStore, stores,
     userLocation, language, showSchoolReturn, onUserMoveEnd, favoriteIds, favoritesOnly }: MapProps) {
+    const t = getT(language);
     const userLocationIcon = useMemo(() => L.divIcon({
         className: 'user-location-icon',
         html: `
             <div class="user-location">
-                <span class="user-location-label"> ${language === 'eng' ? 'My location' : '내 위치'} </span>
+                <span class="user-location-label"> ${t('myLocation')} </span>
                 <span class="user-location-stem"></span>
                 <span class="user-location-dot"></span>
             </div>

@@ -1,9 +1,9 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import { useLanguage } from '../../contexts/LanguageContext';
-import { useAdminAuth } from '../../contexts/AdminAuthContext';
+import { useLanguage } from '../../contexts/LanguageContext'
+import { useAdminAuth } from '../../contexts/AdminAuthContext'
 
 const AdminNavStyled = styled.div`
     width: 13%;
@@ -152,7 +152,7 @@ const AdminLogoutButton = styled.button`
 export function AdminNav() {
     const pathname = usePathname();
     const router = useRouter();
-    const { language } = useLanguage();
+    const { t } = useLanguage();
     const { logoutAdmin } = useAdminAuth();
 
     const isStoresPage = pathname === '/admin' || pathname === '/admin/';
@@ -163,12 +163,12 @@ export function AdminNav() {
         <AdminNavStyled>
             <AdminNavTop>
                 <Text> 관리 </Text>
-                <AdminNavOption href = "/admin" $selected = { isStoresPage }> <IconSlot> <Icon src = { storesIcon } alt = 'store icon'/> </IconSlot> {language === 'eng' ? 'Stores Management' : '매장 관리'} </AdminNavOption>
-                <AdminNavOption href = "/admin/owners" $selected = { pathname === '/admin/owners' }> <IconSlot> <SmallIcon src = { ownersIcon } alt = 'owner icon'/> </IconSlot> {language === 'eng' ? 'Owners Management' : '사장님 관리'} </AdminNavOption>
+                <AdminNavOption href = "/admin" $selected = { isStoresPage }> <IconSlot> <Icon src = { storesIcon } alt = 'store icon'/> </IconSlot> {t('storesManagement')} </AdminNavOption>
+                <AdminNavOption href = "/admin/owners" $selected = { pathname === '/admin/owners' }> <IconSlot> <SmallIcon src = { ownersIcon } alt = 'owner icon'/> </IconSlot> {t('ownersManagement')} </AdminNavOption>
             </AdminNavTop>
             <AdminNavBottom>
                 <AdminLogoutButton onClick = {() => { logoutAdmin(); router.push('/login'); }}>
-                    {language === 'eng' ? 'Logout' : '로그아웃'}
+                    {t('logout')}
                 </AdminLogoutButton>
             </AdminNavBottom>
         </AdminNavStyled>

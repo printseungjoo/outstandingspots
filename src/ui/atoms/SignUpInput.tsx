@@ -1,6 +1,4 @@
-import styled from 'styled-components';
-
-import { useLanguage } from '../../contexts/LanguageContext';
+import styled from 'styled-components'
 
 const SignUpInputStyled = styled.div`
     box-sizing: border-box;
@@ -64,22 +62,18 @@ const Description = styled.p`
 `;
 
 interface SignUpInputProps {
-    engTitle: string;
-    korTitle: string;
-    engPlaceholder: string;
-    korPlaceholder: string;
+    title: string;
+    placeholder: string;
     value?: string;
     onChange?: (value: string) => void;
 }
 
-export function SignUpInput({ engTitle, korTitle, engPlaceholder, korPlaceholder, value, onChange }: SignUpInputProps) {
-    const { language } = useLanguage();
-
+export function SignUpInput({ title, placeholder, value, onChange }: SignUpInputProps) {
     return(
         <SignUpInputStyled>
-            <Title> { language === 'eng' ? engTitle : korTitle } </Title>
+            <Title> { title } </Title>
             <InputField>
-                <Input type = "text" value = { value } placeholder = { language === 'eng' ? engPlaceholder : korPlaceholder }
+                <Input type = "text" value = { value } placeholder = { placeholder }
                     onChange = {(e) => onChange?.(e.target.value)} />
                 <Description>{'\u00A0'}</Description>
             </InputField>

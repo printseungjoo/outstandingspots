@@ -1,8 +1,8 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import { AdminStoreSearch } from '../atoms/AdminStoreSearch';
-import { AdminStoreSearchByCategory } from '../atoms/AdminStoreSearchByCategory';
-import { StudentFavoritesNumber } from '../atoms/StudentFavoritesNumber';
+import { AdminStoreSearch } from '../atoms/AdminStoreSearch'
+import { AdminStoreSearchByCategory } from '../atoms/AdminStoreSearchByCategory'
+import { StudentFavoritesNumber } from '../atoms/StudentFavoritesNumber'
 
 const StudentFavoritesFilterBarStyled = styled.div`
     width: 100%;

@@ -1,14 +1,16 @@
 'use client'
 
-import styled from 'styled-components'
-import { useState } from 'react';
+import { localized } from '../../lib/localized'
 
-import { useLanguage } from '../../contexts/LanguageContext';
-import { useStores } from '../../contexts/StoresContext';
-import { useStudentAuth } from '../../contexts/StudentAuthContext';
-import { useCategories } from '../../contexts/CategoryContext';
-import { StudentRecentTable } from '../molecules/StudentRecentTable';
-import type Store from '../../types/Store';
+import styled from 'styled-components'
+import { useState } from 'react'
+
+import { useLanguage } from '../../contexts/LanguageContext'
+import { useStores } from '../../contexts/StoresContext'
+import { useStudentAuth } from '../../contexts/StudentAuthContext'
+import { useCategories } from '../../contexts/CategoryContext'
+import { StudentRecentTable } from '../molecules/StudentRecentTable'
+import type Store from '../../types/Store'
 
 const StudentRecentTabStyled = styled.div`
     width: 100%;
@@ -92,7 +94,7 @@ const EmptyMessage = styled.p`
 `;
 
 export function StudentRecentTab() {
-    const { language } = useLanguage();
+    const { language, t } = useLanguage();
     const { stores } = useStores();
     const { student } = useStudentAuth();
     const { categories } = useCategories();
@@ -109,25 +111,25 @@ export function StudentRecentTab() {
     return(
         <StudentRecentTabStyled>
             <TitleDiv>
-                <BoldText> { language === 'eng' ? 'Recently viewed stores' : '최근 본 매장' } </BoldText>
-                <SubText> { language === 'eng' ? 'Shows the 7 most recently viewed stores.' : '최근 본 매장 7개를 보여줍니다.' } </SubText>
+                <BoldText> { t('recentlyViewedStores') } </BoldText>
+                <SubText> { t('showsThe7MostRecentlyViewedStores') } </SubText>
             </TitleDiv>
             <FilterBlock>
-                <FilterLabel> { language === 'eng' ? 'Filter' : '필터' } </FilterLabel>
+                <FilterLabel> { t('filter') } </FilterLabel>
                 <Select value = { selectedCategory } onChange = {(e) => setSelectedCategory(e.target.value)}>
-                    <option value = 'all'> { language === 'eng' ? 'All' : '전체' } </option>
+                    <option value = 'all'> { t('all') } </option>
                     {categories.map((category) => (
                         <option key = { category._id } value = { category.name.kor }>
-                            { language === 'eng' ? category.name.eng : category.name.kor }
+                            { localized(category.name, language) }
                         </option>
                     ))}
                 </Select>
-                <FilterHint> { language === 'eng' ? 'Shows the 7 most recently viewed stores.' : '최근 본 매장 7개를 보여줍니다.' } </FilterHint>
+                <FilterHint> { t('showsThe7MostRecentlyViewedStores') } </FilterHint>
             </FilterBlock>
             {recentStores.length === 0
-                ? <EmptyMessage> { language === 'eng' ? 'There are no recently viewed stores.' : '최근 본 매장이 없습니다.' } </EmptyMessage>
+                ? <EmptyMessage> { t('thereAreNoRecentlyViewedStores') } </EmptyMessage>
                 : filteredStores.length === 0
-                    ? <EmptyMessage> { language === 'eng' ? 'There are no stores matching this filter.' : '해당 필터링에 맞는 매장이 없습니다.' } </EmptyMessage>
+                    ? <EmptyMessage> { t('thereAreNoStoresMatchingThisFilter') } </EmptyMessage>
                     : <StudentRecentTable stores = { filteredStores } />}
         </StudentRecentTabStyled>
     )

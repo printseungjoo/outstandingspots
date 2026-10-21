@@ -5,6 +5,8 @@ import styled from 'styled-components'
 import { firebaseAuth } from '../../firebase/firebase'
 import { SignUpInputWithButton } from '../atoms/SignUpInputWithButton'
 import { useLanguage } from '../../contexts/LanguageContext'
+import { getT } from '../../i18n'
+import { localeCode } from '../../lib/localized'
 import type Language from '../../types/Language'
 
 export function convertPhoneToE164(phone: string) {
@@ -36,43 +38,39 @@ export function getFirebaseErrorCode(error: unknown) {
 }
 
 export function getConfirmErrorMessage(error: unknown, language: Language) {
+    const t = getT(language);
     const code = getFirebaseErrorCode(error);
     if (code === 'auth/invalid-verification-code') {
-        return language === 'eng' ? 'The verification code is invalid.' : '인증번호가 올바르지 않습니다.';
+        return t('theVerificationCodeIsInvalid');
     }
     if (code === 'auth/code-expired' || code === 'auth/session-expired') {
-        return language === 'eng' ? 'The verification code expired. Please send it again.' : '인증번호가 만료되었습니다. 다시 전송해주세요.';
+        return t('theVerificationCodeExpiredPleaseSendItAgain');
     }
     if (code === 'auth/credential-already-in-use' || code === 'auth/account-exists-with-different-credential') {
-        return language === 'eng' ? 'This phone number is already in use.' : '이미 사용 중인 전화번호입니다.';
+        return t('thisPhoneNumberIsAlreadyInUse');
     }
     if (error instanceof Error && error.message && !code.startsWith('auth/')) {
         return error.message;
     }
-    return language === 'eng'
-        ? `Failed to change the phone number.${code ? ` (${code})` : ''}`
-        : `전화번호 변경에 실패했습니다.${code ? ` (${code})` : ''}`;
+    return t('failedToChangeThePhoneNumber', { code: code ? ` (${code})` : '' });
 }
 
 export function getSendErrorMessage(error: unknown, language: Language) {
+    const t = getT(language);
     const code = getFirebaseErrorCode(error);
     if (code === 'auth/invalid-phone-number') {
-        return language === 'eng' ? 'Enter a valid phone number.' : '올바른 전화번호를 입력해 주세요.';
+        return t('enterAValidPhoneNumber');
     }
     if (code === 'auth/too-many-requests') {
-        return language === 'eng' ? 'Too many attempts. Try again later.' : '시도 횟수가 너무 많습니다. 잠시 후 다시 시도해 주세요.';
+        return t('tooManyAttemptsTryAgainLater');
     }
     if (code === 'auth/operation-not-allowed') {
-        return language === 'eng' ? 'Phone sign-in is not enabled in Firebase.' : 'Firebase에서 전화번호 로그인이 꺼져 있습니다.';
+        return t('phoneSignInIsNotEnabledInFirebase');
     }
     if (code === 'auth/captcha-check-failed' || code === 'auth/invalid-app-credential') {
-        return language === 'eng'
-            ? 'reCAPTCHA failed. Use 127.0.0.1 instead of localhost, and add 127.0.0.1 in Firebase authorized domains.'
-            : 'reCAPTCHA 확인에 실패했습니다. localhost 대신 127.0.0.1로 열고, Firebase 승인된 도메인에 127.0.0.1을 추가해 주세요.';
+        return t('recaptchaFailedUse127001InsteadOfLocalhost');
     }
-    return language === 'eng'
-        ? `Failed to send the verification code.${code ? ` (${code})` : ''}`
-        : `인증번호 전송에 실패했습니다.${code ? ` (${code})` : ''}`;
+    return t('failedToSendTheVerificationCode', { code: code ? ` (${code})` : '' });
 }
 
 interface PhoneVerificationProps {
@@ -111,7 +109,7 @@ const RecaptchaBox = styled.div`
 `;
 
 export function PhoneVerification({ phone, onPhoneChange, onVerified }: PhoneVerificationProps) {
-    const { language } = useLanguage();
+    const { language, t } = useLanguage();
     const [verificationCode, setVerificationCode] = useState<string>('');
     const [codeSent, setCodeSent] = useState<boolean>(false);
     const [verified, setVerified] = useState<boolean>(false);
@@ -121,7 +119,7 @@ export function PhoneVerification({ phone, onPhoneChange, onVerified }: PhoneVer
     const recaptchaContainerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        firebaseAuth.languageCode = language === 'eng' ? 'en' : 'ko';
+        firebaseAuth.languageCode = localeCode(language);
     }, [language]);
 
     useEffect(() => {
@@ -152,13 +150,11 @@ export function PhoneVerification({ phone, onPhoneChange, onVerified }: PhoneVer
 
     const sendVerificationCode = async () => {
         if (isLocalhostHostname()) {
-            alert(language === 'eng'
-                ? `Firebase phone auth does not work on localhost. Open ${getLocalhostRedirectUrl()}`
-                : `Firebase 전화번호 인증은 localhost에서 동작하지 않습니다. ${getLocalhostRedirectUrl()} 로 열어 주세요.`);
+            alert(t('firebasePhoneAuthLocalhost', { url: getLocalhostRedirectUrl() }));
             return;
         }
         if (!isValidKoreanPhone(phone)) {
-            alert(language === 'eng' ? 'Enter a valid Korean number.' : '올바른 전화번호를 입력해주세요.');
+            alert(t('enterAValidKoreanNumber'));
             return;
         }
         try {
@@ -172,7 +168,7 @@ export function PhoneVerification({ phone, onPhoneChange, onVerified }: PhoneVer
             const result = await signInWithPhoneNumber(firebaseAuth, phoneNumber, verifier);
             confirmationResultRef.current = result;
             setCodeSent(true);
-            alert(language === 'eng' ? 'The verification code has been sent.' : '인증번호가 전송되었습니다.');
+            alert(t('theVerificationCodeHasBeenSent'));
         } catch (error) {
             console.error(error);
             resetRecaptchaVerifier();
@@ -184,7 +180,7 @@ export function PhoneVerification({ phone, onPhoneChange, onVerified }: PhoneVer
 
     const verifyCode = async () => {
         if (!confirmationResultRef.current) {
-            alert(language === 'eng' ? 'Please request a verification code first.' : '먼저 인증번호를 받아 주세요.');
+            alert(t('pleaseRequestAVerificationCodeFirst'));
             return;
         }
         try {
@@ -195,7 +191,7 @@ export function PhoneVerification({ phone, onPhoneChange, onVerified }: PhoneVer
             onVerified(idToken);
         } catch (error) {
             console.error(error);
-            alert(language === 'eng' ? 'The verification code is invalid.' : '인증번호가 올바르지 않습니다.');
+            alert(t('theVerificationCodeIsInvalid'));
         } finally {
             setLoading(false);
         }
@@ -213,15 +209,15 @@ export function PhoneVerification({ phone, onPhoneChange, onVerified }: PhoneVer
     return (
         <PhoneVerificationStyled>
             <PhoneFields>
-                <SignUpInputWithButton engTitle = 'Phone' korTitle = '전화번호'
-                    engPlaceholder = 'Enter only numbers.' korPlaceholder = '- 없이 숫자만 입력해주세요.'
-                    engButtonText = { codeSent ? 'Resend' : 'Verify' } korButtonText = { codeSent ? '재전송' : '인증하기' }
+                <SignUpInputWithButton title = { t('phone') }
+                    placeholder = { t('enterOnlyNumbersDashless') }
+                    buttonText = { codeSent ? t('resend') : t('verify') }
                     value = { phone } onChange = { handlePhoneChange } onButtonClick = { sendVerificationCode }
                     inputReadOnly = { verified } buttonDisabled = { loading || verified } inputType = 'tel'
                     description = { '\u00A0' } />
-                <SignUpInputWithButton engTitle = 'Confirm' korTitle = '전화번호 확인'
-                    engPlaceholder = 'Enter verification code.' korPlaceholder = '문자로 받은 인증번호를 입력해주세요.'
-                    engButtonText = 'Submit' korButtonText = '제출하기' value = { verificationCode }
+                <SignUpInputWithButton title = { t('confirmPhone') }
+                    placeholder = { t('enterSmsVerificationCode') }
+                    buttonText = { t('submitCode') } value = { verificationCode }
                     onChange = {(value) => {
                         if (verified) return;
                         setVerificationCode(value.replace(/\D/g, ''));
@@ -231,7 +227,7 @@ export function PhoneVerification({ phone, onPhoneChange, onVerified }: PhoneVer
                     buttonDisabled = { loading || !codeSent || verified }
                     maxLength = { 6 } inputMode = 'numeric'
                     description = { verified
-                        ? (language === 'eng' ? 'Phone number verified.' : '전화번호 인증이 완료되었습니다.')
+                        ? (t('phoneNumberVerified'))
                         : '\u00A0' } />
             </PhoneFields>
             <RecaptchaBox ref = { recaptchaContainerRef } />

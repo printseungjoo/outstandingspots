@@ -1,12 +1,14 @@
-import styled from 'styled-components';
+import { localized } from '../../lib/localized'
+import { getT } from '../../i18n'
+import styled from 'styled-components'
 
-import { Photos } from '../atoms/Photos';
-import type Store from '../../types/Store';
-import { NaverMaps } from '../atoms/NaverMaps';
-import type Language from '../../types/Language';
-import { OpenOrNot } from '../atoms/OpenOrNot';
-import { useStudentAuth } from '../../contexts/StudentAuthContext';
-import { addStudentFavorite, removeStudentFavorite } from '../../lib/studentsApi';
+import { Photos } from '../atoms/Photos'
+import type Store from '../../types/Store'
+import { NaverMaps } from '../atoms/NaverMaps'
+import type Language from '../../types/Language'
+import { OpenOrNot } from '../atoms/OpenOrNot'
+import { useStudentAuth } from '../../contexts/StudentAuthContext'
+import { addStudentFavorite, removeStudentFavorite } from '../../lib/studentsApi'
 
 const StoreInformationStyled = styled.div`
     width: 92%;
@@ -196,14 +198,13 @@ interface StoreInformationProps {
 }
 
 export function StoreInformation({ store, language }: StoreInformationProps) {
+    const t = getT(language);
     const { student, isStudent, updateStudent } = useStudentAuth();
     const isFavorited = Boolean(student?.favorites?.includes(store._id));
 
     async function handleFavorite() {
         if (!isStudent || !student?._id) {
-            alert(language === 'eng'
-                ? 'Please log in as a student to use favorites.'
-                : '즐겨찾기는 학생 로그인 후 이용할 수 있습니다.');
+            alert(t('pleaseLogInAsAStudentToUseFavorites'));
             return;
         }
         try {
@@ -215,29 +216,25 @@ export function StoreInformation({ store, language }: StoreInformationProps) {
             console.error(error);
             const message = error instanceof Error ? error.message : '';
             if (message === 'HTTP 404' || message.includes('Cannot POST') || message.includes('Cannot DELETE')) {
-                alert(language === 'eng'
-                    ? 'The favorites API is missing. Restart the API server in the server folder.'
-                    : '즐겨찾기 API가 없습니다. server 폴더에서 API 서버를 재시작해 주세요.');
+                alert(t('theFavoritesApiIsMissingRestartTheApiServerIn'));
                 return;
             }
             if (message === 'Failed to fetch' || message.includes('NetworkError') || message.includes('fetch')) {
-                alert(language === 'eng'
-                    ? 'The API server is not running. Start it with npm run dev in the server folder.'
-                    : 'API 서버가 꺼져 있습니다. server 폴더에서 npm run dev로 시작해 주세요.');
+                alert(t('theApiServerIsNotRunningStartItWithNpm'));
                 return;
             }
-            alert(language === 'eng' ? 'Failed to update favorites.' : '즐겨찾기 변경에 실패했습니다.');
+            alert(t('failedToUpdateFavorites'));
         }
     }
 
     return (
         <StoreInformationStyled>
-            <Photos photoSrc = { store.photo } storeAltName = {language === 'eng' ? store.name.eng : store.name.kor} />
+            <Photos photoSrc = { store.photo } storeAltName = {localized(store.name, language)} />
             <StoreInfoDiv>
                 <StoreInfoFirstLineDiv>
                     <StoreNameMapDiv>
                         <StoreNameMap>
-                            {language === 'eng' ? store.name.eng : store.name.kor} 
+                            {localized(store.name, language)} 
                             <NaverMaps storeNaverMap = { store.naverMap }/>
                         </StoreNameMap>
                     </StoreNameMapDiv>
@@ -245,10 +242,10 @@ export function StoreInformation({ store, language }: StoreInformationProps) {
                 </StoreInfoFirstLineDiv>
                 <StoreInfoSecondLineDiv>
                     <BranchName>
-                        {language === 'eng' ? store.branch.eng : store.branch.kor}
+                        {localized(store.branch, language)}
                     </BranchName>
                     <ThemeName>
-                        {language === 'eng' ? store.theme?.eng : store.theme?.kor}
+                        {localized(store.theme, language)}
                     </ThemeName>
                 </StoreInfoSecondLineDiv>
                 <StoreInfoSecondLineDiv>
@@ -256,24 +253,24 @@ export function StoreInformation({ store, language }: StoreInformationProps) {
                     <OpeningHours> {store.openTime} - {store.closeTime} </OpeningHours>
                 </StoreInfoSecondLineDiv>
                 <LongLine/>
-                <BoldText> 🎓 {language === 'eng' ? 'SUNY Benefit' : 'SUNY 혜택'}</BoldText>
+                <BoldText> 🎓 {t('sunyBenefit')}</BoldText>
                 <SUNYBenefitDiv>
                     <SUNYBenefit>
-                        {language === 'eng' ? store.discount.eng : store.discount.kor}
+                        {localized(store.discount, language)}
                     </SUNYBenefit>
                     <SUNYBenefitPlus>
-                        {language === 'eng' ? '*You must bring your SUNY student ID card to receive the discount.' : '할인을 받기 위해서는 학생증을 필수 지참해야합니다.'}
+                        {t('youMustBringYourSunyStudentIdCardToReceive')}
                     </SUNYBenefitPlus>
                 </SUNYBenefitDiv>
-                <BoldText> ✅ {language === 'eng' ? 'Additional precautions' : '추가 유의사항'} </BoldText>
+                <BoldText> ✅ {t('additionalPrecautions')} </BoldText>
                 <SUNYBenefitDiv>
                     <SUNYBenefit>
-                        {language === 'eng' ? store.description.eng : store.description.kor}
+                        {localized(store.description, language)}
                     </SUNYBenefit>
                 </SUNYBenefitDiv>
                 <LongLine/>
-                <BoldText> 🚡{language === 'eng' ? 'Address' : '주소'} </BoldText>
-                <Address> {language === 'eng' ? store.address?.eng : store.address?.kor} </Address>
+                <BoldText> 🚡{t('address')} </BoldText>
+                <Address> {localized(store.address, language)} </Address>
             </StoreInfoDiv>
         </StoreInformationStyled>
     )

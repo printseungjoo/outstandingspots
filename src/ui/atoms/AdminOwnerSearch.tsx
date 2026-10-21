@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import styled from 'styled-components'
 
 import { useLanguage } from '../../contexts/LanguageContext'
+import { localized } from '../../lib/localized'
 import type Owner from '../../types/Owner'
 import type Language from '../../types/Language'
 
@@ -116,9 +117,7 @@ const EmptyItem = styled.p`
 `;
 
 export function ownerStoreLabel(owner: Owner, language: Language) {
-    return language === 'eng'
-        ? (owner.storeName?.eng || owner.storeName?.kor || '')
-        : (owner.storeName?.kor || owner.storeName?.eng || '');
+    return localized(owner.storeName, language);
 }
 
 export function ownerSuggestionLabel(owner: Owner, language: Language) {
@@ -150,7 +149,7 @@ interface AdminOwnerSearchProps {
 }
 
 export function AdminOwnerSearch({ searchValue, onChangeSearchValue, owners }: AdminOwnerSearchProps) {
-    const { language } = useLanguage();
+    const { language, t } = useLanguage();
     const [open, setOpen] = useState(false);
     const [activeIndex, setActiveIndex] = useState(0);
     const [menuBox, setMenuBox] = useState<{ top: number; left: number; width: number }>({ top: 0, left: 0, width: 0 });
@@ -179,7 +178,7 @@ export function AdminOwnerSearch({ searchValue, onChangeSearchValue, owners }: A
 
     return(
         <AdminOwnerSearchStyled>
-            <Text> {language === 'eng' ? 'Search' : '검색'} </Text>
+            <Text> {t('search')} </Text>
             <SearchDiv>
                 <SearchBarDiv ref = { fieldRef }>
                     <SearchIcon> 🔍 </SearchIcon>
@@ -223,7 +222,7 @@ export function AdminOwnerSearch({ searchValue, onChangeSearchValue, owners }: A
                 <Dropdown style = {{ top: menuBox.top, left: menuBox.left, width: menuBox.width }}>
                     {matches.length === 0 ? (
                         <EmptyItem>
-                            {language === 'eng' ? 'No matching owner.' : '일치하는 사장님이 없습니다.'}
+                            {t('noMatchingOwner')}
                         </EmptyItem>
                     ) : matches.map((owner, index) => (
                         <DropdownItem key = { owner._id } type = 'button'

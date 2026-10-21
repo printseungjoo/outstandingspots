@@ -1,9 +1,9 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import { useLanguage } from '../../contexts/LanguageContext';
-import { useOwnerAuth } from '../../contexts/OwnerAuthContext';
+import { useLanguage } from '../../contexts/LanguageContext'
+import { useOwnerAuth } from '../../contexts/OwnerAuthContext'
 
 const OwnerNavStyled = styled.div`
     width: 13%;
@@ -147,7 +147,7 @@ const OwnerLogoutButton = styled.button`
 export function OwnerNav() {
     const pathname = usePathname();
     const router = useRouter();
-    const { language } = useLanguage();
+    const { t } = useLanguage();
     const { logoutOwner } = useOwnerAuth();
 
     const isViewPage = pathname === '/owner' || pathname === '/owner/';
@@ -161,20 +161,20 @@ export function OwnerNav() {
                 <Text> 관리 </Text>
                 <OwnerNavOption href = "/owner" $selected = { isViewPage }>
                     <IconSlot> <Icon src = { viewIcon } alt = 'store icon'/> </IconSlot>
-                    {language === 'eng' ? 'Store Information' : '매장 정보 조회'}
+                    {t('storeInformation')}
                 </OwnerNavOption>
                 <OwnerNavOption href = "/owner/edit" $selected = { pathname === '/owner/edit' }>
                     <IconSlot> <SmallIcon src = { editIcon } alt = 'edit icon'/> </IconSlot>
-                    {language === 'eng' ? 'Edit Store Information' : '매장 정보 수정'}
+                    {t('editStoreInformation')}
                 </OwnerNavOption>
                 <OwnerNavOption href = "/owner/account" $selected = { pathname === '/owner/account' }>
                     <IconSlot> <SmallIcon src = { accountIcon } alt = 'account icon'/> </IconSlot>
-                    {language === 'eng' ? 'Account Management' : '계정 관리'}
+                    {t('accountManagement')}
                 </OwnerNavOption>
             </OwnerNavTop>
             <OwnerNavBottom>
                 <OwnerLogoutButton type = 'button' onClick = {() => { logoutOwner(); router.push('/login'); }}>
-                    {language === 'eng' ? 'Logout' : '로그아웃'}
+                    {t('logout')}
                 </OwnerLogoutButton>
             </OwnerNavBottom>
         </OwnerNavStyled>

@@ -1,16 +1,16 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation';
-import styled from 'styled-components';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useRouter } from 'next/navigation'
+import styled from 'styled-components'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-import { byPrefixAndName } from '../../icon/icons';
-import { useLanguage } from '../../contexts/LanguageContext';
-import { useStudentAuth } from '../../contexts/StudentAuthContext';
-import { isValidOwnerPassword } from '../../lib/ownersApi';
-import { deleteStudent, loginStudent, patchStudentNickname, patchStudentPassword } from '../../lib/studentsApi';
-import { GUIDE_URL } from '../../lib/constants';
+import { byPrefixAndName } from '../../icon/icons'
+import { useLanguage } from '../../contexts/LanguageContext'
+import { useStudentAuth } from '../../contexts/StudentAuthContext'
+import { isValidOwnerPassword } from '../../lib/ownersApi'
+import { deleteStudent, loginStudent, patchStudentNickname, patchStudentPassword } from '../../lib/studentsApi'
+import { GUIDE_URL } from '../../lib/constants'
 
 const guideUrl = GUIDE_URL;
 
@@ -402,7 +402,7 @@ const WithdrawActions = styled.div`
 `;
 
 export function StudentAccountTab() {
-    const { language } = useLanguage();
+    const { t } = useLanguage();
     const { student, updateStudent, logoutStudent } = useStudentAuth();
     const router = useRouter();
     const [editingName, setEditingName] = useState(false);
@@ -425,7 +425,7 @@ export function StudentAccountTab() {
     async function handleSaveName() {
         const nextName = nameValue.trim();
         if (!nextName) {
-            alert(language === 'eng' ? 'Please enter your name.' : '이름을 입력해주세요.');
+            alert(t('pleaseEnterYourName'));
             return;
         }
         setSavingName(true);
@@ -435,7 +435,7 @@ export function StudentAccountTab() {
             setEditingName(false);
         } catch (error) {
             console.error(error);
-            alert(language === 'eng' ? 'Failed to update the name.' : '이름 수정에 실패했습니다.');
+            alert(t('failedToUpdateTheName'));
         } finally {
             setSavingName(false);
         }
@@ -443,17 +443,15 @@ export function StudentAccountTab() {
 
     async function handleChangePassword() {
         if (!currentPassword || !newPassword || !confirmPassword) {
-            alert(language === 'eng' ? 'Please fill in all password fields.' : '비밀번호를 모두 입력해주세요.');
+            alert(t('pleaseFillInAllPasswordFields'));
             return;
         }
         if (!isValidOwnerPassword(newPassword)) {
-            alert(language === 'eng'
-                ? 'Use 8-20 characters including letters and numbers.'
-                : '영문자, 숫자를 포함한 8-20자로 입력해주세요.');
+            alert(t('use820CharactersIncludingLettersAndNumbers'));
             return;
         }
         if (newPassword !== confirmPassword) {
-            alert(language === 'eng' ? 'The new passwords do not match.' : '새 비밀번호가 일치하지 않습니다.');
+            alert(t('theNewPasswordsDoNotMatch'));
             return;
         }
         setSavingPassword(true);
@@ -463,7 +461,7 @@ export function StudentAccountTab() {
             } catch (error) {
                 const message = error instanceof Error ? error.message : '';
                 if (message === 'INVALID_CREDENTIALS' || message.includes('올바르지')) {
-                    alert(language === 'eng' ? 'The current password is incorrect.' : '현재 비밀번호가 올바르지 않습니다.');
+                    alert(t('theCurrentPasswordIsIncorrect'));
                     return;
                 }
                 throw error;
@@ -472,14 +470,14 @@ export function StudentAccountTab() {
             setCurrentPassword('');
             setNewPassword('');
             setConfirmPassword('');
-            alert(language === 'eng' ? 'Password has been changed.' : '비밀번호가 변경되었습니다.');
+            alert(t('passwordHasBeenChanged'));
         } catch (error) {
             console.error(error);
             const message = error instanceof Error ? error.message : '';
             if (message.includes('현재 비밀번호') || message.toLowerCase().includes('current password')) {
-                alert(language === 'eng' ? 'The current password is incorrect.' : '현재 비밀번호가 올바르지 않습니다.');
+                alert(t('theCurrentPasswordIsIncorrect'));
             } else {
-                alert(message || (language === 'eng' ? 'Failed to change the password.' : '비밀번호 변경에 실패했습니다.'));
+                alert(message || (t('failedToChangeThePassword')));
             }
         } finally {
             setSavingPassword(false);
@@ -488,9 +486,7 @@ export function StudentAccountTab() {
 
     async function handleWithdraw() {
         const confirmed = window.confirm(
-            language === 'eng'
-                ? 'Are you sure you want to delete this account? This cannot be undone.'
-                : '정말 탈퇴하시겠습니까? 탈퇴 후에는 복구할 수 없습니다.'
+            t('areYouSureYouWantToDeleteThisAccountThis')
         );
         if (!confirmed) {
             return;
@@ -501,72 +497,70 @@ export function StudentAccountTab() {
             router.push('/login');
         } catch (error) {
             console.error(error);
-            alert(language === 'eng' ? 'Failed to delete the account.' : '계정 탈퇴에 실패했습니다.');
+            alert(t('failedToDeleteTheAccount'));
         }
     }
 
     return(
         <Page>
             <HeaderBlock>
-                <Title> { language === 'eng' ? 'Account Management' : '계정 관리' } </Title>
-                <SubTitle> { language === 'eng' ? 'You can manage your account and security information.' : '내 계정과 보안 정보를 관리할 수 있습니다.' } </SubTitle>
+                <Title> { t('accountManagement') } </Title>
+                <SubTitle> { t('youCanManageYourAccountAndSecurityInformation') } </SubTitle>
             </HeaderBlock>
             <Grid>
                 <LeftCard>
-                    <CardTitle> { language === 'eng' ? 'Basic information' : '기본 정보' } </CardTitle>
+                    <CardTitle> { t('basicInformation') } </CardTitle>
                     <InfoList>
                         <InfoRow $stack = { editingName }>
                             {editingName ? (
                                 <NameEditBlock>
-                                    <InfoLabel> { language === 'eng' ? 'Name' : '이름' } </InfoLabel>
+                                    <InfoLabel> { t('name') } </InfoLabel>
                                     <NameEditRow>
                                         <NameInput value = { nameValue } onChange = {(e) => setNameValue(e.target.value)} />
                                         <NameActionButton type = 'button' onClick = {() => {
                                             setEditingName(false);
                                             setNameValue(student.nickname);
-                                        }}> { language === 'eng' ? 'Cancel' : '취소' } </NameActionButton>
+                                        }}> { t('cancel') } </NameActionButton>
                                         <NameSaveButton type = 'button' disabled = { savingName } onClick = {() => { void handleSaveName(); }}>
-                                            { language === 'eng' ? 'Save' : '저장' }
+                                            { t('save') }
                                         </NameSaveButton>
                                     </NameEditRow>
                                 </NameEditBlock>
                             ) : (
                                 <>
                                     <div>
-                                        <InfoLabel> { language === 'eng' ? 'Name' : '이름' } </InfoLabel>
+                                        <InfoLabel> { t('name') } </InfoLabel>
                                         <InfoValue> { student.nickname } </InfoValue>
                                     </div>
                                     <OutlineButton type = 'button' onClick = {() => {
                                         setNameValue(student.nickname);
                                         setEditingName(true);
-                                    }}> { language === 'eng' ? 'Edit' : '수정' } </OutlineButton>
+                                    }}> { t('edit') } </OutlineButton>
                                 </>
                             )}
                         </InfoRow>
                         <InfoRow>
                             <div>
-                                <InfoLabel> { language === 'eng' ? 'ID' : '아이디' } </InfoLabel>
+                                <InfoLabel> { t('id') } </InfoLabel>
                                 <InfoValue> { student.id } </InfoValue>
                             </div>
                         </InfoRow>
                         <InfoRow>
                             <div>
-                                <InfoLabel> { language === 'eng' ? 'Email' : '이메일' } </InfoLabel>
+                                <InfoLabel> { t('email') } </InfoLabel>
                                 <InfoValue> { student.email } </InfoValue>
                             </div>
                         </InfoRow>
                     </InfoList>
                 </LeftCard>
                 <PasswordCard>
-                    <CardTitle> { language === 'eng' ? 'Change password' : '비밀번호 변경' } </CardTitle>
+                    <CardTitle> { t('changePassword') } </CardTitle>
                     <CardHint>
-                        { language === 'eng'
-                            ? '8-20 characters including letters and numbers'
-                            : '영문자, 숫자 포함 8-20자' }
+                        { t('n820CharactersIncludingLettersAndNumbers') }
                     </CardHint>
                     <PasswordStack>
                         <PasswordField>
-                            <FieldLabel> { language === 'eng' ? 'Current password' : '현재 비밀번호' } </FieldLabel>
+                            <FieldLabel> { t('currentPassword') } </FieldLabel>
                             <CompactPasswordWrap>
                                 <CompactPasswordInput type = { showCurrent ? 'text' : 'password' } value = { currentPassword }
                                     onChange = {(e) => setCurrentPassword(e.target.value)} />
@@ -576,7 +570,7 @@ export function StudentAccountTab() {
                             </CompactPasswordWrap>
                         </PasswordField>
                         <PasswordField>
-                            <FieldLabel> { language === 'eng' ? 'New password' : '새 비밀번호' } </FieldLabel>
+                            <FieldLabel> { t('newPassword') } </FieldLabel>
                             <CompactPasswordWrap>
                                 <CompactPasswordInput type = { showNew ? 'text' : 'password' } value = { newPassword }
                                     onChange = {(e) => setNewPassword(e.target.value)} />
@@ -586,7 +580,7 @@ export function StudentAccountTab() {
                             </CompactPasswordWrap>
                         </PasswordField>
                         <PasswordField>
-                            <FieldLabel> { language === 'eng' ? 'Confirm new password' : '새 비밀번호 확인' } </FieldLabel>
+                            <FieldLabel> { t('confirmNewPassword') } </FieldLabel>
                             <CompactPasswordWrap>
                                 <CompactPasswordInput type = { showConfirm ? 'text' : 'password' } value = { confirmPassword }
                                     onChange = {(e) => setConfirmPassword(e.target.value)} />
@@ -597,43 +591,39 @@ export function StudentAccountTab() {
                             {confirmPassword.length > 0 && (
                                 <MatchHint $valid = { confirmPassword === newPassword }>
                                     {confirmPassword === newPassword
-                                        ? (language === 'eng' ? 'The passwords you entered match.' : '입력한 비밀번호가 일치합니다.')
-                                        : (language === 'eng' ? 'The passwords you entered do not match.' : '입력한 비밀번호가 일치하지 않습니다.')}
+                                        ? (t('thePasswordsYouEnteredMatch'))
+                                        : (t('thePasswordsYouEnteredDoNotMatch'))}
                                 </MatchHint>
                             )}
                         </PasswordField>
                     </PasswordStack>
                     <ButtonRight>
                         <PrimaryButton type = 'button' disabled = { savingPassword } onClick = {() => { void handleChangePassword(); }}>
-                            { language === 'eng' ? 'Change password' : '비밀번호 변경' }
+                            { t('changePassword') }
                         </PrimaryButton>
                     </ButtonRight>
                 </PasswordCard>
                 <WithdrawBox>
                     <div>
-                        <WithdrawTitle> { language === 'eng' ? 'Delete account' : '계정 탈퇴' } </WithdrawTitle>
+                        <WithdrawTitle> { t('deleteAccount') } </WithdrawTitle>
                         <WithdrawText>
-                            { language === 'eng'
-                                ? 'If you delete your account, your student information will be removed and cannot be restored.'
-                                : '탈퇴하면 학생 계정 정보가 삭제되며 다시 복구할 수 없습니다.' }
+                            { t('ifYouDeleteYourAccountYourStudentInformationWillBe') }
                         </WithdrawText>
                     </div>
                     <WithdrawActions>
                         <WithdrawButton type = 'button' onClick = {() => { void handleWithdraw(); }}>
-                            { language === 'eng' ? 'Delete account' : '계정 탈퇴' }
+                            { t('deleteAccount') }
                         </WithdrawButton>
                     </WithdrawActions>
                 </WithdrawBox>
                 <GuideCard>
-                    <CardTitle> { language === 'eng' ? 'Korean Web User Guide' : '한글 웹 사용 설명서' } </CardTitle>
+                    <CardTitle> { t('koreanWebUserGuide2') } </CardTitle>
                     <GuideText>
-                        { language === 'eng'
-                            ? 'You can view the Korean web user guide.'
-                            : '한글 웹 사용 설명서를 확인할 수 있습니다.' }
+                        { t('youCanViewTheKoreanWebUserGuide') }
                     </GuideText>
                     <ButtonRight>
                         <PrimaryButton type = 'button' onClick = {() => window.open(guideUrl, '_blank', 'noopener,noreferrer')}>
-                            { language === 'eng' ? 'Open' : '열기' }
+                            { t('open3') }
                         </PrimaryButton>
                     </ButtonRight>
                 </GuideCard>

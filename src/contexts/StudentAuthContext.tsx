@@ -1,8 +1,8 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import type { ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react'
+import type { ReactNode } from 'react'
 
-import type Student from '../types/Student';
-import { fetchStudentSession, prependRecentView as nextRecentViews, logoutStudentSession } from '../lib/studentsApi';
+import type Student from '../types/Student'
+import { fetchStudentSession, prependRecentView as nextRecentViews, logoutStudentSession } from '../lib/studentsApi'
 
 interface StudentAuthContextValue {
     student: Student | null;

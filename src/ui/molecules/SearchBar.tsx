@@ -1,3 +1,4 @@
+import { localized } from '../../lib/localized'
 import styled from 'styled-components'
 import { useRef, useState } from 'react'
 import type { ChangeEvent, KeyboardEvent } from 'react'
@@ -64,12 +65,11 @@ interface SearchBarProps {
     onSelectStore?: (store: Store) => void;
     onQueryChange?: (value: string) => void;
     persistSelectedName?: boolean;
-    engPlaceholder: string;
-    korPlaceholder: string;
+    placeholder: string;
     className?: string;
 }
 
-export function SearchBar({ language, stores, onSelectStore, onQueryChange, persistSelectedName, engPlaceholder, korPlaceholder, className }: SearchBarProps) {
+export function SearchBar({ language, stores, onSelectStore, onQueryChange, persistSelectedName, placeholder, className }: SearchBarProps) {
     const [matchDataList, setMatchDataList] = useState<Store[]>([]);
     const [nowIndex, setNowIndex] = useState(0);
     const [inputValue, setInputValue] = useState('');
@@ -98,7 +98,7 @@ export function SearchBar({ language, stores, onSelectStore, onQueryChange, pers
             return [] as Store[];
         }
         return stores.filter((store) => {
-            const name = (language === 'eng' ? store.name.eng : store.name.kor).toLowerCase();
+            const name = (localized(store.name, language)).toLowerCase();
             const themeKor = store.theme?.kor ?? '';
             const themeEng = store.theme?.eng?.toLowerCase() ?? '';
             return name.includes(lowerCaseValue) || themeKor.includes(lowerCaseValue) || themeEng.includes(lowerCaseValue);
@@ -108,7 +108,7 @@ export function SearchBar({ language, stores, onSelectStore, onQueryChange, pers
     const selectStore = (store: Store) => {
         skipInputUpdate.current = true;
         if (persistSelectedName) {
-            const selectedName = language === 'eng' ? store.name.eng : store.name.kor;
+            const selectedName = localized(store.name, language);
             setInputValue(selectedName);
             if (inputRef.current) {
                 inputRef.current.value = selectedName;
@@ -177,8 +177,8 @@ export function SearchBar({ language, stores, onSelectStore, onQueryChange, pers
             <SearchBarDiv>
                 <SearchIcon> 🔍 </SearchIcon>
                 <SearchInput type = "text" id = "searchBar" ref = { inputRef } value = { inputValue }
-                    placeholder = { language === 'eng' ? engPlaceholder : korPlaceholder }
-                    onChange = { handleChange } onCompositionEnd = { handleCompositionEnd } onKeyUp = { handleKeyUp }
+                    placeholder = { placeholder } onChange = { handleChange } 
+                    onCompositionEnd = { handleCompositionEnd } onKeyUp = { handleKeyUp }
                 />
             </SearchBarDiv>
             <Autocomplete language = { language } matchDataList = { matchDataList } nowIndex = { nowIndex } onSelectStore = { selectStore }/>

@@ -1,6 +1,6 @@
-import type { Request } from 'express';
+import type { Request } from 'express'
 
-import type { SessionRole } from '../lib/sessionToken';
+import type { SessionRole } from '../lib/sessionToken'
 
 export type RequestAuth = {
     role: SessionRole;

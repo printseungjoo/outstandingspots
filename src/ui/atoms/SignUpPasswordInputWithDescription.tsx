@@ -1,9 +1,9 @@
-import styled from 'styled-components';
-import { byPrefixAndName } from '../../icon/icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState } from 'react';
+import styled from 'styled-components'
+import { byPrefixAndName } from '../../icon/icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useState } from 'react'
 
-import { useLanguage } from '../../contexts/LanguageContext';
+import { useLanguage } from '../../contexts/LanguageContext'
 
 const SignUpPasswordInputWithDescriptionStyled = styled.div`
     box-sizing: border-box;
@@ -113,20 +113,17 @@ function isValidOwnerPassword(value: string) {
 }
 
 interface SignUpPasswordInputWithDescriptionProps {
-    engTitle: string;
-    korTitle: string;
-    engPlaceholder: string;
-    korPlaceholder: string;
-    engDescription?: string;
-    korDescription?: string;
+    title: string;
+    placeholder: string;
+    description?: string;
     value?: string;
     onChange?: (value: string) => void;
     matchWith?: string;
     hideHintOnNarrow?: boolean;
 }
 
-export function SignUpPasswordInputWithDescription({ engTitle, korTitle, engPlaceholder, korPlaceholder, engDescription, korDescription, value, onChange, matchWith, hideHintOnNarrow }: SignUpPasswordInputWithDescriptionProps) {
-    const { language } = useLanguage();
+export function SignUpPasswordInputWithDescription({ title, placeholder, description, value, onChange, matchWith, hideHintOnNarrow }: SignUpPasswordInputWithDescriptionProps) {
+    const { t } = useLanguage();
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const isConfirm = matchWith !== undefined;
     const typed = (value ?? '').length > 0;
@@ -135,26 +132,25 @@ export function SignUpPasswordInputWithDescription({ engTitle, korTitle, engPlac
     let confirmMessage: string | undefined;
     if (isConfirm && typed) {
         confirmMessage = passwordsMatch
-            ? (language === 'eng' ? 'The passwords you entered match.' : '입력한 비밀번호가 일치합니다.')
-            : (language === 'eng' ? 'The passwords you entered do not match.' : '입력한 비밀번호가 일치하지 않습니다.');
+            ? (t('thePasswordsYouEnteredMatch'))
+            : (t('thePasswordsYouEnteredDoNotMatch'));
     }
     const showDescription = isConfirm ? Boolean(confirmMessage) : true;
 
     return(
         <SignUpPasswordInputWithDescriptionStyled>
-            <Title $hasDescription = { showDescription }> { language === 'eng' ? engTitle : korTitle } </Title>
+            <Title $hasDescription = { showDescription }> { title } </Title>
             <InputField>
                 <SignUpPasswordStyled>
                     <Input type = { showPassword ? 'text' : 'password' } value = { value }
-                        placeholder = {language === 'eng' ? engPlaceholder : korPlaceholder}
-                        onChange = {(e) => onChange?.(e.target.value)} />
+                        placeholder = { placeholder } onChange = {(e) => onChange?.(e.target.value)} />
                     <ToggleIcon icon = {byPrefixAndName.far['eye']} onClick = {() => setShowPassword((visible) => !visible)} />
                 </SignUpPasswordStyled>
                 {isConfirm ? (
                     confirmMessage && (<Description $hideOnNarrow = { hideHintOnNarrow } $tone = { passwordsMatch ? 'valid' : 'invalid' }> { confirmMessage } </Description>)
                 ) : (
                     <DescriptionRow $hideOnNarrow = { hideHintOnNarrow }>
-                        <Description $tone = 'gray'> { language === 'eng' ? engDescription : korDescription } </Description>
+                        <Description $tone = 'gray'> { description } </Description>
                         {typed && (
                             <ValidityIcon icon = { passwordValid ? byPrefixAndName.fas.check : byPrefixAndName.fas.xmark } $valid = { passwordValid } />
                         )}

@@ -1,8 +1,8 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import { Categories } from '../atoms/Categories';
-import { Exits } from '../atoms/Exits';
-import type Language from '../../types/Language';
+import { Categories } from '../atoms/Categories'
+import { Exits } from '../atoms/Exits'
+import type Language from '../../types/Language'
 
 const CategoryButton = styled.div`
     position: relative;

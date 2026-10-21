@@ -1,7 +1,8 @@
-import styled from 'styled-components';
+import { localized } from '../../lib/localized'
+import styled from 'styled-components'
 
-import { useCategories } from '../../contexts/CategoryContext';
-import { useLanguage } from '../../contexts/LanguageContext';
+import { useCategories } from '../../contexts/CategoryContext'
+import { useLanguage } from '../../contexts/LanguageContext'
 
 const AdminStoreAddCategoryStyled = styled.div`
     display: flex;
@@ -44,17 +45,17 @@ interface AdminStoreAddCategoryProps {
 
 export function AdminStoreAddCategory({ selectedCategory, onChangeSelectedCategory }: AdminStoreAddCategoryProps) {
     const { categories } = useCategories();
-    const { language } = useLanguage();
+    const { language, t } = useLanguage();
 
     return(
         <AdminStoreAddCategoryStyled>
-            <Text> {language === 'eng' ? 'Store category' : '카테고리'} </Text>
+            <Text> {t('storeCategory')} </Text>
             <SearchDiv>
                 <Select value = { selectedCategory } onChange = {(e) => onChangeSelectedCategory(e.target.value)}>
-                    <option value = ''> {language === 'eng' ? 'Select category' : '카테고리 선택'} </option>
+                    <option value = ''> {t('selectCategory')} </option>
                     {categories.map((category) => (
                         <option key = { category._id } value = { category.name.kor }>
-                            {language === 'eng' ? category.name.eng : category.name.kor}
+                            {localized(category.name, language)}
                         </option>
                     ))}
                 </Select>

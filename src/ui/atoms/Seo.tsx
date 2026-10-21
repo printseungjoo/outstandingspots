@@ -1,7 +1,10 @@
-import { useEffect } from 'react';
-import { usePathname } from 'next/navigation';
+import { useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 
-import { useLanguage } from '../../contexts/LanguageContext';
+import { useLanguage } from '../../contexts/LanguageContext'
+import { getT } from '../../i18n'
+import { localeCode, ogLocale } from '../../lib/localized'
+import type Language from '../../types/Language'
 
 const SITE_URL = 'https://outstandingspots.com';
 
@@ -26,40 +29,30 @@ function upsertLink(rel: string, href: string) {
     element.setAttribute('href', href);
 }
 
-function getSeo(pathname: string, language: 'kor' | 'eng') {
-    const isKorean = language === 'kor';
+function getSeo(pathname: string, language: Language) {
+    const t = getT(language);
     if (pathname === '/stores') {
         return {
-            title: isKorean
-                ? '전체 매장 | Outstanding Spots'
-                : 'All Stores | Outstanding Spots',
-            description: isKorean
-                ? '한국뉴욕주립대학교 주변 제휴 매장 목록과 할인 혜택을 확인하세요.'
-                : 'Browse partner stores and discounts near SUNY Korea.',
+            title: t('storesSeoTitle'),
+            description: t('storesSeoDescription'),
             robots: 'index,follow',
-            path: '/stores',
+            path: '/stores'
         };
     }
     if (pathname === '/') {
         return {
-            title: isKorean
-                ? 'Outstanding Spots | 한국뉴욕주립대학교 주변 제휴 매장'
-                : 'Outstanding Spots | Partner Stores near SUNY Korea',
-            description: isKorean
-                ? '한국뉴욕주립대학교 주변 제휴 매장 지도와 할인 정보를 한눈에 확인하세요.'
-                : 'Find partner stores and discounts near SUNY Korea on the Outstanding Spots map.',
+            title: t('homeSeoTitle'),
+            description: t('homeSeoDescription'),
             robots: 'index,follow',
-            path: '/',
+            path: '/'
         };
     }
 
     return {
         title: 'Outstanding Spots',
-        description: isKorean
-            ? '한국뉴욕주립대학교 주변 제휴 매장 안내 서비스입니다.'
-            : 'Partner store guide for SUNY Korea.',
+        description: t('defaultSeoDescription'),
         robots: 'noindex,nofollow',
-        path: pathname,
+        path: pathname
     };
 }
 
@@ -72,14 +65,14 @@ export function Seo() {
         const url = `${SITE_URL}${seo.path === '/' ? '/' : seo.path}`;
         const image = `${SITE_URL}/loginBackgroundImage.png`;
         document.title = seo.title;
-        document.documentElement.lang = language === 'eng' ? 'en' : 'ko';
+        document.documentElement.lang = localeCode(language);
         upsertMeta('meta[name="description"]', { name: 'description', content: seo.description });
         upsertMeta('meta[name="robots"]', { name: 'robots', content: seo.robots });
         upsertMeta('meta[property="og:title"]', { property: 'og:title', content: seo.title });
         upsertMeta('meta[property="og:description"]', { property: 'og:description', content: seo.description });
         upsertMeta('meta[property="og:url"]', { property: 'og:url', content: url });
         upsertMeta('meta[property="og:image"]', { property: 'og:image', content: image });
-        upsertMeta('meta[property="og:locale"]', { property: 'og:locale', content: language === 'eng' ? 'en_US' : 'ko_KR' });
+        upsertMeta('meta[property="og:locale"]', { property: 'og:locale', content: ogLocale(language) });
         upsertMeta('meta[name="twitter:title"]', { name: 'twitter:title', content: seo.title });
         upsertMeta('meta[name="twitter:description"]', { name: 'twitter:description', content: seo.description });
         upsertLink('canonical', url);

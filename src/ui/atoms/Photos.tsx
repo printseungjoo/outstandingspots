@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import { resolvePhotoUrl } from '../../lib/storesApi';
+import { resolvePhotoUrl } from '../../lib/storesApi'
 
 const Photo = styled.div`
     display: flex;

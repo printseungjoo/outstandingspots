@@ -1,6 +1,6 @@
-import fetchJson from './fetchJson';
-import type Store from '../types/Store';
-import { API_URL } from './constants';
+import fetchJson from './fetchJson'
+import type Store from '../types/Store'
+import { API_URL } from './constants'
 
 const baseUrl = API_URL;
 

@@ -1,8 +1,8 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import { useLanguage } from '../../contexts/LanguageContext';
-import type Owner from '../../types/Owner';
-import { ownerStoreLabel } from '../atoms/AdminOwnerSearch';
+import { useLanguage } from '../../contexts/LanguageContext'
+import type Owner from '../../types/Owner'
+import { ownerStoreLabel } from '../atoms/AdminOwnerSearch'
 
 const TableWrap = styled.div`
     width: 100%;
@@ -174,7 +174,7 @@ interface AdminOwnersTableProps {
 }
 
 export function AdminOwnersTable({ owners, variant, onApprove, onReject, onPending }: AdminOwnersTableProps) {
-    const { language } = useLanguage();
+    const { language, t } = useLanguage();
     
     const isPending = variant === 'pending';
     const colSpan = isPending ? 5 : 4;
@@ -185,20 +185,20 @@ export function AdminOwnersTable({ owners, variant, onApprove, onReject, onPendi
                 <Table>
                     <thead>
                         <tr>
-                            <Th> {language === 'eng' ? (isPending ? 'Applicant' : 'Owner') : (isPending ? '신청자 정보' : '사장님')} </Th>
-                            <Th> {language === 'eng' ? 'Contact' : '연락처'} </Th>
-                            <Th> {language === 'eng' ? 'Linked store' : '연결 매장'} </Th>
+                            <Th> { t(isPending ? 'applicant' : 'owner') } </Th>
+                            <Th> {t('contact')} </Th>
+                            <Th> {t('linkedStore')} </Th>
                             {isPending && (
-                                <DateTh> {language === 'eng' ? 'Applied date' : '신청일'} </DateTh>
+                                <DateTh> {t('appliedDate')} </DateTh>
                             )}
-                            <ActionTh> {language === 'eng' ? 'Actions' : '관리'} </ActionTh>
+                            <ActionTh> {t('actions')} </ActionTh>
                         </tr>
                     </thead>
                     <tbody>
                         {owners.length === 0 ? (
                             <tr>
                                 <EmptyTd colSpan = { colSpan }>
-                                    {language === 'eng' ? 'No owners in this list.' : '해당하는 사장님이 없습니다.'}
+                                    {t('noOwnersInThisList')}
                                 </EmptyTd>
                             </tr>
                         ) : owners.map((owner) => (
@@ -213,15 +213,15 @@ export function AdminOwnersTable({ owners, variant, onApprove, onReject, onPendi
                                     {isPending ? (
                                         <>
                                             <ActionButton type = 'button' onClick = {() => onReject?.(owner)}>
-                                                {language === 'eng' ? 'Reject' : '거절'}
+                                                {t('reject')}
                                             </ActionButton>
                                             <PrimaryButton type = 'button' onClick = {() => onApprove?.(owner)}>
-                                                {language === 'eng' ? 'Approve' : '승인'}
+                                                {t('approve')}
                                             </PrimaryButton>
                                         </>
                                     ) : (
                                         <ActionButton type = 'button' onClick = {() => onPending?.(owner)}>
-                                            {language === 'eng' ? 'Pending' : '대기'}
+                                            {t('pending')}
                                         </ActionButton>
                                     )}
                                 </Td>
@@ -233,17 +233,17 @@ export function AdminOwnersTable({ owners, variant, onApprove, onReject, onPendi
             <CardList>
                 {owners.length === 0 ? (
                     <EmptyCard>
-                        {language === 'eng' ? 'No owners in this list.' : '해당하는 사장님이 없습니다.'}
+                        {t('noOwnersInThisList')}
                     </EmptyCard>
                 ) : owners.map((owner) => (
                     <OwnerCard key = { owner._id }>
                         <CardInfo>
                             <CardName> { owner.name } </CardName>
-                            <CardMeta> { language === 'eng' ? 'Contact' : '연락처' }: { owner.phone } </CardMeta>
-                            <CardMeta> { language === 'eng' ? 'Linked store' : '연결 매장' }: { ownerStoreLabel(owner, language) } </CardMeta>
+                            <CardMeta> { t('contact') }: { owner.phone } </CardMeta>
+                            <CardMeta> { t('linkedStore') }: { ownerStoreLabel(owner, language) } </CardMeta>
                             {isPending && (
                                 <CardMeta>
-                                    { language === 'eng' ? 'Applied date' : '신청일' }: { formatAppliedDate(owner.createdAt) }
+                                    { t('appliedDate') }: { formatAppliedDate(owner.createdAt) }
                                 </CardMeta>
                             )}
                         </CardInfo>
@@ -251,15 +251,15 @@ export function AdminOwnersTable({ owners, variant, onApprove, onReject, onPendi
                             {isPending ? (
                                 <>
                                     <CardActionButton type = 'button' onClick = {() => onReject?.(owner)}>
-                                        { language === 'eng' ? 'Reject' : '거절' }
+                                        { t('reject') }
                                     </CardActionButton>
                                     <CardPrimaryButton type = 'button' onClick = {() => onApprove?.(owner)}>
-                                        { language === 'eng' ? 'Approve' : '승인' }
+                                        { t('approve') }
                                     </CardPrimaryButton>
                                 </>
                             ) : (
                                 <CardActionButton type = 'button' onClick = {() => onPending?.(owner)}>
-                                    { language === 'eng' ? 'Pending' : '대기' }
+                                    { t('pending') }
                                 </CardActionButton>
                             )}
                         </CardActions>

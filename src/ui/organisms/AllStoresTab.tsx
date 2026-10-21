@@ -1,9 +1,9 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import { Exits } from '../atoms/Exits';
-import { AllStores } from '../molecules/AllStores';
-import type Store from '../../types/Store';
-import type Language from '../../types/Language';
+import { Exits } from '../atoms/Exits'
+import { AllStores } from '../molecules/AllStores'
+import type Store from '../../types/Store'
+import type Language from '../../types/Language'
 
 const AllStoresTabStyled = styled.div`
     position: relative;

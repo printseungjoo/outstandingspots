@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import type { ChangeEvent } from 'react';
-import styled from 'styled-components';
+import { useState } from 'react'
+import type { ChangeEvent } from 'react'
+import styled from 'styled-components'
 
-import { useLanguage } from '../../contexts/LanguageContext';
+import { useLanguage } from '../../contexts/LanguageContext'
 
 const TitleField = styled.div`
     width: 100%;
@@ -62,12 +62,10 @@ const InputForm = styled.input`
 `;
 
 interface AdminStoreAddInputProps {
-    engTitle: string;
-    korTitle: string;
+    title: string;
     engPlaceholder: string;
     korPlaceholder: string;
-    engLabel?: string;
-    korLabel?: string;
+    label?: string;
     engAutoText?: string;
     korAutoText?: string;
     korValue: string;
@@ -76,14 +74,14 @@ interface AdminStoreAddInputProps {
     onChangeEng: (value: string) => void;
 }
 
-export function AdminStoreAddInput({ engTitle, korTitle, engPlaceholder = '', korPlaceholder = '',
-    engLabel, korLabel, engAutoText = '', korAutoText = '',
+export function AdminStoreAddInput({ title, engPlaceholder = '', korPlaceholder = '',
+    label, engAutoText = '', korAutoText = '',
     korValue, engValue, onChangeKor, onChangeEng }: AdminStoreAddInputProps) { 
-    const { language } = useLanguage();
+    const { t } = useLanguage();
     const [isChecked, setIsChecked] = useState(false);
 
-    const examplePrefix = language === 'eng' ? 'Ex)' : '예)';
-    const showCheckbox = Boolean(engLabel || korLabel);
+    const examplePrefix = t('ex');
+    const showCheckbox = Boolean(label);
 
     function handleCheck(e: ChangeEvent<HTMLInputElement>) {
         const nextChecked = e.target.checked;
@@ -100,22 +98,22 @@ export function AdminStoreAddInput({ engTitle, korTitle, engPlaceholder = '', ko
     return(
         <AdminStoreAddInputStyled>
             <TitleField>
-                <Title> {language === 'eng' ? engTitle : korTitle} </Title>
+                <Title> { title } </Title>
                 {showCheckbox && (
                     <CheckLabel>
                         <input type = 'checkbox' checked = { isChecked } onChange = { handleCheck } />
-                        {language === 'eng' ? engLabel : korLabel}
+                        { label }
                     </CheckLabel>
                 )}
             </TitleField>
             <InputField>
                 <LanguageInputField>
-                    <LanguageText> {language === 'eng' ? 'Korean' : '한국어'} </LanguageText>
+                    <LanguageText> {t('korean')} </LanguageText>
                     <InputForm type = 'text' value = { korValue } onChange = {(e) => onChangeKor(e.target.value)}
                         placeholder = { `${examplePrefix} ${korPlaceholder}` } />
                 </LanguageInputField>
                 <LanguageInputField>
-                    <LanguageText> {language === 'eng' ? 'English' : '영어'} </LanguageText>
+                    <LanguageText> {t('english')} </LanguageText>
                     <InputForm type = 'text' value = { engValue } onChange = {(e) => onChangeEng(e.target.value)}
                         placeholder = { `${examplePrefix} ${engPlaceholder}` } />
                 </LanguageInputField>

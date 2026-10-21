@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import { useLanguage } from '../../contexts/LanguageContext';
+import { useLanguage } from '../../contexts/LanguageContext'
 
 const AdminStoreAddBusinessHoursStyled = styled.div`
     width: 100%;
@@ -45,8 +45,7 @@ const InputForm = styled.input`
 `;
 
 interface AdminStoreAddBusinessHoursProps {
-    engTitle: string;
-    korTitle: string;
+    title: string;
     openTime: string;
     closeTime: string;
     onChangeOpenTime: (value: string) => void;
@@ -54,25 +53,24 @@ interface AdminStoreAddBusinessHoursProps {
 }
 
 export function AdminStoreAddBusinessHours({
-    engTitle,
-    korTitle,
+    title,
     openTime,
     closeTime,
     onChangeOpenTime,
-    onChangeCloseTime,
+    onChangeCloseTime
 }: AdminStoreAddBusinessHoursProps) { 
-    const { language } = useLanguage();
+    const { t } = useLanguage();
 
     return(
         <AdminStoreAddBusinessHoursStyled>
-            <Title> {language === 'eng' ? engTitle : korTitle} </Title>
+            <Title> { title } </Title>
             <InputField>
                 <HoursInputField>
-                    <HoursText> {language === 'eng' ? 'Open time' : '영업 시작 시간'} </HoursText>
+                    <HoursText> {t('openTime')} </HoursText>
                     <InputForm type = 'time' value = { openTime } onChange = {(e) => onChangeOpenTime(e.target.value)}/>
                 </HoursInputField>
                 <HoursInputField>
-                    <HoursText> {language === 'eng' ? 'Close time' : '영업 종료 시간'} </HoursText>
+                    <HoursText> {t('closeTime')} </HoursText>
                     <InputForm type = 'time' value = { closeTime } onChange = {(e) => onChangeCloseTime(e.target.value)}/>
                 </HoursInputField>
             </InputField>

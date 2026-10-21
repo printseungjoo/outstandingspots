@@ -1,8 +1,8 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import type { ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react'
+import type { ReactNode } from 'react'
 
-import type Owner from '../types/Owner';
-import { fetchOwnerSession, logoutOwnerSession } from '../lib/ownersApi';
+import type Owner from '../types/Owner'
+import { fetchOwnerSession, logoutOwnerSession } from '../lib/ownersApi'
 
 interface OwnerAuthContextValue {
     owner: Owner | null;

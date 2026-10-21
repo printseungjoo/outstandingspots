@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import { useLanguage } from '../../contexts/LanguageContext';
+import { useLanguage } from '../../contexts/LanguageContext'
 
 const AdminOwnersManagementTopStyled = styled.div`
     width: 100%;
@@ -32,13 +32,13 @@ const SubText = styled.p`
 `;
 
 export function AdminOwnersManagementTop() {
-    const { language } = useLanguage();
+    const { t } = useLanguage();
 
     return(
         <AdminOwnersManagementTopStyled>
             <TitleDiv>
-                <BoldText> {language === 'eng' ? 'Owners Management' : '사장님 관리'} </BoldText>
-                <SubText> {language === 'eng' ? 'You can allow or manage owner registration.' : '사장님 가입 신청을 승인하거나 관리할 수 있습니다.'} </SubText>
+                <BoldText> {t('ownersManagement')} </BoldText>
+                <SubText> {t('youCanAllowOrManageOwnerRegistration')} </SubText>
             </TitleDiv>
         </AdminOwnersManagementTopStyled>
     )

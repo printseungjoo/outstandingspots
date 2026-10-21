@@ -1,5 +1,5 @@
-import { withApi } from './csrf';
-import { API_URL } from './constants';
+import { withApi } from './csrf'
+import { API_URL } from './constants'
 
 const baseUrl = API_URL;
 

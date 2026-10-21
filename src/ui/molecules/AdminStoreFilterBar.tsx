@@ -1,10 +1,10 @@
-import styled from 'styled-components';
-import { useRouter } from 'next/navigation';
+import styled from 'styled-components'
+import { useRouter } from 'next/navigation'
 
-import { AdminStoreSearch } from '../atoms/AdminStoreSearch';
-import { AdminStoreSearchByCategory } from '../atoms/AdminStoreSearchByCategory';
-import { StoresNumber } from '../atoms/StoresNumber';
-import { useLanguage } from '../../contexts/LanguageContext';
+import { AdminStoreSearch } from '../atoms/AdminStoreSearch'
+import { AdminStoreSearchByCategory } from '../atoms/AdminStoreSearchByCategory'
+import { StoresNumber } from '../atoms/StoresNumber'
+import { useLanguage } from '../../contexts/LanguageContext'
 
 const AdminStoreFilterBarStyled = styled.div`
     width: 100%;
@@ -64,7 +64,7 @@ interface AdminStoreFilterBarProps {
 }
 
 export function AdminStoreFilterBar({ searchValue, onChangeSearchValue, selectedCategory, onChangeSelectedCategory, showAddButton = true }: AdminStoreFilterBarProps) {
-    const { language } = useLanguage();
+    const { t } = useLanguage();
     const router = useRouter();
 
     return(
@@ -75,7 +75,7 @@ export function AdminStoreFilterBar({ searchValue, onChangeSearchValue, selected
                 <AdminStoreSearchByCategory selectedCategory = { selectedCategory } onChangeSelectedCategory = { onChangeSelectedCategory } />
                 {showAddButton ? (
                     <ResponsiveAddButton type = 'button' onClick = {() => router.push('/admin/store/add')}>
-                        + { language === 'eng' ? 'Add Store' : '매장 추가' }
+                        + { t('addStore') }
                     </ResponsiveAddButton>
                 ) : null}
             </CategoryAddRow>

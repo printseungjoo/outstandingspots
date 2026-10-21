@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import { useLanguage } from '../../contexts/LanguageContext';
+import { useLanguage } from '../../contexts/LanguageContext'
 
 const AdminStoreAddLatLonStyled = styled.div`
     width: 100%;
@@ -46,8 +46,7 @@ const LatLonForm = styled.input`
 `;
 
 interface AdminStoreAddLatLonProps {
-    engTitle: string;
-    korTitle: string;
+    title: string;
     latitudePlaceholder: string;
     longitudePlaceholder: string;
     lat: string;
@@ -57,27 +56,26 @@ interface AdminStoreAddLatLonProps {
 }
 
 export function AdminStoreAddLatLon({
-    engTitle,
-    korTitle,
+    title,
     latitudePlaceholder = '',
     longitudePlaceholder = '',
     lat,
     lon,
     onChangeLat,
-    onChangeLon,
+    onChangeLon
 }: AdminStoreAddLatLonProps) { 
-    const { language } = useLanguage();
+    const { t } = useLanguage();
     return(
         <AdminStoreAddLatLonStyled>
-            <Title> {language === 'eng' ? engTitle : korTitle} </Title>
+            <Title> { title } </Title>
             <LatLonField>
                 <LatLonTextareaField>
-                    <LatLonText> {language === 'eng' ? 'Latitude' : '위도'} </LatLonText>
+                    <LatLonText> {t('latitude')} </LatLonText>
                     <LatLonForm type = 'number' step = 'any' value = { lat } onChange = {(e) => onChangeLat(e.target.value)}
                         placeholder = { latitudePlaceholder } />
                 </LatLonTextareaField>
                 <LatLonTextareaField>
-                    <LatLonText> {language === 'eng' ? 'Longitude' : '경도'} </LatLonText>
+                    <LatLonText> {t('longitude')} </LatLonText>
                     <LatLonForm type = 'number' step = 'any' value = { lon } onChange = {(e) => onChangeLon(e.target.value)}
                         placeholder = { longitudePlaceholder } />
                 </LatLonTextareaField>

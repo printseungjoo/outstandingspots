@@ -1,14 +1,15 @@
-import styled from 'styled-components';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import styled from 'styled-components'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
-import { useLanguage } from '../../contexts/LanguageContext';
-import { SignUpInput } from '../atoms/SignUpInput';
-import { SignUpIdInputWithDescription } from '../atoms/SignUpIdInputWithDescription';
-import { SignUpPasswordInputWithDescription } from '../atoms/SignUpPasswordInputWithDescription';
-import { EmailVerification } from '../organisms/EmailVerification';
-import { signupStudent } from '../../lib/studentsApi';
-import type Language from '../../types/Language';
+import { useLanguage } from '../../contexts/LanguageContext'
+import { getT } from '../../i18n'
+import { SignUpInput } from '../atoms/SignUpInput'
+import { SignUpIdInputWithDescription } from '../atoms/SignUpIdInputWithDescription'
+import { SignUpPasswordInputWithDescription } from '../atoms/SignUpPasswordInputWithDescription'
+import { EmailVerification } from '../organisms/EmailVerification'
+import { signupStudent } from '../../lib/studentsApi'
+import type Language from '../../types/Language'
 
 const StudentSignUpPageStyled = styled.div`
     width: 100%;
@@ -224,49 +225,40 @@ const SignUpButton = styled.button`
 `;
 
 function getStudentSignupErrorMessage(error: unknown, language: Language) {
+    const t = getT(language);
     const message = error instanceof Error ? error.message : '';
     if (message === 'DUPLICATE_ID') {
-        return language === 'eng' ? 'It is already a duplicate ID.' : '이미 있는 아이디입니다.';
+        return t('itIsAlreadyADuplicateId');
     }
     if (message === 'DUPLICATE_EMAIL') {
-        return language === 'eng' ? 'This email is already registered.' : '이미 가입된 이메일입니다.';
+        return t('thisEmailIsAlreadyRegistered');
     }
     if (message === 'EMAIL_NOT_VERIFIED') {
-        return language === 'eng' ? 'Please verify your school email.' : '학교 이메일 인증을 완료해 주세요.';
+        return t('pleaseVerifyYourSchoolEmail');
     }
     if (message === 'MISSING_FIELDS') {
-        return language === 'eng' ? 'Please fill in all fields.' : '모든 항목을 입력해 주세요.';
+        return t('pleaseFillInAllFields');
     }
     if (message === 'INVALID_SCHOOL_EMAIL') {
-        return language === 'eng'
-            ? 'Please request verification with an email that has the @stonybrook.edu or @fitnyc.edu domain.'
-            : '@stonybrook.edu나 @fitnyc.edu의 도메인을 가진 이메일로 인증을 요청해주세요.';
+        return t('pleaseRequestVerificationWithAnEmailThatHasTheStonybrook');
     }
     if (message === 'INVALID_ID') {
-        return language === 'eng'
-            ? 'ID must be 4-20 characters including a number and a lowercase letter.'
-            : '아이디는 영문 소문자, 숫자를 포함해 4-20자여야 합니다.';
+        return t('idMustBe420CharactersIncludingANumberAnd');
     }
     if (message === 'INVALID_PASSWORD') {
-        return language === 'eng'
-            ? 'Password must be 8-20 characters including a letter and a number.'
-            : '비밀번호는 영문자, 숫자를 포함해 8-20자여야 합니다.';
+        return t('passwordMustBe820CharactersIncludingALetterAnd');
     }
     if (message === 'HTTP 404' || message.includes('Cannot POST')) {
-        return language === 'eng'
-            ? 'The signup API is missing. Restart the API server in the server folder.'
-            : '회원가입 API가 없습니다. server 폴더에서 API 서버를 재시작해 주세요.';
+        return t('theSignupApiIsMissingRestartTheApiServerIn');
     }
     if (message === 'Failed to fetch' || message.includes('NetworkError') || message.includes('fetch')) {
-        return language === 'eng'
-            ? 'The API server is not running. Start it with npm run dev in the server folder.'
-            : 'API 서버가 꺼져 있습니다. server 폴더에서 npm run dev로 시작해 주세요.';
+        return t('theApiServerIsNotRunningStartItWithNpm');
     }
-    return language === 'eng' ? 'Failed to sign up.' : '회원가입에 실패했습니다.';
+    return t('failedToSignUp');
 }
 
 export function StudentSignUpPage() {
-    const { language } = useLanguage();
+    const { language, t } = useLanguage();
     const router = useRouter();
     const [nickname, setNickname] = useState('');
     const [email, setEmail] = useState('');
@@ -279,15 +271,15 @@ export function StudentSignUpPage() {
     async function handleSubmit() {
         if (isSubmitting) return;
         if (!nickname.trim() || !email.trim() || !id.trim() || !password || !passwordCheck) {
-            alert(language === 'eng' ? 'Please fill in all fields.' : '모든 항목을 입력해 주세요.');
+            alert(t('pleaseFillInAllFields'));
             return;
         }
         if (!emailVerified) {
-            alert(language === 'eng' ? 'Please verify your school email.' : '학교 이메일 인증을 완료해 주세요.');
+            alert(t('pleaseVerifyYourSchoolEmail'));
             return;
         }
         if (password !== passwordCheck) {
-            alert(language === 'eng' ? 'Passwords do not match.' : '비밀번호가 일치하지 않습니다.');
+            alert(t('passwordsDoNotMatch'));
             return;
         }
         setIsSubmitting(true);
@@ -298,7 +290,7 @@ export function StudentSignUpPage() {
                 id: id.trim(),
                 password
             });
-            alert(language === 'eng' ? 'Sign up completed.' : '회원가입이 완료되었습니다.');
+            alert(t('signUpCompleted'));
             router.push('/login');
         } catch (error) {
             console.error(error);
@@ -315,15 +307,15 @@ export function StudentSignUpPage() {
                     <StudentIconFrame>
                         <StudentIcon src = '/mortarboardIcon.png' alt = 'student icon' />
                     </StudentIconFrame>
-                    <Title> { language === 'eng' ? 'Student sign up' : '학생 회원가입' } </Title>
-                    <Description> { language === 'eng' ? 'Only SUNY Korea students' : 'SUNY Korea 학생만' } </Description>
-                    <Description> { language === 'eng' ? 'can sign up.' : '회원가입 가능합니다.' } </Description>
+                    <Title> { t('studentSignUp') } </Title>
+                    <Description> { t('onlySunyKoreaStudents') } </Description>
+                    <Description> { t('canSignUp') } </Description>
                 </LeftDiv>
                 <RightDiv onSubmit = {(event) => {
                     event.preventDefault();
                     void handleSubmit();
                 }}>
-                    <SignUpInput engTitle = 'Nickname' korTitle = '닉네임' engPlaceholder = 'Enter your nickname.' korPlaceholder = '닉네임을 입력해주세요.'
+                    <SignUpInput title = { t('nickname') } placeholder = { t('enterYourNickname') }
                         value = { nickname } onChange = { setNickname } />
                     <EmailVerification
                         email = { email }
@@ -333,19 +325,19 @@ export function StudentSignUpPage() {
                         }}
                         onVerified = {() => setEmailVerified(true)} />
                     <SignUpIdPasswordDiv>
-                        <SignUpIdInputWithDescription engTitle = 'Set ID' korTitle = '아이디 설정' engPlaceholder = 'Enter your id.' korPlaceholder = '아이디를 입력해주세요.' engDescription = '4-20 characters including number, lowercase eng letter' korDescription = '영문 소문자, 숫자 포함 4-20자'
+                        <SignUpIdInputWithDescription title = { t('setId') } placeholder = { t('enterYourIdField') } description = { t('idRuleDetail') }
                             value = { id } onChange = { setId } />
-                        <SignUpPasswordInputWithDescription engTitle = 'Set password' korTitle = '비밀번호 설정' engPlaceholder = 'Enter your password.' korPlaceholder = '비밀번호를 입력해주세요.' engDescription = '8-20 characters including number, eng letter' korDescription = '영문자, 숫자 포함 8-20자'
+                        <SignUpPasswordInputWithDescription title = { t('setPassword') } placeholder = { t('enterYourPasswordField') } description = { t('passwordRuleDetail') }
                             value = { password } onChange = { setPassword } />
-                        <SignUpPasswordInputWithDescription engTitle = 'Check' korTitle = '비밀번호 확인' engPlaceholder = 'Enter your password again.' korPlaceholder = '비밀번호를 다시 입력해주세요.'
+                        <SignUpPasswordInputWithDescription title = { t('checkPassword') } placeholder = { t('enterYourPasswordAgain') }
                             value = { passwordCheck } onChange = { setPasswordCheck } matchWith = { password } />
                     </SignUpIdPasswordDiv>
                     <ButtonRow>
                         <CancelButton type = 'button' onClick = {() => router.push('/login')}>
-                            { language === 'eng' ? 'Cancel' : '취소' }
+                            { t('cancel') }
                         </CancelButton>
                         <SignUpButton type = 'submit' disabled = { isSubmitting }>
-                            { language === 'eng' ? 'Submit' : '제출' }
+                            { t('submit') }
                         </SignUpButton>
                     </ButtonRow>
                 </RightDiv>

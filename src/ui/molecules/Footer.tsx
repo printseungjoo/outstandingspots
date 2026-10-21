@@ -1,7 +1,7 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import { FooterLeftText } from '../atoms/FooterLeftText';
-import { FooterRightText } from '../atoms/FooterRightText';
+import { FooterLeftText } from '../atoms/FooterLeftText'
+import { FooterRightText } from '../atoms/FooterRightText'
 
 const FooterStyled = styled.div`
     background-color: #FAF9FE;

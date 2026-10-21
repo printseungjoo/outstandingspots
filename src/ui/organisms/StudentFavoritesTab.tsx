@@ -1,15 +1,16 @@
 'use client'
 
 import styled from 'styled-components'
-import { useState } from 'react';
+import { useState } from 'react'
 
-import { StudentFavoritesTable } from '../molecules/StudentFavoritesTable';
-import { StudentFavoritesTop } from '../molecules/StudentFavoritesTop';
-import { StudentFavoritesFilterBar } from '../molecules/StudentFavoritesFilterBar';
-import { useStores } from '../../contexts/StoresContext';
-import { useStudentAuth } from '../../contexts/StudentAuthContext';
-import { useLanguage } from '../../contexts/LanguageContext';
-import type Store from '../../types/Store';
+import { StudentFavoritesTable } from '../molecules/StudentFavoritesTable'
+import { StudentFavoritesTop } from '../molecules/StudentFavoritesTop'
+import { StudentFavoritesFilterBar } from '../molecules/StudentFavoritesFilterBar'
+import { useStores } from '../../contexts/StoresContext'
+import { useStudentAuth } from '../../contexts/StudentAuthContext'
+import { useLanguage } from '../../contexts/LanguageContext'
+import { localeCode, localizedName } from '../../lib/localized'
+import type Store from '../../types/Store'
 
 const StudentFavoritesTabStyled = styled.div`
     width: 100%;
@@ -39,7 +40,7 @@ export function StudentFavoritesTab() {
     const [selectedCategory, setSelectedCategory] = useState('all');
     const { stores } = useStores();
     const { student } = useStudentAuth();
-    const { language } = useLanguage();
+    const { language, t } = useLanguage();
 
     const favoriteIds = student?.favorites ?? [];
     const favoriteStores = stores.filter((store) => favoriteIds.includes(store._id));
@@ -52,9 +53,9 @@ export function StudentFavoritesTab() {
         return matchesCategory && (name.includes(query) || theme.includes(query));
     });
     const sortedStores = [...filteredStores].sort((a, b) => {
-        const aName = language === 'eng' ? `${a.name.eng} ${a.branch.eng}` : `${a.name.kor} ${a.branch.kor}`;
-        const bName = language === 'eng' ? `${b.name.eng} ${b.branch.eng}` : `${b.name.kor} ${b.branch.kor}`;
-        return language === 'eng' ? aName.localeCompare(bName, 'en') : aName.localeCompare(bName, 'ko');
+        const aName = localizedName(a, language);
+        const bName = localizedName(b, language);
+        return aName.localeCompare(bName, localeCode(language));
     });
 
     return(
@@ -64,9 +65,9 @@ export function StudentFavoritesTab() {
                 selectedCategory = { selectedCategory } onChangeSelectedCategory = { setSelectedCategory }
                 favoriteCount = { favoriteStores.length } />
             {favoriteStores.length === 0
-                ? <EmptyMessage> { language === 'eng' ? 'There are no favorite stores.' : '즐겨찾기한 매장이 없습니다' } </EmptyMessage>
+                ? <EmptyMessage> { t('thereAreNoFavoriteStores') } </EmptyMessage>
                 : filteredStores.length === 0
-                    ? <EmptyMessage> { language === 'eng' ? 'There are no stores matching this filter.' : '해당 필터링에 맞는 매장이 없습니다.' } </EmptyMessage>
+                    ? <EmptyMessage> { t('thereAreNoStoresMatchingThisFilter') } </EmptyMessage>
                     : <StudentFavoritesTable stores = { sortedStores } />}
         </StudentFavoritesTabStyled>
     )

@@ -1,14 +1,16 @@
 'use client'
 
+import { localized } from '../../lib/localized'
+
 import styled from 'styled-components'
 
-import { OwnerStoreViewTop } from '../molecules/OwnerStoreViewTop';
-import { OpenOrNot } from '../atoms/OpenOrNot';
-import { NaverMaps } from '../atoms/NaverMaps';
-import { useLanguage } from '../../contexts/LanguageContext';
-import { useOwnerAuth } from '../../contexts/OwnerAuthContext';
-import { useStores } from '../../contexts/StoresContext';
-import { resolvePhotoUrl } from '../../lib/storesApi';
+import { OwnerStoreViewTop } from '../molecules/OwnerStoreViewTop'
+import { OpenOrNot } from '../atoms/OpenOrNot'
+import { NaverMaps } from '../atoms/NaverMaps'
+import { useLanguage } from '../../contexts/LanguageContext'
+import { useOwnerAuth } from '../../contexts/OwnerAuthContext'
+import { useStores } from '../../contexts/StoresContext'
+import { resolvePhotoUrl } from '../../lib/storesApi'
 
 const OwnerStoreViewTabStyled = styled.div`
     width: 100%;
@@ -363,7 +365,7 @@ const MapLink = styled.a`
 `;
 
 export function OwnerStoreViewTab() {
-    const { language } = useLanguage();
+    const { language, t } = useLanguage();
     const { owner } = useOwnerAuth();
     const { stores } = useStores();
 
@@ -373,7 +375,7 @@ export function OwnerStoreViewTab() {
             <OwnerStoreViewTabStyled>
                 <OwnerStoreViewTop />
                 <EmptyText>
-                    {language === 'eng' ? 'Store information was not found.' : '매장 정보를 찾을 수 없습니다.'}
+                    {t('storeInformationWasNotFound')}
                 </EmptyText>
             </OwnerStoreViewTabStyled>
         )
@@ -383,12 +385,12 @@ export function OwnerStoreViewTab() {
         <OwnerStoreViewTabStyled>
             <OwnerStoreViewTop />
             <SummaryCard>
-                <StorePhoto src = { resolvePhotoUrl(store.photo) } alt = { language === 'eng' ? store.name.eng : store.name.kor } />
+                <StorePhoto src = { resolvePhotoUrl(store.photo) } alt = { localized(store.name, language) } />
                 <SummaryInfo>
                     <SummaryRow>
                         <StoreName>
                             <StoreNameText>
-                                {language === 'eng' ? store.name.eng : store.name.kor}
+                                {localized(store.name, language)}
                             </StoreNameText>
                             <NaverMapSlot>
                                 <NaverMaps storeNaverMap = { store.naverMap } />
@@ -396,12 +398,12 @@ export function OwnerStoreViewTab() {
                         </StoreName>
                     </SummaryRow>
                     <SummaryRow>
-                        <BranchName> { language === 'eng' ? store.branch.eng : store.branch.kor } </BranchName>
+                        <BranchName> { localized(store.branch, language) } </BranchName>
                     </SummaryRow>
                     <SummaryRow $tight>
-                        <CategoryName> { language === 'eng' ? store.category.eng : store.category.kor } </CategoryName>
+                        <CategoryName> { localized(store.category, language) } </CategoryName>
                         <MetaDot>·</MetaDot>
-                        <ThemeName> { language === 'eng' ? store.theme.eng : store.theme.kor } </ThemeName>
+                        <ThemeName> { localized(store.theme, language) } </ThemeName>
                     </SummaryRow>
                     <SummaryRow>
                         <OpenOrNot openTime = { store.openTime } closeTime = { store.closeTime } language = { language } />
@@ -413,63 +415,63 @@ export function OwnerStoreViewTab() {
                 <BenefitCard>
                     <CardScroll>
                     <BenefitSection>
-                        <BenefitTitle>🎓 {language === 'eng' ? 'SUNY Benefit' : 'SUNY 혜택'}</BenefitTitle>
+                        <BenefitTitle>🎓 {t('sunyBenefit')}</BenefitTitle>
                         <BenefitBox>
-                            <BenefitText>{language === 'eng' ? store.discount.eng : store.discount.kor}</BenefitText>
-                            <BenefitNote>{language === 'eng' ? '*You must bring your SUNY student ID card to receive the discount.' : '할인을 받기 위해서는 학생증을 필수 지참해야합니다.'}</BenefitNote>
+                            <BenefitText>{localized(store.discount, language)}</BenefitText>
+                            <BenefitNote>{t('youMustBringYourSunyStudentIdCardToReceive')}</BenefitNote>
                         </BenefitBox>
                     </BenefitSection>
                     <BenefitSection>
-                        <BenefitTitle>✅ {language === 'eng' ? 'Additional precautions' : '추가 유의사항'}</BenefitTitle>
+                        <BenefitTitle>✅ {t('additionalPrecautions')}</BenefitTitle>
                         <BenefitBox>
-                            <BenefitText>{language === 'eng' ? store.description.eng : store.description.kor}</BenefitText>
+                            <BenefitText>{localized(store.description, language)}</BenefitText>
                         </BenefitBox>
                     </BenefitSection>
                     </CardScroll>
                 </BenefitCard>
                 <InfoCard>
-                    <CardTitle> ℹ️ { language === 'eng' ? 'Store details' : '매장 정보' } </CardTitle>
+                    <CardTitle> ℹ️ { t('storeDetails') } </CardTitle>
                     <CardScroll>
                     <FieldList>
                         <FieldRow>
-                            <FieldLabel>{language === 'eng' ? 'Store name (KOR/ENG)' : '매장명 (한/영)'}</FieldLabel>
+                            <FieldLabel>{t('storeNameKorEng')}</FieldLabel>
                             <FieldValue>{`${store.name.kor} / ${store.name.eng}`}</FieldValue>
                         </FieldRow>
                         <FieldRow>
-                            <FieldLabel>{language === 'eng' ? 'Category (KOR/ENG)' : '카테고리 (한/영)'}</FieldLabel>
+                            <FieldLabel>{t('categoryKorEng')}</FieldLabel>
                             <FieldValue>{`${store.category.kor} / ${store.category.eng}`}</FieldValue>
                         </FieldRow>
                         <FieldRow>
-                            <FieldLabel>{language === 'eng' ? 'Theme (KOR/ENG)' : '테마 (한/영)'}</FieldLabel>
+                            <FieldLabel>{t('themeKorEng')}</FieldLabel>
                             <FieldValue>{`${store.theme.kor} / ${store.theme.eng}`}</FieldValue>
                         </FieldRow>
                         <FieldRow>
-                            <FieldLabel>{language === 'eng' ? 'Business hours' : '영업 시간'}</FieldLabel>
+                            <FieldLabel>{t('businessHours')}</FieldLabel>
                             <FieldValue>{store.openTime} - {store.closeTime}</FieldValue>
                         </FieldRow>
                         <FieldRow>
-                            <FieldLabel>{language === 'eng' ? 'Naver map' : '네이버 지도'}</FieldLabel>
+                            <FieldLabel>{t('naverMap')}</FieldLabel>
                             <MapLink href = { store.naverMap } target = '_blank' rel = 'noopener noreferrer'>
-                                {language === 'eng' ? 'View on map' : '지도에서 보기'} ↗
+                                {t('viewOnMap')} ↗
                             </MapLink>
                         </FieldRow>
                         <FieldRow>
-                            <FieldLabel>{language === 'eng' ? 'Branch (KOR/ENG)' : '지점명 (한/영)'}</FieldLabel>
+                            <FieldLabel>{t('branchKorEng')}</FieldLabel>
                             <FieldValue>{`${store.branch.kor} / ${store.branch.eng}`}</FieldValue>
                         </FieldRow>
                     </FieldList>
                     </CardScroll>
                 </InfoCard>
                 <InfoCard>
-                    <CardTitle> 📍 { language === 'eng' ? 'Address' : '주소' } </CardTitle>
+                    <CardTitle> 📍 { t('address') } </CardTitle>
                     <CardScroll>
                     <FieldList>
                         <FieldRow>
-                            <FieldLabel>{language === 'eng' ? 'Latitude' : '위도'}</FieldLabel>
+                            <FieldLabel>{t('latitude')}</FieldLabel>
                             <FieldValue>{store.lat}</FieldValue>
                         </FieldRow>
                         <FieldRow>
-                            <FieldLabel>{language === 'eng' ? 'Longitude' : '경도'}</FieldLabel>
+                            <FieldLabel>{t('longitude')}</FieldLabel>
                             <FieldValue>{store.lon}</FieldValue>
                         </FieldRow>
                     </FieldList>

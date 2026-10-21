@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import { Exits } from '../atoms/Exits';
+import { Exits } from '../atoms/Exits'
 
 const ExitDiv = styled.div`
     position: relative;

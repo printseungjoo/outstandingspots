@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import { Options } from '../atoms/Options';
+import { Options } from '../atoms/Options'
 
 const OptionGroup = styled.div`
     display: flex;

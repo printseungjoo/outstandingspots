@@ -1,13 +1,14 @@
-import styled from 'styled-components';
-import { usePathname } from 'next/navigation';
+import { getT } from '../../i18n'
+import styled from 'styled-components'
+import { usePathname } from 'next/navigation'
 
-import { HeaderTitle } from '../molecules/HeaderTitle';
-import type Language from '../../types/Language';
-import { NavBar } from '../atoms/NavBar';
-import { LanguageButtons } from '../molecules/LanguageButtons';
-import { useAdminAuth } from '../../contexts/AdminAuthContext';
-import { useOwnerAuth } from '../../contexts/OwnerAuthContext';
-import { useStudentAuth } from '../../contexts/StudentAuthContext';
+import { HeaderTitle } from '../molecules/HeaderTitle'
+import type Language from '../../types/Language'
+import { NavBar } from '../atoms/NavBar'
+import { LanguageButtons } from '../molecules/LanguageButtons'
+import { useAdminAuth } from '../../contexts/AdminAuthContext'
+import { useOwnerAuth } from '../../contexts/OwnerAuthContext'
+import { useStudentAuth } from '../../contexts/StudentAuthContext'
 
 const HeaderStyled = styled.div<{ $innerMobile?: boolean }>`
     width: 100%;
@@ -93,6 +94,7 @@ interface HeaderProps {
 }
 
 export function Header({ language, onChangeLanguage }: HeaderProps) {
+    const t = getT(language);
     const pathname = usePathname();
     const { isAdmin } = useAdminAuth();
     const { isOwner } = useOwnerAuth();
@@ -107,9 +109,9 @@ export function Header({ language, onChangeLanguage }: HeaderProps) {
             <HeaderLeftDiv $innerMobile = { innerMobileHeader }>
                 <HeaderTitle language = { language } compactOnMobile = { innerMobileHeader } />
                 <NavBars>
-                    <NavBar navName = {language === 'eng' ? 'Map' : '지도'} clicked = { pathname === '/' } link = "/" onClick = {() => {}} />
-                    <NavBar navName = {language === 'eng' ? 'My page' : '마이페이지'} clicked = { myPageClicked } link = { myPageLink } onClick = {() => {}} />
-                    <NavBar navName = {language === 'eng' ? 'Stores' : '전체 매장'} clicked = { pathname.startsWith('/stores') } link = "/stores" onClick = {() => {}} />
+                    <NavBar navName = {t('map')} clicked = { pathname === '/' } link = "/" onClick = {() => {}} />
+                    <NavBar navName = {t('myPage')} clicked = { myPageClicked } link = { myPageLink } onClick = {() => {}} />
+                    <NavBar navName = {t('stores')} clicked = { pathname.startsWith('/stores') } link = "/stores" onClick = {() => {}} />
                 </NavBars>
             </HeaderLeftDiv>
             <HeaderRightDiv $hideOnMobileMap = { pathname === '/' }>

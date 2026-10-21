@@ -1,6 +1,4 @@
-import styled from 'styled-components';
-
-import { useLanguage } from '../../contexts/LanguageContext';
+import styled from 'styled-components'
 
 const SignUpInputWithButtonStyled = styled.div`
     box-sizing: border-box;
@@ -105,12 +103,9 @@ const SignUpButton = styled.button`
 `;
 
 interface SignUpInputWithButtonProps {
-    engTitle: string;
-    korTitle: string;
-    engPlaceholder: string;
-    korPlaceholder: string;
-    engButtonText: string;
-    korButtonText: string;
+    title: string;
+    placeholder: string;
+    buttonText: string;
     value?: string;
     onChange?: (value: string) => void;
     onButtonClick?: () => void;
@@ -125,31 +120,30 @@ interface SignUpInputWithButtonProps {
 }
 
 export function SignUpInputWithButton({
-    engTitle, korTitle, engPlaceholder, korPlaceholder, engButtonText, korButtonText,
+    title, placeholder, buttonText,
     value, onChange, onButtonClick, inputDisabled, inputReadOnly, buttonDisabled, buttonId,
     inputType = 'text', maxLength, inputMode, description
 }: SignUpInputWithButtonProps) {
-    const { language } = useLanguage();
 
     const isInactive = Boolean(inputDisabled || inputReadOnly);
     const isSpacer = description === '\u00A0';
 
     return(
         <SignUpInputWithButtonStyled>
-            <Title $hasDescription = { Boolean(description) && !isSpacer }> { language === 'eng' ? engTitle : korTitle } </Title>
+            <Title $hasDescription = { Boolean(description) && !isSpacer }> { title } </Title>
             <InputFieldDiv>
                 <InputField $inactive = { isInactive }>
                     <SignUpInput type = { inputType } value = { value } $inactive = { isInactive }
                         disabled = { inputDisabled } readOnly = { inputReadOnly }
                         maxLength = { maxLength } inputMode = { inputMode }
-                        placeholder = { language === 'eng' ? engPlaceholder : korPlaceholder }
+                        placeholder = { placeholder }
                         onChange = {(e) => {
                             if (inputDisabled || inputReadOnly) return;
                             onChange?.(e.target.value);
                         }} />
                     <SignUpButton id = { buttonId } type = "button" disabled = { buttonDisabled }
                         onClick = { onButtonClick }>
-                        { language === 'eng' ? engButtonText : korButtonText }
+                        { buttonText }
                     </SignUpButton>
                 </InputField>
                 {description && (<Description $spacer = { isSpacer }> { description } </Description>)}

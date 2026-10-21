@@ -1,7 +1,8 @@
-import styled from 'styled-components';
+import { getT } from '../../i18n'
+import styled from 'styled-components'
 
-import type Language from '../../types/Language';
-import { isStoreOpen } from '../../lib/isStoreOpen';
+import type Language from '../../types/Language'
+import { isStoreOpen } from '../../lib/isStoreOpen'
 
 const Open = styled.p`
     font-weight: bold;
@@ -32,11 +33,12 @@ interface OpenOrNotProps {
 }
 
 export function OpenOrNot({ openTime, closeTime, language }: OpenOrNotProps) {
+    const t = getT(language);
     const isOpen = isStoreOpen(openTime, closeTime);
 
     return(
         <>
-            {isOpen ? <Open> {language === 'eng' ? 'Open' : '영업 중'} </Open> : <Closed> {language === 'eng' ? 'Closed' : '영업 마감'} </Closed>}
+            {isOpen ? <Open> {t('open')} </Open> : <Closed> {t('closed')} </Closed>}
         </>
     )
 }

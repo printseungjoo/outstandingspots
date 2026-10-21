@@ -1,3 +1,4 @@
+import { localeCode, localized } from '../../lib/localized'
 import styled from 'styled-components'
 import { useState } from 'react'
 
@@ -47,9 +48,9 @@ export function StoresPage() {
         return matchesCategory && (name.includes(query) || theme.includes(query));
     });
     const sortedStores = [...filteredStores].sort((a, b) => {
-        const aName = language === 'eng' ? a.name.eng : a.name.kor;
-        const bName = language === 'eng' ? b.name.eng : b.name.kor;
-        return language === 'eng' ? aName.localeCompare(bName, 'en') : aName.localeCompare(bName, 'ko');
+        const aName = localized(a.name, language);
+        const bName = localized(b.name, language);
+        return aName.localeCompare(bName, localeCode(language));
     });
 
     return(

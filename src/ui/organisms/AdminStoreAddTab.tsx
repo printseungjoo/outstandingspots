@@ -4,18 +4,18 @@ import styled from 'styled-components'
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
-import { UploadImage } from '../molecules/UploadImage';
-import { AdminStoreAddInput } from '../atoms/AdminStoreAddInput';
-import { AdminStoreAddTextarea } from '../atoms/AdminStoreAddTextarea';
-import { AdminStoreAddBusinessHours } from '../atoms/AdminStoreAddBusinessHours';
-import { AdminStoreAddCategory } from '../atoms/AdminStoreAddCategory';
-import { AdminStoreAddLatLon } from '../atoms/AdminStoreAddLatLon';
-import { useLanguage } from '../../contexts/LanguageContext';
-import { useCategories } from '../../contexts/CategoryContext';
-import { SUCCESS_MESSAGE, useStores } from '../../contexts/StoresContext';
-import { createStore, patchStore, resolvePhotoUrl, uploadStorePhoto } from '../../lib/storesApi';
-import { geocodeAddress } from '../../lib/geocodeAddress';
-import type Store from '../../types/Store';
+import { UploadImage } from '../molecules/UploadImage'
+import { AdminStoreAddInput } from '../atoms/AdminStoreAddInput'
+import { AdminStoreAddTextarea } from '../atoms/AdminStoreAddTextarea'
+import { AdminStoreAddBusinessHours } from '../atoms/AdminStoreAddBusinessHours'
+import { AdminStoreAddCategory } from '../atoms/AdminStoreAddCategory'
+import { AdminStoreAddLatLon } from '../atoms/AdminStoreAddLatLon'
+import { useLanguage } from '../../contexts/LanguageContext'
+import { useCategories } from '../../contexts/CategoryContext'
+import { SUCCESS_MESSAGE, useStores } from '../../contexts/StoresContext'
+import { createStore, patchStore, resolvePhotoUrl, uploadStorePhoto } from '../../lib/storesApi'
+import { geocodeAddress } from '../../lib/geocodeAddress'
+import type Store from '../../types/Store'
 
 const AdminStoreAddTabStyled = styled.div`
     width: 100%;
@@ -282,7 +282,7 @@ function buildStorePatch(original: Store, form: StoreAddForm, category: Store['c
 export function AdminStoreAddTab({ storeIdOverride, cancelTo = '/admin', afterSaveTo = '/admin' }: AdminStoreAddTabProps = {}) {
     const router = useRouter();
     const storeId = storeIdOverride;
-    const { language } = useLanguage();
+    const { t } = useLanguage();
     const { categories } = useCategories();
     const { stores, loadingState, addStore, updateStore } = useStores();
     const editingStore = stores.find((store) => store._id === storeId);
@@ -331,7 +331,7 @@ export function AdminStoreAddTab({ storeIdOverride, cancelTo = '/admin', afterSa
     async function handleSearchAddress() {
         const address = form.address.trim();
         if (!address) {
-            alert(language === 'eng' ? 'Please enter an address.' : '주소를 입력해 주세요.');
+            alert(t('pleaseEnterAnAddress'));
             return;
         }
         if (isGeocoding) return;
@@ -343,7 +343,7 @@ export function AdminStoreAddTab({ storeIdOverride, cancelTo = '/admin', afterSa
             }));
         } catch (error) {
             console.error(error);
-            alert(language === 'eng' ? 'Could not find that address.' : '주소를 찾을 수 없습니다.');
+            alert(t('couldNotFindThatAddress'));
         } finally {
             setIsGeocoding(false);
         }
@@ -370,7 +370,7 @@ export function AdminStoreAddTab({ storeIdOverride, cancelTo = '/admin', afterSa
                     const updated = await patchStore(storeId, patch);
                     updateStore(updated);
                 }
-                alert(language === 'eng' ? 'Successfully updated.' : '성공적으로 수정되었습니다.');
+                alert(t('successfullyUpdated'));
                 router.push(afterSaveTo);
                 return;
             }
@@ -396,11 +396,11 @@ export function AdminStoreAddTab({ storeIdOverride, cancelTo = '/admin', afterSa
                 lon: Number(form.lon)
             });
             addStore(created);
-            alert(language === 'eng' ? 'Successfully saved.' : '저장이 완료되었습니다.');
+            alert(t('successfullySaved'));
             router.push(afterSaveTo);
         } catch (error) {
             console.error(error);
-            alert(language === 'eng' ? 'Failed to save the store.' : '매장 저장에 실패했습니다.');
+            alert(t('failedToSaveTheStore'));
         } finally {
             setIsSubmitting(false);
         }
@@ -419,12 +419,12 @@ export function AdminStoreAddTab({ storeIdOverride, cancelTo = '/admin', afterSa
                             }} />
                         <AdminStoreAddCategory selectedCategory = { form.categoryKor }
                             onChangeSelectedCategory = {(value) => setField('categoryKor', value)} />
-                        <AdminStoreAddInput engTitle = 'Store name' korTitle = '매장 이름'
+                        <AdminStoreAddInput title = { t('storeName') }
                             engPlaceholder = 'Outstanding cafe' korPlaceholder = '아웃스탠딩 카페'
                             korValue = { form.name.kor } engValue = { form.name.eng }
                             onChangeKor = {(value) => setLocalized('name', 'kor', value)}
                             onChangeEng = {(value) => setLocalized('name', 'eng', value)} />
-                        <AdminStoreAddTextarea engTitle = 'SUNY discount' korTitle = '할인 정보'
+                        <AdminStoreAddTextarea title = { t('sunyDiscount') }
                             engPlaceholder = 'Drink 10% discount' korPlaceholder = '음료 10% 할인'
                             korValue = { form.discount.kor } engValue = { form.discount.eng }
                             onChangeKor = {(value) => setLocalized('discount', 'kor', value)}
@@ -433,32 +433,32 @@ export function AdminStoreAddTab({ storeIdOverride, cancelTo = '/admin', afterSa
                 </AdminStoreAddLeftRight>
                 <AdminStoreAddLeftRight>
                     <AddFormColumn>
-                        <AdminStoreAddInput engTitle = 'Store theme' korTitle = '매장 테마'
+                        <AdminStoreAddInput title = { t('storeTheme') }
                             engPlaceholder = 'Korean food' korPlaceholder = '한식'
                             korValue = { form.theme.kor } engValue = { form.theme.eng }
                             onChangeKor = {(value) => setLocalized('theme', 'kor', value)}
                             onChangeEng = {(value) => setLocalized('theme', 'eng', value)} />
-                        <AdminStoreAddInput engTitle = 'Store branch' korTitle = '매장 지점명'
+                        <AdminStoreAddInput title = { t('storeBranch') }
                             engPlaceholder = 'Songdo branch' korPlaceholder = '송도점'
                             engAutoText = 'Main branch' korAutoText = '본점'
-                            engLabel = 'Main branch' korLabel = '본점'
+                            label = { t('mainBranch') }
                             korValue = { form.branch.kor } engValue = { form.branch.eng }
                             onChangeKor = {(value) => setLocalized('branch', 'kor', value)}
                             onChangeEng = {(value) => setLocalized('branch', 'eng', value)} />
                         <FieldGroup>
-                            <Title> {language === 'eng' ? 'Naver map link' : '네이버지도 링크' } </Title>
+                            <Title> {t('naverMapLink') } </Title>
                             <InputField>
                                 <InputForm type = 'text' value = { form.naverMap }
                                     onChange = {(e) => setField('naverMap', e.target.value)}
                                     placeholder = 'https://map.naver.com/...' />
                             </InputField>
                         </FieldGroup>
-                        <AdminStoreAddBusinessHours engTitle = 'Business hours' korTitle = '영업 시간'
+                        <AdminStoreAddBusinessHours title = { t('businessHours') }
                             openTime = { form.openTime } closeTime = { form.closeTime }
                             onChangeOpenTime = {(value) => setField('openTime', value)}
                             onChangeCloseTime = {(value) => setField('closeTime', value)} />
                         <FieldGroup>
-                            <Title> {language === 'eng' ? 'Store address' : '매장 주소' } </Title>
+                            <Title> {t('storeAddress') } </Title>
                             <InputField>
                                 <InputForm type = 'text' value = { form.address }
                                     onChange = {(e) => setField('address', e.target.value)}
@@ -468,31 +468,31 @@ export function AdminStoreAddTab({ storeIdOverride, cancelTo = '/admin', afterSa
                                             handleSearchAddress();
                                         }
                                     }}
-                                    placeholder = {language === 'eng' ? 'Enter address, automatically calculate lat/lon' : '주소를 입력하면 위도/경도가 자동으로 계산됩니다'} />
+                                    placeholder = {t('enterAddressAutomaticallyCalculateLatLon')} />
                                 <SearchButton type = 'button' disabled = { isGeocoding } onClick = { handleSearchAddress }>
                                     {isGeocoding
-                                        ? (language === 'eng' ? 'Searching' : '검색 중')
-                                        : (language === 'eng' ? 'Search' : '검색')}
+                                        ? (t('searching'))
+                                        : (t('search'))}
                                 </SearchButton>
                             </InputField>
                         </FieldGroup>
-                        <AdminStoreAddLatLon engTitle = 'Store lat/lon' korTitle = '매장 위도/경도'
+                        <AdminStoreAddLatLon title = { t('storeLatLon') }
                             latitudePlaceholder = '37.3751739' longitudePlaceholder = '126.6682747'
                             lat = { form.lat } lon = { form.lon }
                             onChangeLat = {(value) => setField('lat', value)}
                             onChangeLon = {(value) => setField('lon', value)} />
-                        <AdminStoreAddTextarea engTitle = 'Additional precautions' korTitle = '추가 유의사항'
+                        <AdminStoreAddTextarea title = { t('additionalPrecautions') }
                             engPlaceholder = 'Lunch special starts from Oct 21' korPlaceholder = '점심특선은 10월 21일부터 시행'
-                            engAutoText = 'None' korAutoText = '없음' engLabel = 'None' korLabel = '없음'
+                            engAutoText = 'None' korAutoText = '없음' label = { t('none') }
                             korValue = { form.description.kor } engValue = { form.description.eng }
                             onChangeKor = {(value) => setLocalized('description', 'kor', value)}
                             onChangeEng = {(value) => setLocalized('description', 'eng', value)} />
                         <CancelSubmitButtons>
                             <CancelButton type = 'button' disabled = { isSubmitting } onClick = {() => router.push(cancelTo)}>
-                                {language === 'eng' ? 'Cancel' : '취소'}
+                                {t('cancel')}
                             </CancelButton>
                             <SubmitButton type = 'button' disabled = { isSubmitting || !canSave } onClick = { handleSave }>
-                                {language === 'eng' ? 'Save' : '저장'}
+                                {t('save')}
                             </SubmitButton>
                         </CancelSubmitButtons>
                     </AddFormColumn>
