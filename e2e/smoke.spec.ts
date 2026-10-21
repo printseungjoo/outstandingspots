@@ -1,5 +1,5 @@
-import { approvedOwner, student } from './fixtures/data';
-import { expect, loginAsAdmin, seedOwnerSession, seedStudentSession, test } from './support/test';
+import { approvedOwner, student } from './fixtures/data'
+import { expect, loginAsAdmin, seedOwnerSession, seedStudentSession, test } from './support/test'
 
 test.describe('public routes render', () => {
     test('map page', async ({ page }) => {

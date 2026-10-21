@@ -1,11 +1,11 @@
-import { RecaptchaVerifier, signInWithPhoneNumber, type ConfirmationResult } from 'firebase/auth';
-import { useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
+import { RecaptchaVerifier, signInWithPhoneNumber, type ConfirmationResult } from 'firebase/auth'
+import { useEffect, useRef, useState } from 'react'
+import styled from 'styled-components'
 
-import { firebaseAuth } from '../../firebase/firebase';
-import { SignUpInputWithButton } from '../atoms/SignUpInputWithButton';
-import { useLanguage } from '../../contexts/LanguageContext';
-import type Language from '../../types/Language';
+import { firebaseAuth } from '../../firebase/firebase'
+import { SignUpInputWithButton } from '../atoms/SignUpInputWithButton'
+import { useLanguage } from '../../contexts/LanguageContext'
+import type Language from '../../types/Language'
 
 export function convertPhoneToE164(phone: string) {
     const numbers = phone.replace(/\D/g, '');

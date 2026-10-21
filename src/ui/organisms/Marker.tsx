@@ -1,12 +1,12 @@
-import { useEffect, useMemo, useRef } from 'react';
-import L from 'leaflet';
+import { useEffect, useMemo, useRef } from 'react'
+import L from 'leaflet'
 
-import { Marker as LeafletMarker } from 'react-leaflet';
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-import type Store from '../../types/Store';
-import { isStoreOpen, OPEN_NOW_CATEGORY } from '../../lib/isStoreOpen';
+import { Marker as LeafletMarker } from 'react-leaflet'
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
+import markerIcon from 'leaflet/dist/images/marker-icon.png'
+import markerShadow from 'leaflet/dist/images/marker-shadow.png'
+import type Store from '../../types/Store'
+import { isStoreOpen, OPEN_NOW_CATEGORY } from '../../lib/isStoreOpen'
 
 delete (L.Icon.Default.prototype as { _getIconUrl?: () => string })._getIconUrl
 

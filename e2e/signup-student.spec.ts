@@ -1,7 +1,7 @@
-import type { Page } from '@playwright/test';
+import type { Page } from '@playwright/test'
 
-import { EMAIL_CODE } from './fixtures/data';
-import { expect, test } from './support/test';
+import { EMAIL_CODE } from './fixtures/data'
+import { expect, test } from './support/test'
 
 const SCHOOL_EMAIL = 'newbie@stonybrook.edu';
 

@@ -1,11 +1,11 @@
-import type { BrowserContext, Page, Request, Route } from '@playwright/test';
+import type { BrowserContext, Page, Request, Route } from '@playwright/test'
 
-import type Category from '../../src/types/Category';
-import type Owner from '../../src/types/Owner';
-import type Store from '../../src/types/Store';
-import type Student from '../../src/types/Student';
-import * as data from '../fixtures/data';
-import { ADMIN_ID, ADMIN_PASSWORD, API_PREFIX, APP_PORT } from './constants';
+import type Category from '../../src/types/Category'
+import type Owner from '../../src/types/Owner'
+import type Store from '../../src/types/Store'
+import type Student from '../../src/types/Student'
+import * as data from '../fixtures/data'
+import { ADMIN_ID, ADMIN_PASSWORD, API_PREFIX, APP_PORT } from './constants'
 
 const CSRF_TOKEN = 'e2e-csrf';
 const installed = new WeakMap<BrowserContext, MockApi>();

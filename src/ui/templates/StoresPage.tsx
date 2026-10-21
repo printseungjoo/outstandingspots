@@ -1,11 +1,11 @@
-import styled from 'styled-components';
-import { useState } from 'react';
+import styled from 'styled-components'
+import { useState } from 'react'
 
-import { StoresTable } from '../molecules/StoresTable';
-import { AdminStoreFilterBar } from '../molecules/AdminStoreFilterBar';
-import { useStores } from '../../contexts/StoresContext';
-import { useLanguage } from '../../contexts/LanguageContext';
-import type Store from '../../types/Store';
+import { StoresTable } from '../molecules/StoresTable'
+import { AdminStoreFilterBar } from '../molecules/AdminStoreFilterBar'
+import { useStores } from '../../contexts/StoresContext'
+import { useLanguage } from '../../contexts/LanguageContext'
+import type Store from '../../types/Store'
 
 const StoresPageStyled = styled.div`
     width: 100%;

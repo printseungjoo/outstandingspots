@@ -1,6 +1,6 @@
-import { chromium } from '@playwright/test';
+import { chromium } from '@playwright/test'
 
-import { APP_ORIGIN } from './constants';
+import { APP_ORIGIN } from './constants'
 
 export default async function globalSetup() {
     const browser = await chromium.launch();
@@ -10,9 +10,9 @@ export default async function globalSetup() {
         return url.origin === APP_ORIGIN ? route.continue() : route.abort();
     });
     await page.goto(APP_ORIGIN);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(1500);
     await page.goto(APP_ORIGIN);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await browser.close();
 }

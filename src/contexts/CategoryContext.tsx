@@ -1,9 +1,9 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import type { ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react'
+import type { ReactNode } from 'react'
 
-import type Category from '../types/Category';
-import fetchJson from '../lib/fetchJson';
-import { API_URL } from '../lib/constants';
+import type Category from '../types/Category'
+import fetchJson from '../lib/fetchJson'
+import { API_URL } from '../lib/constants'
 
 interface CategoryContextValue {
     categories: Category[];
@@ -41,5 +41,5 @@ export function useCategories() {
     if (!value) {
         throw new Error('useCategories는 CategoryProvider 안에서만 사용할 수 있습니다.');
     }
-    return value;
+    return value
 }

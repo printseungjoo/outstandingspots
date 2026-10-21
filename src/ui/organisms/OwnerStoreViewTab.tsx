@@ -1,4 +1,6 @@
-import styled from 'styled-components';
+'use client'
+
+import styled from 'styled-components'
 
 import { OwnerStoreViewTop } from '../molecules/OwnerStoreViewTop';
 import { OpenOrNot } from '../atoms/OpenOrNot';

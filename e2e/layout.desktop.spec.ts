@@ -1,4 +1,4 @@
-import { expect, test } from './support/test';
+import { expect, test } from './support/test'
 
 test.describe('desktop layout', () => {
     test('shows the header, nav links and footer', async ({ page }) => {

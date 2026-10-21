@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+'use client'
+
+import { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components';
 
 import { AdminOwnersManagementTop } from '../molecules/AdminOwnersManagementTop';

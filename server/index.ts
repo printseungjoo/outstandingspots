@@ -1,28 +1,28 @@
-import express from 'express';
-import type { Request, Response } from 'express';
-import dotenv from 'dotenv';
-import cors from 'cors';
-import path from 'path';
-import crypto from 'crypto';
+import express from 'express'
+import type { Request, Response } from 'express'
+import dotenv from 'dotenv'
+import cors from 'cors'
+import path from 'path'
+import crypto from 'crypto'
 
-import { connectDB } from './config/ConnectDB';
-import categoryModel from './models/CategoryModels';
-import storeModel from './models/StoreModels';
-import type { StoreInterface } from './types/StoreInterface';
-import type { CategoryInterface } from './types/CategoryInterface';
-import type { OwnerInterface, OwnerStatus } from './types/OwnerInterface';
-import ownerModel from './models/OwnerModels';
-import studentModel from './models/StudentModels';
-import { verifyPhoneVerification, type FirebaseRequest } from './middlewares/verifyPhoneVerification';
-import { requireAdmin, requireAdminOrOwner, requireOwner, requireOwnerSelf, requireStoreWrite, requireStudent, requireStudentSelf } from './middlewares/requireSession';
-import { logoutSession, rejectBrowserDocument, requireAllowedOrigin } from './middlewares/csrf';
-import type { AuthedRequest } from './types/AuthRequest';
-import { rateLimit } from './middlewares/rateLimit';
-import { createCsrfToken, issueSession, readSessionCookie, safeEqual } from './lib/sessionToken';
-import { ALLOWED_ORIGINS, isAllowedOrigin } from './lib/origins';
-import { validateStoreWrite } from './lib/validateStore';
-import { CloudinaryConfigError, uploadImageToCloudinary } from './lib/cloudinaryUpload';
-import { sendStudentEmailCode, verifyStudentEmailCode, isAllowedSchoolEmail, normalizeSchoolEmail, isSchoolEmailVerified, clearVerifiedSchoolEmail } from './lib/studentEmailOtp';
+import { connectDB } from './config/ConnectDB'
+import categoryModel from './models/CategoryModels'
+import storeModel from './models/StoreModels'
+import type { StoreInterface } from './types/StoreInterface'
+import type { CategoryInterface } from './types/CategoryInterface'
+import type { OwnerInterface, OwnerStatus } from './types/OwnerInterface'
+import ownerModel from './models/OwnerModels'
+import studentModel from './models/StudentModels'
+import { verifyPhoneVerification, type FirebaseRequest } from './middlewares/verifyPhoneVerification'
+import { requireAdmin, requireAdminOrOwner, requireOwner, requireOwnerSelf, requireStoreWrite, requireStudent, requireStudentSelf } from './middlewares/requireSession'
+import { logoutSession, rejectBrowserDocument, requireAllowedOrigin } from './middlewares/csrf'
+import type { AuthedRequest } from './types/AuthRequest'
+import { rateLimit } from './middlewares/rateLimit'
+import { createCsrfToken, issueSession, readSessionCookie, safeEqual } from './lib/sessionToken'
+import { ALLOWED_ORIGINS, isAllowedOrigin } from './lib/origins'
+import { validateStoreWrite } from './lib/validateStore'
+import { CloudinaryConfigError, uploadImageToCloudinary } from './lib/cloudinaryUpload'
+import { sendStudentEmailCode, verifyStudentEmailCode, isAllowedSchoolEmail, normalizeSchoolEmail, isSchoolEmailVerified, clearVerifiedSchoolEmail } from './lib/studentEmailOtp'
 
 dotenv.config({ path: path.join(__dirname, '.env') });
 

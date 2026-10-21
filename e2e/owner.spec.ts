@@ -1,7 +1,7 @@
-import type Owner from '../src/types/Owner';
-import { approvedOwner, cafeStore, OWNER_PASSWORD } from './fixtures/data';
-import { storeForm, uploadPhoto } from './support/storeForm';
-import { expect, fieldInput, readSession, seedOwnerSession, test } from './support/test';
+import type Owner from '../src/types/Owner'
+import { approvedOwner, cafeStore, OWNER_PASSWORD } from './fixtures/data'
+import { storeForm, uploadPhoto } from './support/storeForm'
+import { expect, fieldInput, readSession, seedOwnerSession, test } from './support/test'
 
 test.describe('store information', () => {
     test('shows the store linked to the owner', async ({ page }) => {

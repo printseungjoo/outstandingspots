@@ -1,7 +1,7 @@
-import type { Page } from '@playwright/test';
+import type { Page } from '@playwright/test'
 
-import { barStore, cafeStore, foodStore } from './fixtures/data';
-import { expect, test } from './support/test';
+import { barStore, cafeStore, foodStore } from './fixtures/data'
+import { expect, test } from './support/test'
 
 const SEARCH_PLACEHOLDER = '매장 이름 혹은 테마로 검색해보세요.';
 

@@ -1,17 +1,24 @@
-import type { ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
+'use client'
 
-import { useOwnerAuth } from '../../contexts/OwnerAuthContext';
+import type { ReactNode } from 'react'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+
+import { useOwnerAuth } from '../../contexts/OwnerAuthContext'
 
 interface ProtectedOwnerRouteProps {
     children: ReactNode;
 }
 
 export function ProtectedOwnerRoute({ children }: ProtectedOwnerRouteProps) {
-    const { isOwner } = useOwnerAuth();
+    const { isOwner, isCheckingOwner } = useOwnerAuth();
     const router = useRouter();
-    if (!isOwner) {
-        router.replace('/login');
+    useEffect(() => {
+        if (!isCheckingOwner && !isOwner) {
+            router.replace('/login');
+        }
+    }, [isOwner, isCheckingOwner, router]);
+    if (isCheckingOwner || !isOwner) {
         return null;
     }
     return children;

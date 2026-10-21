@@ -1,8 +1,8 @@
-import fetchJson from './fetchJson';
-import type Owner from '../types/Owner';
-import type { OwnerStatus } from '../types/Owner';
-import { clearCsrfToken, takeCsrfToken, withApi } from './csrf';
-import { API_URL } from './constants';
+import fetchJson from './fetchJson'
+import type Owner from '../types/Owner'
+import type { OwnerStatus } from '../types/Owner'
+import { clearCsrfToken, takeCsrfToken, withApi } from './csrf'
+import { API_URL } from './constants'
 
 const baseUrl = API_URL;
 

@@ -1,4 +1,6 @@
-import { AdminStoreAddTab } from './AdminStoreAddTab';
+'use client'
+
+import { AdminStoreAddTab } from './AdminStoreAddTab'
 import { useOwnerAuth } from '../../contexts/OwnerAuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 

@@ -1,7 +1,7 @@
-import type { Page } from '@playwright/test';
+import type { Page } from '@playwright/test'
 
-import { barStore, cafeStore, foodStore } from './fixtures/data';
-import { expect, test } from './support/test';
+import { barStore, cafeStore, foodStore } from './fixtures/data'
+import { expect, test } from './support/test'
 
 function signupForm(page: Page) {
     return {

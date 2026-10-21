@@ -1,5 +1,5 @@
-import { Link, useLocation } from 'react-router-dom';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
 import styled from 'styled-components';
 
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -145,7 +145,7 @@ const OwnerLogoutButton = styled.button`
 `;
 
 export function OwnerNav() {
-    const { pathname } = useLocation();
+    const pathname = usePathname();
     const router = useRouter();
     const { language } = useLanguage();
     const { logoutOwner } = useOwnerAuth();
@@ -159,15 +159,15 @@ export function OwnerNav() {
         <OwnerNavStyled>
             <OwnerNavTop>
                 <Text> 관리 </Text>
-                <OwnerNavOption to = "/owner" $selected = { isViewPage }>
+                <OwnerNavOption href = "/owner" $selected = { isViewPage }>
                     <IconSlot> <Icon src = { viewIcon } alt = 'store icon'/> </IconSlot>
                     {language === 'eng' ? 'Store Information' : '매장 정보 조회'}
                 </OwnerNavOption>
-                <OwnerNavOption to = "/owner/edit" $selected = { pathname === '/owner/edit' }>
+                <OwnerNavOption href = "/owner/edit" $selected = { pathname === '/owner/edit' }>
                     <IconSlot> <SmallIcon src = { editIcon } alt = 'edit icon'/> </IconSlot>
                     {language === 'eng' ? 'Edit Store Information' : '매장 정보 수정'}
                 </OwnerNavOption>
-                <OwnerNavOption to = "/owner/account" $selected = { pathname === '/owner/account' }>
+                <OwnerNavOption href = "/owner/account" $selected = { pathname === '/owner/account' }>
                     <IconSlot> <SmallIcon src = { accountIcon } alt = 'account icon'/> </IconSlot>
                     {language === 'eng' ? 'Account Management' : '계정 관리'}
                 </OwnerNavOption>

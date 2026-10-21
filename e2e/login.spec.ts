@@ -1,8 +1,8 @@
-import type Student from '../src/types/Student';
-import type Owner from '../src/types/Owner';
-import { approvedOwner, OWNER_PASSWORD, pendingOwner, rejectedOwner, student, STUDENT_PASSWORD } from './fixtures/data';
-import { ADMIN_ID, ADMIN_PASSWORD } from './support/constants';
-import { expect, loginForm, readSession, test } from './support/test';
+import type Student from '../src/types/Student'
+import type Owner from '../src/types/Owner'
+import { approvedOwner, OWNER_PASSWORD, pendingOwner, rejectedOwner, student, STUDENT_PASSWORD } from './fixtures/data'
+import { ADMIN_ID, ADMIN_PASSWORD } from './support/constants'
+import { expect, loginForm, readSession, test } from './support/test'
 
 test.beforeEach(async ({ page }) => {
     await page.goto('/login');

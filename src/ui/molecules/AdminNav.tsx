@@ -1,5 +1,5 @@
-import { Link, useLocation } from 'react-router-dom';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
 import styled from 'styled-components';
 
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -150,7 +150,7 @@ const AdminLogoutButton = styled.button`
 `;
 
 export function AdminNav() {
-    const { pathname } = useLocation();
+    const pathname = usePathname();
     const router = useRouter();
     const { language } = useLanguage();
     const { logoutAdmin } = useAdminAuth();
@@ -163,8 +163,8 @@ export function AdminNav() {
         <AdminNavStyled>
             <AdminNavTop>
                 <Text> 관리 </Text>
-                <AdminNavOption to = "/admin/" $selected = { isStoresPage }> <IconSlot> <Icon src = { storesIcon } alt = 'store icon'/> </IconSlot> {language === 'eng' ? 'Stores Management' : '매장 관리'} </AdminNavOption>
-                <AdminNavOption to = "/admin/owners" $selected = { pathname === '/admin/owners' }> <IconSlot> <SmallIcon src = { ownersIcon } alt = 'owner icon'/> </IconSlot> {language === 'eng' ? 'Owners Management' : '사장님 관리'} </AdminNavOption>
+                <AdminNavOption href = "/admin" $selected = { isStoresPage }> <IconSlot> <Icon src = { storesIcon } alt = 'store icon'/> </IconSlot> {language === 'eng' ? 'Stores Management' : '매장 관리'} </AdminNavOption>
+                <AdminNavOption href = "/admin/owners" $selected = { pathname === '/admin/owners' }> <IconSlot> <SmallIcon src = { ownersIcon } alt = 'owner icon'/> </IconSlot> {language === 'eng' ? 'Owners Management' : '사장님 관리'} </AdminNavOption>
             </AdminNavTop>
             <AdminNavBottom>
                 <AdminLogoutButton onClick = {() => { logoutAdmin(); router.push('/login'); }}>

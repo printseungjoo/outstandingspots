@@ -1,7 +1,10 @@
-import type { ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
+'use client'
 
-import { useAdminAuth } from '../../contexts/AdminAuthContext';
+import type { ReactNode } from 'react'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+
+import { useAdminAuth } from '../../contexts/AdminAuthContext'
 
 interface ProtectedAdminRouteProps {
     children: ReactNode;
@@ -10,11 +13,12 @@ interface ProtectedAdminRouteProps {
 export function ProtectedAdminRoute({ children }: ProtectedAdminRouteProps) {
     const { isAdmin, isCheckingAdmin } = useAdminAuth();
     const router = useRouter();
-    if (isCheckingAdmin) {
-        return null;
-    }
-    if (!isAdmin) {
-        router.replace('/login');
+    useEffect(() => {
+        if (!isCheckingAdmin && !isAdmin) {
+            router.replace('/login');
+        }
+    }, [isAdmin, isCheckingAdmin, router]);
+    if (isCheckingAdmin || !isAdmin) {
         return null;
     }
     return children;

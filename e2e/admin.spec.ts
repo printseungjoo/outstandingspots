@@ -1,8 +1,8 @@
-import type { Page } from '@playwright/test';
+import type { Page } from '@playwright/test'
 
-import { approvedOwner, barStore, cafeStore, foodStore, GEOCODE_RESULT, pendingOwner, rejectedOwner } from './fixtures/data';
-import { storeForm, uploadPhoto } from './support/storeForm';
-import { expect, loginAsAdmin, test } from './support/test';
+import { approvedOwner, barStore, cafeStore, foodStore, GEOCODE_RESULT, pendingOwner, rejectedOwner } from './fixtures/data'
+import { storeForm, uploadPhoto } from './support/storeForm'
+import { expect, loginAsAdmin, test } from './support/test'
 
 function rows(page: Page) {
     return page.locator('table tbody tr');
@@ -260,10 +260,7 @@ test.describe('edit store', () => {
     });
 
     test('returns to store management for an unknown store', async ({ page }) => {
-        await page.evaluate(() => {
-            window.history.pushState({}, '', '/admin/store/edit/unknown-store');
-            window.dispatchEvent(new PopStateEvent('popstate'));
-        });
+        await page.goto('/admin/store/edit/unknown-store');
         await expect(page).toHaveURL(/\/admin$/);
     });
 });

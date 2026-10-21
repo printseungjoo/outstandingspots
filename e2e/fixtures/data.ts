@@ -1,7 +1,7 @@
-import type Category from '../../src/types/Category';
-import type Owner from '../../src/types/Owner';
-import type Store from '../../src/types/Store';
-import type Student from '../../src/types/Student';
+import type Category from '../../src/types/Category'
+import type Owner from '../../src/types/Owner'
+import type Store from '../../src/types/Store'
+import type Student from '../../src/types/Student'
 
 export const categories: Category[] = [
     { _id: 'cat-cafe', name: { kor: '카페', eng: 'Cafe' } },

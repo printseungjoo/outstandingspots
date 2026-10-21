@@ -1,9 +1,9 @@
-import type { Page } from '@playwright/test';
+import type { Page } from '@playwright/test'
 
-import type Student from '../src/types/Student';
-import { isStoreOpen } from '../src/lib/isStoreOpen';
-import { barStore, cafeStore, foodStore, student } from './fixtures/data';
-import { expect, readSession, seedStudentSession, test } from './support/test';
+import type Student from '../src/types/Student'
+import { isStoreOpen } from '../src/lib/isStoreOpen'
+import { barStore, cafeStore, foodStore, student } from './fixtures/data'
+import { expect, readSession, seedStudentSession, test } from './support/test'
 
 const SEARCH_PLACEHOLDER = '매장 이름 혹은 테마로 검색해보세요.';
 

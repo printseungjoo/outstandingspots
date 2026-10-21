@@ -1,17 +1,24 @@
-import type { ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
+'use client'
 
-import { useStudentAuth } from '../../contexts/StudentAuthContext';
+import type { ReactNode } from 'react'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+
+import { useStudentAuth } from '../../contexts/StudentAuthContext'
 
 interface ProtectedStudentRouteProps {
     children: ReactNode;
 }
 
 export function ProtectedStudentRoute({ children }: ProtectedStudentRouteProps) {
-    const { isStudent } = useStudentAuth();
+    const { isStudent, isCheckingStudent } = useStudentAuth();
     const router = useRouter();
-    if (!isStudent) {
-        router.replace('/login');
+    useEffect(() => {
+        if (!isCheckingStudent && !isStudent) {
+            router.replace('/login');
+        }
+    }, [isStudent, isCheckingStudent, router]);
+    if (isCheckingStudent || !isStudent) {
         return null;
     }
     return children;

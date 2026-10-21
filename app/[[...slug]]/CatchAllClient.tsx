@@ -5,5 +5,5 @@ import dynamic from 'next/dynamic'
 const App = dynamic(() => import('../../src/App'), { ssr: false })
 
 export function CatchAllClient() {
-  return <App />
+    return <App />
 }

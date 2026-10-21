@@ -1,6 +1,6 @@
-import type Student from '../types/Student';
-import { clearCsrfToken, takeCsrfToken, withApi } from './csrf';
-import { API_URL } from './constants';
+import type Student from '../types/Student'
+import { clearCsrfToken, takeCsrfToken, withApi } from './csrf'
+import { API_URL } from './constants'
 
 const baseUrl = API_URL;
 

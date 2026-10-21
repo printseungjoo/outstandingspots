@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation'
 
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useStudentAuth } from '../../contexts/StudentAuthContext';
@@ -160,7 +160,7 @@ interface StudentFavoritesTableProps {
 
 export function StudentFavoritesTable({ stores }: StudentFavoritesTableProps) {
     const { language } = useLanguage();
-    const navigate = useNavigate();
+    const router = useRouter();
     const { student, updateStudent } = useStudentAuth();
 
     async function handleDelete(store: Store) {
@@ -198,7 +198,7 @@ export function StudentFavoritesTable({ stores }: StudentFavoritesTableProps) {
                                 <Td> { language === 'eng' ? store.theme?.eng : store.theme?.kor } </Td>
                                 <Td> { language === 'eng' ? store.discount.eng : store.discount.kor } </Td>
                                 <Td>
-                                    <ActionButton type = 'button' onClick = {() => navigate(`/?store=${store._id}`)}>
+                                    <ActionButton type = 'button' onClick = {() => router.push(`/?store=${store._id}`)}>
                                         { language === 'eng' ? 'View' : '보기' }
                                     </ActionButton>
                                     <ActionButton type = 'button' onClick = {() => { void handleDelete(store); }}>
@@ -222,7 +222,7 @@ export function StudentFavoritesTable({ stores }: StudentFavoritesTableProps) {
                             </CardInfo>
                         </CardTop>
                         <CardActions>
-                            <CardActionButton type = 'button' onClick = {() => navigate(`/?store=${store._id}`)}>
+                            <CardActionButton type = 'button' onClick = {() => router.push(`/?store=${store._id}`)}>
                                 { language === 'eng' ? 'View' : '보기' }
                             </CardActionButton>
                             <CardActionButton type = 'button' onClick = {() => { void handleDelete(store); }}>

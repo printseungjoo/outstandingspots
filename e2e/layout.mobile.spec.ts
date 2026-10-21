@@ -1,5 +1,5 @@
-import { student } from './fixtures/data';
-import { expect, seedStudentSession, test } from './support/test';
+import { student } from './fixtures/data'
+import { expect, seedStudentSession, test } from './support/test'
 
 test.describe('mobile layout', () => {
     test('shows the bottom nav bar instead of header links', async ({ page }) => {

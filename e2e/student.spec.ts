@@ -1,9 +1,9 @@
-import type { Page } from '@playwright/test';
+import type { Page } from '@playwright/test'
 
-import type Student from '../src/types/Student';
-import { barStore, cafeStore, foodStore, student, STUDENT_PASSWORD } from './fixtures/data';
-import { GUIDE_URL } from './support/constants';
-import { expect, fieldInput, readSession, seedStudentSession, test } from './support/test';
+import type Student from '../src/types/Student'
+import { barStore, cafeStore, foodStore, student, STUDENT_PASSWORD } from './fixtures/data'
+import { GUIDE_URL } from './support/constants'
+import { expect, fieldInput, readSession, seedStudentSession, test } from './support/test'
 
 function rows(page: Page) {
     return page.locator('table tbody tr');

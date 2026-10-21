@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
-import type { ChangeEvent } from 'react';
-import styled from 'styled-components';
+import { useEffect, useState } from 'react'
+import type { ChangeEvent } from 'react'
+import styled from 'styled-components'
 
-import { useLanguage } from '../../contexts/LanguageContext';
+import { useLanguage } from '../../contexts/LanguageContext'
 
 const UploadImageStyled = styled.div`
     display: flex;

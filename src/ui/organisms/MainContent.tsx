@@ -1,6 +1,6 @@
 import styled, { css, keyframes } from 'styled-components';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'next/navigation'
 
 import { AllCategories } from '../molecules/AllCategories';
 import { OptionGroups } from '../molecules/OptionGroups';
@@ -210,7 +210,7 @@ export function MainContent({ className, language, onChangeLanguage }: MainConte
     const { categories } = useCategories();
     const { student, isStudent, updateStudent, prependRecentView } = useStudentAuth();
     const recentViewQueueRef = useRef(Promise.resolve());
-    const [searchParams] = useSearchParams();
+    const searchParams = useSearchParams();
     const selectedStoreId = searchParams.get('store');
     
     const [selectedStore, setSelectedStore] = useState<Store | null>(null);

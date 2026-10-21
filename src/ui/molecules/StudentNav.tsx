@@ -1,5 +1,5 @@
-import { Link, useLocation } from 'react-router-dom';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
 import styled from 'styled-components';
 
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -145,7 +145,7 @@ const StudentLogoutButton = styled.button`
 `;
 
 export function StudentNav() {
-    const { pathname } = useLocation();
+    const pathname = usePathname();
     const router = useRouter();
     const { language } = useLanguage();
     const { logoutStudent } = useStudentAuth();
@@ -159,15 +159,15 @@ export function StudentNav() {
         <StudentNavStyled>
             <StudentNavTop>
                 <Text> { language === 'eng' ? 'My page' : '마이페이지' } </Text>
-                <StudentNavOption to = '/student' $selected = { isFavoritesPage }>
+                <StudentNavOption href = '/student' $selected = { isFavoritesPage }>
                     <IconSlot> <Icon src = { favoritesIcon } alt = 'favorites icon'/> </IconSlot>
                     { language === 'eng' ? 'Favorite stores' : '즐겨찾기한 매장' }
                 </StudentNavOption>
-                <StudentNavOption to = '/student/recent' $selected = { pathname === '/student/recent' }>
+                <StudentNavOption href = '/student/recent' $selected = { pathname === '/student/recent' }>
                     <IconSlot> <SmallIcon src = { recentIcon } alt = 'recent icon'/> </IconSlot>
                     { language === 'eng' ? 'Recently viewed' : '최근 본 매장' }
                 </StudentNavOption>
-                <StudentNavOption to = '/student/account' $selected = { pathname === '/student/account' }>
+                <StudentNavOption href = '/student/account' $selected = { pathname === '/student/account' }>
                     <IconSlot> <SmallIcon src = { accountIcon } alt = 'account icon'/> </IconSlot>
                     { language === 'eng' ? 'Account Management' : '계정 관리' }
                 </StudentNavOption>

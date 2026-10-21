@@ -1,6 +1,6 @@
-import crypto from 'crypto';
+import crypto from 'crypto'
 
-import studentEmailVerificationModel from '../models/StudentEmailVerificationModels';
+import studentEmailVerificationModel from '../models/StudentEmailVerificationModels'
 
 type OtpRecord = {
     salt: string;

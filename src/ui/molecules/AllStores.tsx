@@ -1,8 +1,8 @@
-import styled from 'styled-components';
-import { useMemo } from 'react';
+import styled from 'styled-components'
+import { useMemo } from 'react'
 
-import type Store from '../../types/Store';
-import type Language from '../../types/Language';
+import type Store from '../../types/Store'
+import type Language from '../../types/Language'
 
 const AllStore = styled.div`
     width: 25%;

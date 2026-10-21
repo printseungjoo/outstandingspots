@@ -1,10 +1,10 @@
-import styled from 'styled-components';
-import { useRef, useState } from 'react';
-import type { ChangeEvent, KeyboardEvent } from 'react';
+import styled from 'styled-components'
+import { useRef, useState } from 'react'
+import type { ChangeEvent, KeyboardEvent } from 'react'
 
-import { Autocomplete } from './Autocomplete';
-import type Language from '../../types/Language';
-import type Store from '../../types/Store';
+import { Autocomplete } from './Autocomplete'
+import type Language from '../../types/Language'
+import type Store from '../../types/Store'
 
 const SearchDiv = styled.div`
     display: flex;

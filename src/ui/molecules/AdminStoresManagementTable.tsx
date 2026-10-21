@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation'
 
 import { useLanguage } from '../../contexts/LanguageContext';
 import type Store from '../../types/Store';
@@ -171,7 +171,7 @@ interface AdminStoresManagementTableProps {
 
 export function AdminStoresManagementTable({ stores, showActions = true }: AdminStoresManagementTableProps) {
     const { language } = useLanguage();
-    const navigate = useNavigate();
+    const router = useRouter();
     const { deleteStore } = useStores();
 
     async function handleDelete(store: Store) {
@@ -208,7 +208,7 @@ export function AdminStoresManagementTable({ stores, showActions = true }: Admin
                                 <Td> { language === 'eng' ? store.discount.eng : store.discount.kor } </Td>
                                 {showActions ? (
                                     <Td>
-                                        <ActionButton type = 'button' onClick = {() => navigate(`/admin/store/edit/${store._id}`)}>
+                                        <ActionButton type = 'button' onClick = {() => router.push(`/admin/store/edit/${store._id}`)}>
                                             { language === 'eng' ? 'Edit' : '수정' }
                                         </ActionButton>
                                         <ActionButton type = 'button' onClick = {() => { void handleDelete(store); }}>
@@ -234,7 +234,7 @@ export function AdminStoresManagementTable({ stores, showActions = true }: Admin
                         </CardTop>
                         {showActions ? (
                             <CardActions>
-                                <CardActionButton type = 'button' onClick = {() => navigate(`/admin/store/edit/${store._id}`)}>
+                                <CardActionButton type = 'button' onClick = {() => router.push(`/admin/store/edit/${store._id}`)}>
                                     { language === 'eng' ? 'Edit' : '수정' }
                                 </CardActionButton>
                                 <CardActionButton type = 'button' onClick = {() => { void handleDelete(store); }}>

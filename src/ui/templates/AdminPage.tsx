@@ -1,7 +1,7 @@
-import styled from 'styled-components';
-import { Outlet } from 'react-router-dom';
+import type { ReactNode } from 'react'
+import styled from 'styled-components'
 
-import { AdminNav } from '../molecules/AdminNav';
+import { AdminNav } from '../molecules/AdminNav'
 
 const AdminPageStyled = styled.div`
     width: 100%;
@@ -30,12 +30,12 @@ const AdminContent = styled.div`
     }
 `;
 
-export function AdminPage() {
+export function AdminPage({ children }: { children: ReactNode }) {
     return(
         <AdminPageStyled>
             <AdminNav />
             <AdminContent>
-                <Outlet />
+                { (children) }
             </AdminContent>
         </AdminPageStyled>        
     )

@@ -1,4 +1,6 @@
-import { PhoneAuthProvider, RecaptchaVerifier, signInWithCredential, signInWithPhoneNumber, updatePhoneNumber, type ConfirmationResult } from 'firebase/auth';
+'use client'
+
+import { PhoneAuthProvider, RecaptchaVerifier, signInWithCredential, signInWithPhoneNumber, updatePhoneNumber, type ConfirmationResult } from 'firebase/auth'
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styled from 'styled-components';

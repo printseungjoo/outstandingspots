@@ -1,6 +1,8 @@
-import styled from 'styled-components';
-import { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+'use client'
+
+import styled from 'styled-components'
+import { useEffect, useRef, useState } from 'react'
+import { useParams, usePathname, useRouter } from 'next/navigation'
 
 import { UploadImage } from '../molecules/UploadImage';
 import { AdminStoreAddInput } from '../atoms/AdminStoreAddInput';
@@ -278,9 +280,11 @@ function buildStorePatch(original: Store, form: StoreAddForm, category: Store['c
 }
 
 export function AdminStoreAddTab({ storeIdOverride, cancelTo = '/admin', afterSaveTo = '/admin' }: AdminStoreAddTabProps = {}) {
-    const navigate = useNavigate();
-    const { storeId: storeIdFromParams } = useParams();
-    const storeId = storeIdOverride ?? storeIdFromParams;
+    const router = useRouter();
+    const params = useParams<{ storeId?: string }>();
+    const pathname = usePathname();
+    const pathMatch = pathname.match(/^\/admin\/store\/edit\/([^/]+)/);
+    const storeId = storeIdOverride ?? pathMatch?.[1] ?? params.storeId;
     const { language } = useLanguage();
     const { categories } = useCategories();
     const { stores, loadingState, addStore, updateStore } = useStores();
@@ -296,13 +300,13 @@ export function AdminStoreAddTab({ storeIdOverride, cancelTo = '/admin', afterSa
         if (!storeId) return;
         if (loadingState !== SUCCESS_MESSAGE) return;
         if (!editingStore) {
-            navigate(cancelTo);
+            router.push(cancelTo);
             return;
         }
         setForm(storeToForm(editingStore));
         setHasPhoto(Boolean(editingStore.photo));
         photoBlobRef.current = null;
-    }, [storeId, editingStore, loadingState, navigate, cancelTo]);
+    }, [storeId, editingStore, loadingState, router, cancelTo]);
 
     const lat = Number(form.lat);
     const lon = Number(form.lon);
@@ -370,7 +374,7 @@ export function AdminStoreAddTab({ storeIdOverride, cancelTo = '/admin', afterSa
                     updateStore(updated);
                 }
                 alert(language === 'eng' ? 'Successfully updated.' : '성공적으로 수정되었습니다.');
-                navigate(afterSaveTo);
+                router.push(afterSaveTo);
                 return;
             }
             const photoBlob = photoBlobRef.current;
@@ -396,7 +400,7 @@ export function AdminStoreAddTab({ storeIdOverride, cancelTo = '/admin', afterSa
             });
             addStore(created);
             alert(language === 'eng' ? 'Successfully saved.' : '저장이 완료되었습니다.');
-            navigate(afterSaveTo);
+            router.push(afterSaveTo);
         } catch (error) {
             console.error(error);
             alert(language === 'eng' ? 'Failed to save the store.' : '매장 저장에 실패했습니다.');
@@ -487,7 +491,7 @@ export function AdminStoreAddTab({ storeIdOverride, cancelTo = '/admin', afterSa
                             onChangeKor = {(value) => setLocalized('description', 'kor', value)}
                             onChangeEng = {(value) => setLocalized('description', 'eng', value)} />
                         <CancelSubmitButtons>
-                            <CancelButton type = 'button' disabled = { isSubmitting } onClick = {() => navigate(cancelTo)}>
+                            <CancelButton type = 'button' disabled = { isSubmitting } onClick = {() => router.push(cancelTo)}>
                                 {language === 'eng' ? 'Cancel' : '취소'}
                             </CancelButton>
                             <SubmitButton type = 'button' disabled = { isSubmitting || !canSave } onClick = { handleSave }>

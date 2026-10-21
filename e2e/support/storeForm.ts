@@ -1,6 +1,6 @@
-import type { Page } from '@playwright/test';
+import type { Page } from '@playwright/test'
 
-import { PNG_1X1 } from './mockApi';
+import { PNG_1X1 } from './mockApi'
 
 export function storeForm(page: Page) {
     return {

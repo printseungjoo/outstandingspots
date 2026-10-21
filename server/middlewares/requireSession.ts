@@ -1,9 +1,9 @@
-import type { NextFunction, Response } from 'express';
+import type { NextFunction, Response } from 'express'
 
-import ownerModel from '../models/OwnerModels';
-import studentModel from '../models/StudentModels';
-import { csrfHeaderMatches, parseSessionToken, readSessionCookie, type SessionRole } from '../lib/sessionToken';
-import type { AuthedRequest } from '../types/AuthRequest';
+import ownerModel from '../models/OwnerModels'
+import studentModel from '../models/StudentModels'
+import { csrfHeaderMatches, parseSessionToken, readSessionCookie, type SessionRole } from '../lib/sessionToken'
+import type { AuthedRequest } from '../types/AuthRequest'
 
 function isMutation(req: AuthedRequest) {
     const method = req.method.toUpperCase();

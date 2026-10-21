@@ -1,10 +1,10 @@
-import { useMemo, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
-import styled from 'styled-components';
+import { useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
+import styled from 'styled-components'
 
-import { useLanguage } from '../../contexts/LanguageContext';
-import type Owner from '../../types/Owner';
-import type Language from '../../types/Language';
+import { useLanguage } from '../../contexts/LanguageContext'
+import type Owner from '../../types/Owner'
+import type Language from '../../types/Language'
 
 const AdminOwnerSearchStyled = styled.div`
     min-width: 0;

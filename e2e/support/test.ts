@@ -1,10 +1,10 @@
-import { test as base, expect } from '@playwright/test';
-import type { Page } from '@playwright/test';
+import { test as base, expect } from '@playwright/test'
+import type { Page } from '@playwright/test'
 
-import type Owner from '../../src/types/Owner';
-import type Student from '../../src/types/Student';
-import { MockApi, mockApiFor } from './mockApi';
-import { ADMIN_ID, ADMIN_PASSWORD } from './constants';
+import type Owner from '../../src/types/Owner'
+import type Student from '../../src/types/Student'
+import { MockApi, mockApiFor } from './mockApi'
+import { ADMIN_ID, ADMIN_PASSWORD } from './constants'
 
 export class Dialogs {
     messages: string[] = [];
