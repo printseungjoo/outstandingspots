@@ -2,6 +2,6 @@
 
 import { MapPage } from './ui/templates/MapPage'
 
-export default function App() {
+export default function MapApp() {
     return <MapPage />
 }
