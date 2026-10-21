@@ -5,7 +5,6 @@ import { CatchAllClient } from './CatchAllClient'
 export function generateStaticParams() {
   return [
     { slug: [] },
-    { slug: ['stores'] },
     { slug: ['login'] },
     { slug: ['signup', 'store'] },
     { slug: ['signup', 'student'] },

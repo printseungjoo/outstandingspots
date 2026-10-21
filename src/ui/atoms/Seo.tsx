@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { usePathname } from 'next/navigation';
 
 import { useLanguage } from '../../contexts/LanguageContext';
 
@@ -64,7 +64,7 @@ function getSeo(pathname: string, language: 'kor' | 'eng') {
 }
 
 export function Seo() {
-    const { pathname } = useLocation();
+    const pathname = usePathname();
     const { language } = useLanguage();
 
     useEffect(() => {

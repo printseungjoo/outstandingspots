@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 
 import { AdminStoreSearch } from '../atoms/AdminStoreSearch';
 import { AdminStoreSearchByCategory } from '../atoms/AdminStoreSearchByCategory';
@@ -65,7 +65,7 @@ interface AdminStoreFilterBarProps {
 
 export function AdminStoreFilterBar({ searchValue, onChangeSearchValue, selectedCategory, onChangeSelectedCategory, showAddButton = true }: AdminStoreFilterBarProps) {
     const { language } = useLanguage();
-    const navigate = useNavigate();
+    const router = useRouter();
 
     return(
         <AdminStoreFilterBarStyled>
@@ -74,7 +74,7 @@ export function AdminStoreFilterBar({ searchValue, onChangeSearchValue, selected
             <CategoryAddRow>
                 <AdminStoreSearchByCategory selectedCategory = { selectedCategory } onChangeSelectedCategory = { onChangeSelectedCategory } />
                 {showAddButton ? (
-                    <ResponsiveAddButton type = 'button' onClick = {() => navigate('/admin/store/add')}>
+                    <ResponsiveAddButton type = 'button' onClick = {() => router.push('/admin/store/add')}>
                         + { language === 'eng' ? 'Add Store' : '매장 추가' }
                     </ResponsiveAddButton>
                 ) : null}

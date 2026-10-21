@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 
 import { useLanguage } from '../../contexts/LanguageContext';
 import { resolvePhotoUrl } from '../../lib/storesApi';
@@ -158,7 +158,7 @@ interface StoresTableProps {
 
 export function StoresTable({ stores }: StoresTableProps) {
     const { language } = useLanguage();
-    const navigate = useNavigate();
+    const router = useRouter();
 
     return(
         <>
@@ -183,7 +183,7 @@ export function StoresTable({ stores }: StoresTableProps) {
                                 <Td> { language === 'eng' ? store.theme?.eng : store.theme?.kor } </Td>
                                 <Td> { language === 'eng' ? store.discount.eng : store.discount.kor } </Td>
                                 <Td>
-                                    <ActionButton type = 'button' onClick = {() => navigate(`/?store=${store._id}`)}>
+                                    <ActionButton type = 'button' onClick = {() => router.push(`/?store=${store._id}`)}>
                                         { language === 'eng' ? 'View' : '보기' }
                                     </ActionButton>
                                 </Td>
@@ -204,7 +204,7 @@ export function StoresTable({ stores }: StoresTableProps) {
                             </CardInfo>
                         </CardTop>
                         <CardActions>
-                            <CardActionButton type = 'button' onClick = {() => navigate(`/?store=${store._id}`)}>
+                            <CardActionButton type = 'button' onClick = {() => router.push(`/?store=${store._id}`)}>
                                 { language === 'eng' ? 'View' : '보기' }
                             </CardActionButton>
                         </CardActions>

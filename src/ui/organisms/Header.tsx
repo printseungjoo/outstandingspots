@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useLocation } from 'react-router-dom';
+import { usePathname } from 'next/navigation';
 
 import { HeaderTitle } from '../molecules/HeaderTitle';
 import type Language from '../../types/Language';
@@ -93,7 +93,7 @@ interface HeaderProps {
 }
 
 export function Header({ language, onChangeLanguage }: HeaderProps) {
-    const { pathname } = useLocation();
+    const pathname = usePathname();
     const { isAdmin } = useAdminAuth();
     const { isOwner } = useOwnerAuth();
     const { isStudent } = useStudentAuth();

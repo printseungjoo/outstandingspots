@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 const NavBarStyled = styled(Link)`
     height: 100%;
@@ -41,7 +41,7 @@ interface NavBarProps {
 
 export function NavBar({ navName, clicked, link, onClick }: NavBarProps) {
     return(
-        <NavBarStyled to = { link } onClick = { onClick }>
+        <NavBarStyled href = { link } onClick = { onClick }>
             <NavBarText $clicked = { clicked }> { navName } </NavBarText>
         </NavBarStyled>
     )

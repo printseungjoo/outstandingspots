@@ -1,4 +1,5 @@
-import { Link, useLocation } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import styled from 'styled-components';
 
 import { useAdminAuth } from '../../contexts/AdminAuthContext';
@@ -66,7 +67,7 @@ const Icon = styled.img`
 `;
 
 export function MobileNavBar() {
-    const { pathname } = useLocation();
+    const pathname = usePathname();
     const { isAdmin } = useAdminAuth();
     const { isOwner } = useOwnerAuth();
     const { isStudent } = useStudentAuth();
@@ -83,13 +84,13 @@ export function MobileNavBar() {
             <nav id = 'navbar'>
                 <NavUl>
                     <NavLi>
-                        <Link to = { myPageLink }> <Icon src = { myPageIcon } alt = 'My page icon'/> </Link>
+                        <Link href = { myPageLink }> <Icon src = { myPageIcon } alt = 'My page icon'/> </Link>
                     </NavLi>
                     <NavLi>
-                        <Link to = '/'> <Icon src = { mapIcon } alt = 'Map page icon'/> </Link>
+                        <Link href = '/'> <Icon src = { mapIcon } alt = 'Map page icon'/> </Link>
                     </NavLi>
                     <NavLi>
-                        <Link to = '/stores'> <Icon src = { storesIcon } alt = 'Store page icon'/> </Link>
+                        <Link href = '/stores'> <Icon src = { storesIcon } alt = 'Store page icon'/> </Link>
                     </NavLi>
                 </NavUl>
             </nav>
