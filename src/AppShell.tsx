@@ -63,26 +63,26 @@ export function AppShell({ children }: { children: ReactNode }) {
     }, []);
 
     return (
-        <LanguageProvider language = { language } setLanguage = { setLanguage }>
-            <AdminAuthProvider>
-                <OwnerAuthProvider>
-                <StudentAuthProvider>
-                    <StoresProvider>
-                    <CategoryProvider>
-                        <AppLayout>
-                            <Seo />
-                            <Header language = { language } onChangeLanguage = { setLanguage } />
-                            <RoutesArea>
-                                { (children) }
-                            </RoutesArea>
-                            <MobileNavBar />
-                            <Footer />
-                        </AppLayout>
-                    </CategoryProvider>
-                    </StoresProvider>
-                </StudentAuthProvider>
-                </OwnerAuthProvider>
-            </AdminAuthProvider>
-        </LanguageProvider>
+        <AppLayout>
+            <LanguageProvider language = { language } setLanguage = { setLanguage }>
+                <AdminAuthProvider>
+                    <OwnerAuthProvider>
+                        <StudentAuthProvider>
+                            <StoresProvider>
+                                <CategoryProvider>
+                                    <Seo />
+                                    <Header language = { language } onChangeLanguage = { setLanguage } />
+                                    <RoutesArea>
+                                        { (children) }
+                                    </RoutesArea>
+                                    <MobileNavBar />
+                                    <Footer />
+                                </CategoryProvider>
+                            </StoresProvider>
+                        </StudentAuthProvider>
+                    </OwnerAuthProvider>
+                </AdminAuthProvider>
+            </LanguageProvider>
+        </AppLayout>
     );
 }

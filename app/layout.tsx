@@ -63,11 +63,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     gtag('js', new Date());
                     gtag('config', 'G-GBE7VNK22K');
                 `}</Script>
-                <StyledComponentsRegistry>
+                <StyledComponentsRegistry>{(
                     <AppShell>
                         { (children) }
                     </AppShell>
-                </StyledComponentsRegistry>
+                )}</StyledComponentsRegistry>
             </body>
         </html>
     )
