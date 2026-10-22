@@ -15,12 +15,14 @@ import type Store from '../../types/Store'
 const StudentRecentTabStyled = styled.div`
     width: 100%;
     height: 100%;
+    min-height: 0;
     padding: 0.8rem 1.5rem;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
+    overflow: hidden;
 
     @media (max-width: 767px) {
         padding: 0.7rem 0.8rem 1rem;

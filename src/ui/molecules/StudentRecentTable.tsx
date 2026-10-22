@@ -8,6 +8,8 @@ import type Store from '../../types/Store'
 
 const TableWrap = styled.div`
     width: 100%;
+    flex: 1;
+    min-height: 0;
     overflow: auto;
 
     @media (max-width: 1024px) {
@@ -79,6 +81,9 @@ const CardList = styled.div`
 
     @media (max-width: 1024px) {
         display: flex;
+        flex: 1;
+        min-height: 0;
+        overflow: auto;
         padding-bottom: 1.5rem;
         box-sizing: border-box;
     }
