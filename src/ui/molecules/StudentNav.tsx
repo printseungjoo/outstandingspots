@@ -1,8 +1,9 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
+import styled from 'styled-components'
 
-import { useLanguage } from '../../contexts/LanguageContext';
-import { useStudentAuth } from '../../contexts/StudentAuthContext';
+import { useLanguage } from '../../contexts/LanguageContext'
+import { useStudentAuth } from '../../contexts/StudentAuthContext'
 
 const StudentNavStyled = styled.div`
     width: 13%;
@@ -144,9 +145,9 @@ const StudentLogoutButton = styled.button`
 `;
 
 export function StudentNav() {
-    const { pathname } = useLocation();
-    const navigate = useNavigate();
-    const { language } = useLanguage();
+    const pathname = usePathname();
+    const router = useRouter();
+    const { t } = useLanguage();
     const { logoutStudent } = useStudentAuth();
 
     const isFavoritesPage = pathname === '/student' || pathname === '/student/';
@@ -157,23 +158,23 @@ export function StudentNav() {
     return(
         <StudentNavStyled>
             <StudentNavTop>
-                <Text> { language === 'eng' ? 'My page' : '마이페이지' } </Text>
-                <StudentNavOption to = '/student' $selected = { isFavoritesPage }>
+                <Text> { t('myPage') } </Text>
+                <StudentNavOption href = '/student' $selected = { isFavoritesPage }>
                     <IconSlot> <Icon src = { favoritesIcon } alt = 'favorites icon'/> </IconSlot>
-                    { language === 'eng' ? 'Favorite stores' : '즐겨찾기한 매장' }
+                    { t('favoriteStores') }
                 </StudentNavOption>
-                <StudentNavOption to = '/student/recent' $selected = { pathname === '/student/recent' }>
+                <StudentNavOption href = '/student/recent' $selected = { pathname === '/student/recent' }>
                     <IconSlot> <SmallIcon src = { recentIcon } alt = 'recent icon'/> </IconSlot>
-                    { language === 'eng' ? 'Recently viewed' : '최근 본 매장' }
+                    { t('recentlyViewed') }
                 </StudentNavOption>
-                <StudentNavOption to = '/student/account' $selected = { pathname === '/student/account' }>
+                <StudentNavOption href = '/student/account' $selected = { pathname === '/student/account' }>
                     <IconSlot> <SmallIcon src = { accountIcon } alt = 'account icon'/> </IconSlot>
-                    { language === 'eng' ? 'Account Management' : '계정 관리' }
+                    { t('accountManagement') }
                 </StudentNavOption>
             </StudentNavTop>
             <StudentNavBottom>
-                <StudentLogoutButton onClick = {() => { logoutStudent(); navigate('/login'); }}>
-                    { language === 'eng' ? 'Logout' : '로그아웃' }
+                <StudentLogoutButton onClick = {() => { logoutStudent(); router.push('/login'); }}>
+                    { t('logout') }
                 </StudentLogoutButton>
             </StudentNavBottom>
         </StudentNavStyled>

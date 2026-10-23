@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import { useLanguage } from '../../contexts/LanguageContext';
+import { useLanguage } from '../../contexts/LanguageContext'
 
 interface StudentFavoritesNumberProps {
     count: number;
@@ -36,11 +36,11 @@ const NumberText = styled.p`
 `;
 
 export function StudentFavoritesNumber({ count }: StudentFavoritesNumberProps) {
-    const { language } = useLanguage();
+    const { t } = useLanguage();
 
     return(
         <StudentFavoritesNumberStyled>
-            <Text> { language === 'eng' ? 'Favorite stores number' : '즐겨찾기한 매장 개수' } </Text>
+            <Text> { t('favoriteStoresNumber') } </Text>
             <NumberText> { count } </NumberText>
         </StudentFavoritesNumberStyled>
     )

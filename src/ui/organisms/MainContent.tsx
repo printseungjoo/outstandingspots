@@ -1,21 +1,22 @@
-import styled, { css, keyframes } from 'styled-components';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { getT } from '../../i18n'
+import styled, { css, keyframes } from 'styled-components'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 
-import { AllCategories } from '../molecules/AllCategories';
-import { OptionGroups } from '../molecules/OptionGroups';
-import { Map } from './Map';
-import { StoreInformationTab } from '../organisms/StoreInformationTab';
-import type Store from '../../types/Store';
-import { WebsiteInformationTab } from './WebsiteInformationTab';
-import { AllStoresTab } from './AllStoresTab';
-import type Language from '../../types/Language';
-import { SearchBar } from '../molecules/SearchBar';
-import { LanguageButtons } from '../molecules/LanguageButtons';
-import { SUCCESS_MESSAGE, useStores } from '../../contexts/StoresContext';
-import { useCategories } from '../../contexts/CategoryContext';
-import { useStudentAuth } from '../../contexts/StudentAuthContext';
-import { addStudentRecentView } from '../../lib/studentsApi';
+import { AllCategories } from '../molecules/AllCategories'
+import { OptionGroups } from '../molecules/OptionGroups'
+import { Map } from './Map'
+import { StoreInformationTab } from '../organisms/StoreInformationTab'
+import type Store from '../../types/Store'
+import { WebsiteInformationTab } from './WebsiteInformationTab'
+import { AllStoresTab } from './AllStoresTab'
+import type Language from '../../types/Language'
+import { SearchBar } from '../molecules/SearchBar'
+import { LanguageButtons } from '../molecules/LanguageButtons'
+import { SUCCESS_MESSAGE, useStores } from '../../contexts/StoresContext'
+import { useCategories } from '../../contexts/CategoryContext'
+import { useStudentAuth } from '../../contexts/StudentAuthContext'
+import { addStudentRecentView } from '../../lib/studentsApi'
 
 const MainContentStyled = styled.div`
     position: relative;
@@ -206,11 +207,12 @@ interface MainContentProps {
 }
 
 export function MainContent({ className, language, onChangeLanguage }: MainContentProps) {
+    const t = getT(language);
     const { stores, loadingState } = useStores();
     const { categories } = useCategories();
     const { student, isStudent, updateStudent, prependRecentView } = useStudentAuth();
     const recentViewQueueRef = useRef(Promise.resolve());
-    const [searchParams] = useSearchParams();
+    const searchParams = useSearchParams();
     const selectedStoreId = searchParams.get('store');
     
     const [selectedStore, setSelectedStore] = useState<Store | null>(null);
@@ -257,9 +259,7 @@ export function MainContent({ className, language, onChangeLanguage }: MainConte
 
     const handleToggleFavorites = useCallback(() => {
         if (!favoritesOnly && !isStudent) {
-            alert(language === 'eng'
-                ? 'Please log in as a student to see favorite stores.'
-                : '즐겨찾기한 매장은 학생 로그인 후 볼 수 있습니다.');
+            alert(t('pleaseLogInAsAStudentToSeeFavoriteStores'));
             return;
         }
         setFavoritesOnly((current) => !current);
@@ -305,19 +305,19 @@ export function MainContent({ className, language, onChangeLanguage }: MainConte
             <UpperContentDiv>
                 <OptionGroupsPlus onOpenWebsiteInfo = {() => setIsWebsiteInfoOpen(true)} onMyLocation = { handleMyLocation }
                     onToggleFavorites = { handleToggleFavorites } favoritesOnly = { favoritesOnly } />
-                <SearchBar language = { language } stores = { stores } onSelectStore = { handleSelectStore } engPlaceholder = 'Search by store name or theme.' korPlaceholder = '매장 이름 혹은 테마로 검색해보세요.'/>
+                <SearchBar language = { language } stores = { stores } onSelectStore = { handleSelectStore } placeholder = { t('searchByStoreNameOrTheme') }/>
                 <LanguageButtonsPlus language = { language } onChangeLanguage = { onChangeLanguage } />
             </UpperContentDiv>
             {isStoreListOpen && (<AllStoresTab onOpen = { handleSelectStore } onClose = {() => setIsStoreListOpen(false)} language = { language } stores = { stores } />)}
             <BottomContentDiv>
                 {isLocating && (
                     <LocationNotice>
-                        {language === 'eng' ? 'Moving to your location' : '내 위치로 이동 중입니다'}
+                        {t('movingToYourLocation')}
                     </LocationNotice>
                 )}
                 {userLocation && !isLocating && (
                     <SchoolReturnButton type = "button" onClick = { handleReturnToSchool }>
-                        {language === 'eng' ? 'Return to school' : '학교 위치로 이동'}
+                        {t('returnToSchool')}
                     </SchoolReturnButton>
                 )}
                 {isLoadingVisible && 

@@ -1,13 +1,15 @@
-import { useCallback, useEffect, useState } from 'react';
-import styled from 'styled-components';
+'use client'
 
-import { AdminOwnersManagementTop } from '../molecules/AdminOwnersManagementTop';
-import { AdminOwnersFilterBar } from '../molecules/AdminOwnersFilterBar';
-import { AdminOwnersTable } from '../molecules/AdminOwnersTable';
-import { fetchOwners, patchOwnerStatus } from '../../lib/ownersApi';
-import { useLanguage } from '../../contexts/LanguageContext';
-import type Owner from '../../types/Owner';
-import type { OwnerStatus } from '../../types/Owner';
+import { useCallback, useEffect, useState } from 'react'
+import styled from 'styled-components'
+
+import { AdminOwnersManagementTop } from '../molecules/AdminOwnersManagementTop'
+import { AdminOwnersFilterBar } from '../molecules/AdminOwnersFilterBar'
+import { AdminOwnersTable } from '../molecules/AdminOwnersTable'
+import { fetchOwners, patchOwnerStatus } from '../../lib/ownersApi'
+import { useLanguage } from '../../contexts/LanguageContext'
+import type Owner from '../../types/Owner'
+import type { OwnerStatus } from '../../types/Owner'
 
 const AdminOwnersManagementTabStyled = styled.div`
     width: 100%;
@@ -50,7 +52,7 @@ const SectionCount = styled.span`
 `;
 
 export function AdminOwnersManagementTab() {
-    const { language } = useLanguage();
+    const { t } = useLanguage();
     const [searchValue, setSearchValue] = useState('');
     const [owners, setOwners] = useState<Owner[]>([]);
     const [loading, setLoading] = useState(true);
@@ -72,7 +74,7 @@ export function AdminOwnersManagementTab() {
             .catch((error) => {
                 console.error(error);
                 if (!cancelled) {
-                    alert(language === 'eng' ? 'Failed to load owners.' : '사장님 목록을 불러오지 못했습니다.');
+                    alert(t('failedToLoadOwners'));
                 }
             })
             .finally(() => {
@@ -95,7 +97,7 @@ export function AdminOwnersManagementTab() {
             await loadOwners();
         } catch (error) {
             console.error(error);
-            alert(language === 'eng' ? 'Failed to update the owner.' : '사장님 상태 변경에 실패했습니다.');
+            alert(t('failedToUpdateTheOwner'));
         }
     }
 
@@ -105,7 +107,7 @@ export function AdminOwnersManagementTab() {
             <AdminOwnersFilterBar searchValue = { searchValue } onChangeSearchValue = { setSearchValue } owners = { owners } />
             <Section>
                 <SectionTitleRow>
-                    <SectionTitle> {language === 'eng' ? 'Pending applications' : '가입 신청 대기'} </SectionTitle>
+                    <SectionTitle> {t('pendingApplications')} </SectionTitle>
                     <SectionCount> { loading ? '-' : pendingOwners.length } </SectionCount>
                 </SectionTitleRow>
                 <AdminOwnersTable variant = 'pending' owners = { pendingOwners }
@@ -114,7 +116,7 @@ export function AdminOwnersManagementTab() {
             </Section>
             <Section>
                 <SectionTitleRow>
-                    <SectionTitle> {language === 'eng' ? 'Approved owners' : '승인된 사장님'} </SectionTitle>
+                    <SectionTitle> {t('approvedOwners')} </SectionTitle>
                     <SectionCount> { loading ? '-' : approvedOwners.length } </SectionCount>
                 </SectionTitleRow>
                 <AdminOwnersTable variant = 'approved' owners = { approvedOwners }
@@ -122,7 +124,7 @@ export function AdminOwnersManagementTab() {
             </Section>
             <Section>
                 <SectionTitleRow>
-                    <SectionTitle> {language === 'eng' ? 'Rejected owners' : '거절된 사장님'} </SectionTitle>
+                    <SectionTitle> {t('rejectedOwners')} </SectionTitle>
                     <SectionCount> { loading ? '-' : rejectedOwners.length } </SectionCount>
                 </SectionTitleRow>
                 <AdminOwnersTable variant = 'rejected' owners = { rejectedOwners }

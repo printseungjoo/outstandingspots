@@ -1,6 +1,7 @@
-import { clearCsrfToken, takeCsrfToken, withApi } from './csrf';
+import { clearCsrfToken, takeCsrfToken, withApi } from './csrf'
+import { API_URL } from './constants'
 
-const baseUrl = (import.meta.env.VITE_API_URL as string | undefined) ?? '';
+const baseUrl = API_URL;
 
 export async function loginAdmin(id: string, password: string) {
     const response = await fetch(`${baseUrl}/admin/login`, withApi({

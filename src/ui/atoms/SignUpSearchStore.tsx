@@ -1,12 +1,12 @@
-import { useMemo, useRef, useState } from 'react';
-import type { RefObject } from 'react';
-import { createPortal } from 'react-dom';
-import styled from 'styled-components';
+import { useMemo, useRef, useState } from 'react'
+import type { RefObject } from 'react'
+import { createPortal } from 'react-dom'
+import styled from 'styled-components'
 
-import { useLanguage } from '../../contexts/LanguageContext';
-import { useStores } from '../../contexts/StoresContext';
-import { storeFullName } from '../../lib/resolveStoreId';
-import type Store from '../../types/Store';
+import { useLanguage } from '../../contexts/LanguageContext'
+import { useStores } from '../../contexts/StoresContext'
+import { storeFullName } from '../../lib/resolveStoreId'
+import type Store from '../../types/Store'
 
 const SignUpSearchStoreStyled = styled.div`
     box-sizing: border-box;
@@ -144,7 +144,7 @@ export function SignUpSearchStore({ storeInputRef, onQueryChange }: {
     storeInputRef?: RefObject<HTMLInputElement | null>;
     onQueryChange?: (value: string) => void;
 }) {
-    const { language } = useLanguage();
+    const { language, t } = useLanguage();
     const { stores } = useStores();
     const [query, setQuery] = useState<string>('');
     const [open, setOpen] = useState<boolean>(false);
@@ -197,13 +197,13 @@ export function SignUpSearchStore({ storeInputRef, onQueryChange }: {
 
     return(
         <SignUpSearchStoreStyled>
-            <Title> { language === 'eng' ? 'Store' : '가게 선택' } </Title>
+            <Title> { t('store') } </Title>
             <InputFieldDiv>
                 <FieldWrap>
                     <InputField ref = { fieldRef }>
                         <StoreInput name = "storeQuery" type = "text" defaultValue = ""
                             autoComplete = "off" ref = { setInputNode }
-                            placeholder = { language === 'eng' ? 'Enter the store name and branch.' : '매장명과 지점명을 입력해주세요.' }
+                            placeholder = { t('enterTheStoreNameAndBranch') }
                             onInput = {(e) => handleQuery(e.currentTarget.value)}
                             onChange = {(e) => handleQuery(e.currentTarget.value)}
                             onCompositionEnd = {(e) => handleQuery(e.currentTarget.value)}
@@ -239,8 +239,8 @@ export function SignUpSearchStore({ storeInputRef, onQueryChange }: {
                             {matches.length === 0 ? (
                                 <EmptyItem>
                                     {stores.length === 0
-                                        ? (language === 'eng' ? 'No stores loaded.' : '가게 목록을 불러오지 못했습니다.')
-                                        : (language === 'eng' ? 'No matching store.' : '일치하는 가게가 없습니다.')}
+                                        ? (t('noStoresLoaded'))
+                                        : (t('noMatchingStore'))}
                                 </EmptyItem>
                             ) : matches.map((store) => (
                                 <DropdownItem key = { store._id } type = "button"

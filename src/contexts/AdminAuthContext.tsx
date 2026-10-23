@@ -1,7 +1,7 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import type { ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react'
+import type { ReactNode } from 'react'
 
-import { fetchAdminSession, logoutAdminSession } from '../lib/adminApi';
+import { fetchAdminSession, logoutAdminSession } from '../lib/adminApi'
 
 interface AdminAuthContextValue {
     isAdmin: boolean;
@@ -47,7 +47,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
 
     return (
         <AdminAuthContext.Provider value = {{ isAdmin, isCheckingAdmin, loginAdmin, logoutAdmin }}>
-            {children}
+            { children }
         </AdminAuthContext.Provider>
     )
 }

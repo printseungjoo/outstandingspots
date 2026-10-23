@@ -1,4 +1,4 @@
-import type { Request } from 'express';
+import type { Request } from 'express'
 
 export const ALLOWED_ORIGINS = [
     'https://outstandingspots.com',

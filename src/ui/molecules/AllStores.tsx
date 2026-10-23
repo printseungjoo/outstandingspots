@@ -1,8 +1,10 @@
-import styled from 'styled-components';
-import { useMemo } from 'react';
+import { localeCode, localized, localizedName } from '../../lib/localized'
+import { getT } from '../../i18n'
+import styled from 'styled-components'
+import { useMemo } from 'react'
 
-import type Store from '../../types/Store';
-import type Language from '../../types/Language';
+import type Store from '../../types/Store'
+import type Language from '../../types/Language'
 
 const AllStore = styled.div`
     width: 25%;
@@ -62,28 +64,29 @@ interface AllStoresProps {
 }
 
 export function AllStores({ onOpen, language, stores }: AllStoresProps) {
+    const t = getT(language);
 
     const sortedStores = useMemo(() => {
         return [...stores].sort((a, b) => {
             const aName =
-                language === 'eng' ? `${a.name.eng} ${a.branch.eng}` : `${a.name.kor} ${a.branch.kor}`;
+                localizedName(a, language);
             const bName =
-                language === 'eng' ? `${b.name.eng} ${b.branch.eng}` : `${b.name.kor} ${b.branch.kor}`;
-            return language === 'eng' ? aName.localeCompare(bName, 'en') : aName.localeCompare(bName, 'ko');
+                localizedName(b, language);
+            return aName.localeCompare(bName, localeCode(language));
         });
     }, [stores, language]);
 
     return (
         <AllStore>
             <Title>
-                {language === 'eng' ? 'View all stores' : '전체 매장 확인하기'}
+                {t('viewAllStores')}
             </Title>
             <Detail>
-                {language === 'eng' ? 'It is arranged in alphabetical order.' : '가나다 순으로 정렬되어 있습니다.'} <br/> {language === 'eng' ? 'Scroll through to find out more!' : '스크롤을 통해 더 확인하세요!'}
+                {t('itIsArrangedInAlphabeticalOrder')} <br/> {t('scrollThroughToFindOutMore')}
             </Detail>
             {sortedStores.map((store) => (
                 <StoreButton key = {store._id} onClick = {() => {onOpen?.(store);}}>
-                    {language === 'eng' ? store.name.eng : store.name.kor} {language === 'eng' ? store.branch.eng : store.branch.kor}
+                    {localized(store.name, language)} {localized(store.branch, language)}
                 </StoreButton>
             ))}
         </AllStore>

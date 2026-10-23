@@ -1,6 +1,6 @@
-import type { NextFunction, Request, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express'
 
-import { firebaseAdminAuth } from '../firebase/firebaseAdmin';
+import { firebaseAdminAuth } from '../firebase/firebaseAdmin'
 
 export interface FirebaseRequest extends Request {
     firebaseUser?: {

@@ -1,6 +1,7 @@
-import styled from 'styled-components';
+import { getT } from '../../i18n'
+import styled from 'styled-components'
 
-import type Language from '../../types/Language';
+import type Language from '../../types/Language'
 
 const LogoImage = styled.img`
     margin-top: 3vh;
@@ -95,40 +96,33 @@ interface WebsiteInformationProps {
 }
 
 export function WebsiteInformation({ language }: WebsiteInformationProps) {
+    const t = getT(language);
     return (
         <WebsiteInformationStyled>
             <LogoImage src = "outstanding_logo.jpg" alt = "outstanding logo"/>
             <Title>
-                {language === 'eng' ? "What is 'Outstanding Spots'?" : 'Outstanding Spots란?'}
+                {t('whatIsOutstandingSpots')}
             </Title>
             <Detail>
                 <ContentPadding>
-                    {language === 'eng' ? (
-                        <>
-                            Outstanding Spots is a web service for SUNY Korea students to find out the affiliate stores near SUNY Korea.
-                            <br />
-                            You can easily find out the store information and benefits through Outstanding Spots!
-                        </>
-                    ) : (
-                        <>
-                            Outstanding Spots는 한국뉴욕주립대학교 학생분들을 위한 제휴 매장 안내 웹서비스입니다.
-                            <br />
-                            학교와 제휴된 다양한 매장을 한눈에 확인하고, 학생들에게 제공되는 할인과 특별 혜택을 간편하게 찾아보세요!
-                        </>
-                    )}
+                    <>
+                        { t('whatIsOutstandingSpotsBody1') }
+                        <br />
+                        { t('whatIsOutstandingSpotsBody2') }
+                    </>
                 </ContentPadding>
             </Detail>
             <OptionButton href = 'https://form.naver.com/response/6ZkQLf7FKUMSGLv4rgprCw' target = "_blank" rel="noopener noreferrer">
-                {language === 'eng' ? 'Apply for Affiliate Store' : '제휴 매장 신청하기'}
+                {t('applyForAffiliateStore')}
             </OptionButton>
             <OptionButton href = 'https://www.instagram.com/sunykorea_partnerships?igsh=MXdqZGJyZnRwMTMydg==' target = "_blank" rel="noopener noreferrer">
-                {language === 'eng' ? 'Instagram' : '인스타그램'}
+                {t('instagram')}
             </OptionButton>
             <OptionButton href = 'https://pf.kakao.com/_EyprG' target = "_blank" rel="noopener noreferrer">
-                {language === 'eng' ? 'KakaoTalk' : '카카오톡'}
+                {t('kakaotalk')}
             </OptionButton>
             <OptionButton href = 'https://docs.google.com/forms/d/e/1FAIpQLSesVboW69zSeb3O8Q1ZJwTF46rFmDj7v-SyL5S7NbLpj0Ql5Q/viewform' target = "_blank" rel="noopener noreferrer">
-                {language === 'eng' ? 'Contract the developer' : '개발자에게 문의하기'}
+                {t('contractTheDeveloper')}
             </OptionButton>
         </WebsiteInformationStyled>
     )

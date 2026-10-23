@@ -1,9 +1,11 @@
-import styled from 'styled-components';
+import { localized } from '../../lib/localized'
+import { getT } from '../../i18n'
+import styled from 'styled-components'
 
-import { CategoryButtons } from './CategoryButtons';
-import type Language from '../../types/Language';   
-import type Category from '../../types/Category';
-import { OpenCategoryButton } from './OpenCategoryButton';
+import { CategoryButtons } from './CategoryButtons'
+import type Language from '../../types/Language'
+import type Category from '../../types/Category'
+import { OpenCategoryButton } from './OpenCategoryButton'
 
 const AllCategory = styled.div`
     display: flex;
@@ -39,11 +41,12 @@ interface AllCategoriesProps {
 }
 
 export function AllCategories({ className, onRemoveCategory, onSelectCategory, language, selectedCategory, categories }: AllCategoriesProps) {
+    const t = getT(language);
     return (
         <AllCategory className = { className }>
-                <OpenCategoryButton onRemoveCategory = { onRemoveCategory } onSelectCategory = { onSelectCategory } key = "open" categoryNameProp = { language === 'eng' ? "📢open" : "📢영업중" } language = { language } categoryKoreanName = { "📢영업중" } selectedCategory = { selectedCategory } />
+                <OpenCategoryButton onRemoveCategory = { onRemoveCategory } onSelectCategory = { onSelectCategory } key = "open" categoryNameProp = { t('open2') } language = { language } categoryKoreanName = { "📢영업중" } selectedCategory = { selectedCategory } />
                 {categories.map((category) => (
-                <CategoryButtons onRemoveCategory = { onRemoveCategory } onSelectCategory = { onSelectCategory } key = { category._id } categoryNameProp = { language === 'eng' ? category.name.eng : category.name.kor } language = { language } categoryKoreanName = { category.name.kor } selectedCategory = { selectedCategory }/>
+                <CategoryButtons onRemoveCategory = { onRemoveCategory } onSelectCategory = { onSelectCategory } key = { category._id } categoryNameProp = { localized(category.name, language) } language = { language } categoryKoreanName = { category.name.kor } selectedCategory = { selectedCategory }/>
             ))}
         </AllCategory>
     )

@@ -1,4 +1,4 @@
-import { cloudinaryCloudName } from './cloudinaryUpload';
+import { cloudinaryCloudName } from './cloudinaryUpload'
 
 const JUNK = new Set([
     'asd',
@@ -16,7 +16,7 @@ type Localized = {
 };
 
 function asString(value: unknown) {
-    return typeof value === 'string' ? value.trim() : '';
+    return typeof value === 'string' ? value.trim() : ''
 }
 
 function isJunk(value: string) {
@@ -95,7 +95,7 @@ function isValidNaverMap(value: string) {
 function isValidCoord(lat: number, lon: number) {
     return Number.isFinite(lat) && Number.isFinite(lon)
         && lat >= 33 && lat <= 39
-        && lon >= 124 && lon <= 132;
+        && lon >= 124 && lon <= 132
 }
 
 export type StoreWrite = {

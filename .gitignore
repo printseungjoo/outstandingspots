@@ -23,6 +23,12 @@ dist-ssr
 *.sln
 *.sw?
 
+test-results
+playwright-report
+blob-report
+  
 .env
 .vercel
 server/uploads
+.next
+out

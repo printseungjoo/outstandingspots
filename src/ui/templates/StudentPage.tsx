@@ -1,7 +1,7 @@
-import styled from 'styled-components';
-import { Outlet } from 'react-router-dom';
+import type { ReactNode } from 'react'
+import styled from 'styled-components'
 
-import { StudentNav } from '../molecules/StudentNav';
+import { StudentNav } from '../molecules/StudentNav'
 
 const StudentPageStyled = styled.div`
     width: 100%;
@@ -30,12 +30,12 @@ const StudentContent = styled.div`
     }
 `;
 
-export function StudentPage() {
+export function StudentPage({ children }: { children: ReactNode }) {
     return(
         <StudentPageStyled>
             <StudentNav />
             <StudentContent>
-                <Outlet />
+                { (children) }
             </StudentContent>
         </StudentPageStyled>
     )

@@ -1,7 +1,7 @@
-import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components'
+import { useRouter } from 'next/navigation'
 
-import { useLanguage } from '../../contexts/LanguageContext';
+import { useLanguage } from '../../contexts/LanguageContext'
 
 const AdminStoreManagementTopStyled = styled.div`
     width: 100%;
@@ -43,17 +43,17 @@ const AddButton = styled.button`
 `;
 
 export function AdminStoreManagementTop() {
-    const { language } = useLanguage();
-    const navigate = useNavigate();
+    const { t } = useLanguage();
+    const router = useRouter();
     
     return(
         <AdminStoreManagementTopStyled>
             <TitleDiv>
-                <BoldText> {language === 'eng' ? 'Stores Management' : '매장 관리'} </BoldText>
-                <SubText> {language === 'eng' ? 'Manage all stores and add, edit, delete them.' : '전체 매장을 관리하고 추가, 수정, 삭제할 수 있습니다.'} </SubText>
+                <BoldText> {t('storesManagement')} </BoldText>
+                <SubText> {t('manageAllStoresAndAddEditDeleteThem')} </SubText>
             </TitleDiv>
             <AddButtonDiv>
-                <AddButton onClick = {() => navigate('/admin/store/add')}> + {language === 'eng' ? 'Add Store' : '매장 추가'} </AddButton>
+                <AddButton onClick = {() => router.push('/admin/store/add')}> + {t('addStore')} </AddButton>
             </AddButtonDiv>
         </AdminStoreManagementTopStyled>
     )

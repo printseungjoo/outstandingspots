@@ -1,7 +1,7 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import { useLanguage } from '../../contexts/LanguageContext';
-import { useStores } from '../../contexts/StoresContext';
+import { useLanguage } from '../../contexts/LanguageContext'
+import { useStores } from '../../contexts/StoresContext'
 
 const StoresNumberStyled = styled.div`
     min-width: 0;
@@ -33,12 +33,12 @@ const StoresNumberText = styled.p`
 `;
 
 export function StoresNumber() {
-    const { language } = useLanguage();
+    const { t } = useLanguage();
     const { stores } = useStores();
 
     return(
         <StoresNumberStyled>
-            <Text> {language === 'eng' ? 'Total stores number' : '전체 매장 개수'} </Text>
+            <Text> {t('totalStoresNumber')} </Text>
             <StoresNumberText> { stores.length } </StoresNumberText>
         </StoresNumberStyled>
     )

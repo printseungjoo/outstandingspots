@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 const Category = styled.button<{ $clicked: boolean }>`
     border-radius: 0;

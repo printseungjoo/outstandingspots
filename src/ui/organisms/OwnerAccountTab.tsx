@@ -1,17 +1,20 @@
-import { PhoneAuthProvider, RecaptchaVerifier, signInWithCredential, signInWithPhoneNumber, updatePhoneNumber, type ConfirmationResult } from 'firebase/auth';
-import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+'use client'
 
-import { byPrefixAndName } from '../../icon/icons';
-import { firebaseAuth } from '../../firebase/firebase';
-import { useLanguage } from '../../contexts/LanguageContext';
-import { useOwnerAuth } from '../../contexts/OwnerAuthContext';
-import { useStores } from '../../contexts/StoresContext';
-import { convertPhoneToE164, getConfirmErrorMessage, getFirebaseErrorCode, getLocalhostRedirectUrl, getSendErrorMessage, isLocalhostHostname, isValidKoreanPhone } from './PhoneVerification';
-import { deleteOwner, isValidOwnerPassword, loginOwner, OwnerLoginError, patchOwnerName, patchOwnerPassword, patchOwnerPhone } from '../../lib/ownersApi';
-import { ownerStoreLabel } from '../atoms/AdminOwnerSearch';
+import { PhoneAuthProvider, RecaptchaVerifier, signInWithCredential, signInWithPhoneNumber, updatePhoneNumber, type ConfirmationResult } from 'firebase/auth'
+import { useEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import styled from 'styled-components'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
+import { byPrefixAndName } from '../../icon/icons'
+import { firebaseAuth } from '../../firebase/firebase'
+import { useLanguage } from '../../contexts/LanguageContext'
+import { useOwnerAuth } from '../../contexts/OwnerAuthContext'
+import { useStores } from '../../contexts/StoresContext'
+import { convertPhoneToE164, getConfirmErrorMessage, getFirebaseErrorCode, getLocalhostRedirectUrl, getSendErrorMessage, isLocalhostHostname, isValidKoreanPhone } from './PhoneVerification'
+import { deleteOwner, isValidOwnerPassword, loginOwner, OwnerLoginError, patchOwnerName, patchOwnerPassword, patchOwnerPhone } from '../../lib/ownersApi'
+import { ownerStoreLabel } from '../atoms/AdminOwnerSearch'
+import { localeCode, localizedName } from '../../lib/localized'
 
 const Page = styled.div`
     width: 100%;
@@ -457,15 +460,15 @@ const WithdrawActions = styled.div`
 `;
 
 export function OwnerAccountTab() {
-    const { language } = useLanguage();
+    const { language, t } = useLanguage();
     const { owner, updateOwner, logoutOwner } = useOwnerAuth();
     const { stores } = useStores();
-    const navigate = useNavigate();
+    const router = useRouter();
 
     const store = stores.find((item) => item._id === owner?.storeId);
     const storeLabel = owner
         ? (store
-            ? (language === 'eng' ? `${store.name.eng} ${store.branch.eng}`.trim() : `${store.name.kor} ${store.branch.kor}`.trim())
+            ? (localizedName(store, language))
             : ownerStoreLabel(owner, language))
         : '';
 
@@ -496,7 +499,7 @@ export function OwnerAccountTab() {
     }, []);
 
     useEffect(() => {
-        firebaseAuth.languageCode = language === 'eng' ? 'en' : 'ko';
+        firebaseAuth.languageCode = localeCode(language);
     }, [language]);
 
     useEffect(() => {
@@ -534,7 +537,7 @@ export function OwnerAccountTab() {
     async function handleSaveName() {
         const nextName = nameValue.trim();
         if (!nextName) {
-            alert(language === 'eng' ? 'Please enter your name.' : '이름을 입력해주세요.');
+            alert(t('pleaseEnterYourName'));
             return;
         }
         setSavingName(true);
@@ -544,7 +547,7 @@ export function OwnerAccountTab() {
             setEditingName(false);
         } catch (error) {
             console.error(error);
-            alert(language === 'eng' ? 'Failed to update the name.' : '이름 수정에 실패했습니다.');
+            alert(t('failedToUpdateTheName'));
         } finally {
             setSavingName(false);
         }
@@ -554,14 +557,12 @@ export function OwnerAccountTab() {
         if (isLocalhostHostname()) {
             sessionStorage.setItem('os-pending-phone', newPhone);
             const nextUrl = getLocalhostRedirectUrl();
-            alert(language === 'eng'
-                ? `Firebase phone auth does not work on localhost. Open ${nextUrl}`
-                : `Firebase 전화번호 인증은 localhost에서 동작하지 않습니다. ${nextUrl} 로 열어 주세요.`);
+            alert(t('firebasePhoneAuthLocalhost', { url: nextUrl }));
             window.location.replace(nextUrl);
             return;
         }
         if (!isValidKoreanPhone(newPhone)) {
-            alert(language === 'eng' ? 'Enter a valid Korean number.' : '올바른 전화번호를 입력해주세요.');
+            alert(t('enterAValidKoreanNumber'));
             return;
         }
         try {
@@ -569,7 +570,7 @@ export function OwnerAccountTab() {
             const result = await signInWithPhoneNumber(firebaseAuth, convertPhoneToE164(newPhone), getRecaptchaVerifier());
             confirmationResultRef.current = result;
             setPhoneStep(2);
-            alert(language === 'eng' ? 'The verification code has been sent.' : '인증번호가 전송되었습니다.');
+            alert(t('theVerificationCodeHasBeenSent'));
         } catch (error) {
             console.error(error);
             resetRecaptchaVerifier();
@@ -582,7 +583,7 @@ export function OwnerAccountTab() {
     async function confirmPhoneCode() {
         const code = verifyCode.trim();
         if (!code) {
-            alert(language === 'eng' ? 'Please enter the verification code.' : '인증번호를 입력해주세요.');
+            alert(t('pleaseEnterTheVerificationCode'));
             return;
         }
         try {
@@ -591,7 +592,7 @@ export function OwnerAccountTab() {
             if (firebaseAuth.currentUser?.phoneNumber !== expectedPhone) {
                 const confirmation = confirmationResultRef.current;
                 if (!confirmation) {
-                    alert(language === 'eng' ? 'Please request a verification code first.' : '먼저 인증번호를 받아 주세요.');
+                    alert(t('pleaseRequestAVerificationCodeFirst'));
                     return;
                 }
                 const credential = PhoneAuthProvider.credential(confirmation.verificationId, code);
@@ -612,7 +613,7 @@ export function OwnerAccountTab() {
             }
             const user = firebaseAuth.currentUser;
             if (!user) {
-                throw new Error(language === 'eng' ? 'Phone verification failed.' : '전화번호 인증에 실패했습니다.');
+                throw new Error(t('phoneVerificationFailed'));
             }
             const idToken = await user.getIdToken(true);
             const updated = await patchOwnerPhone(signedInOwner._id, idToken);
@@ -628,17 +629,15 @@ export function OwnerAccountTab() {
 
     async function handleChangePassword() {
         if (!currentPassword || !newPassword || !confirmPassword) {
-            alert(language === 'eng' ? 'Please fill in all password fields.' : '비밀번호를 모두 입력해주세요.');
+            alert(t('pleaseFillInAllPasswordFields'));
             return;
         }
         if (!isValidOwnerPassword(newPassword)) {
-            alert(language === 'eng'
-                ? 'Use 8-20 characters including letters and numbers.'
-                : '영문자, 숫자를 포함한 8-20자로 입력해주세요.');
+            alert(t('use820CharactersIncludingLettersAndNumbers'));
             return;
         }
         if (newPassword !== confirmPassword) {
-            alert(language === 'eng' ? 'The new passwords do not match.' : '새 비밀번호가 일치하지 않습니다.');
+            alert(t('theNewPasswordsDoNotMatch'));
             return;
         }
         setSavingPassword(true);
@@ -647,7 +646,7 @@ export function OwnerAccountTab() {
                 await loginOwner(signedInOwner.id, currentPassword);
             } catch (error) {
                 if (error instanceof OwnerLoginError) {
-                    alert(language === 'eng' ? 'The current password is incorrect.' : '현재 비밀번호가 올바르지 않습니다.');
+                    alert(t('theCurrentPasswordIsIncorrect'));
                     return;
                 }
                 throw error;
@@ -656,14 +655,14 @@ export function OwnerAccountTab() {
             setCurrentPassword('');
             setNewPassword('');
             setConfirmPassword('');
-            alert(language === 'eng' ? 'Password has been changed.' : '비밀번호가 변경되었습니다.');
+            alert(t('passwordHasBeenChanged'));
         } catch (error) {
             console.error(error);
             const message = error instanceof Error ? error.message : '';
             if (message.includes('현재 비밀번호') || message.toLowerCase().includes('current password')) {
-                alert(language === 'eng' ? 'The current password is incorrect.' : '현재 비밀번호가 올바르지 않습니다.');
+                alert(t('theCurrentPasswordIsIncorrect'));
             } else {
-                alert(message || (language === 'eng' ? 'Failed to change the password.' : '비밀번호 변경에 실패했습니다.'));
+                alert(message || (t('failedToChangeThePassword')));
             }
         } finally {
             setSavingPassword(false);
@@ -672,9 +671,7 @@ export function OwnerAccountTab() {
 
     async function handleWithdraw() {
         const confirmed = window.confirm(
-            language === 'eng'
-                ? 'Are you sure you want to delete this account? This cannot be undone.'
-                : '정말 탈퇴하시겠습니까? 탈퇴 후에는 복구할 수 없습니다.'
+            t('areYouSureYouWantToDeleteThisAccountThis')
         );
         if (!confirmed) {
             return;
@@ -682,93 +679,91 @@ export function OwnerAccountTab() {
         try {
             await deleteOwner(signedInOwner._id);
             logoutOwner();
-            navigate('/login');
+            router.push('/login');
         } catch (error) {
             console.error(error);
-            alert(language === 'eng' ? 'Failed to delete the account.' : '계정 탈퇴에 실패했습니다.');
+            alert(t('failedToDeleteTheAccount'));
         }
     }
 
     const statusLabel = owner.status === 'approved'
-        ? (language === 'eng' ? 'Approved' : '승인 완료')
+        ? (t('approved'))
         : owner.status === 'rejected'
-            ? (language === 'eng' ? 'Rejected' : '거절됨')
-            : (language === 'eng' ? 'Pending' : '승인 대기');
+            ? (t('rejected'))
+            : (t('pending2'));
 
     return(
         <Page>
             <HeaderBlock>
-                <Title> {language === 'eng' ? 'Account Management' : '계정 관리'} </Title>
-                <SubTitle> {language === 'eng' ? 'You can manage your account and security information.' : '내 계정과 보안 정보를 관리할 수 있습니다.'} </SubTitle>
+                <Title> {t('accountManagement')} </Title>
+                <SubTitle> {t('youCanManageYourAccountAndSecurityInformation')} </SubTitle>
             </HeaderBlock>
             <Grid>
                 <LeftCard>
-                    <CardTitle> {language === 'eng' ? 'Basic information' : '기본 정보'} </CardTitle>
+                    <CardTitle> {t('basicInformation')} </CardTitle>
                     <InfoList>
                     <InfoRow $stack = { editingName }>
                         {editingName ? (
                             <NameEditBlock>
-                                <InfoLabel> {language === 'eng' ? 'Name' : '이름'} </InfoLabel>
+                                <InfoLabel> {t('name')} </InfoLabel>
                                 <NameEditRow>
                                     <NameInput value = { nameValue } onChange = {(e) => setNameValue(e.target.value)} />
                                     <NameActionButton type = 'button' onClick = {() => {
                                         setEditingName(false);
                                         setNameValue(owner.name);
-                                    }}> {language === 'eng' ? 'Cancel' : '취소'} </NameActionButton>
+                                    }}> {t('cancel')} </NameActionButton>
                                     <NameSaveButton type = 'button' disabled = { savingName } onClick = {() => { void handleSaveName(); }}>
-                                        {language === 'eng' ? 'Save' : '저장'}
+                                        {t('save')}
                                     </NameSaveButton>
                                 </NameEditRow>
                             </NameEditBlock>
                         ) : (
                             <>
                                 <div>
-                                    <InfoLabel> {language === 'eng' ? 'Name' : '이름'} </InfoLabel>
+                                    <InfoLabel> {t('name')} </InfoLabel>
                                     <InfoValue> { owner.name } </InfoValue>
                                 </div>
                                 <OutlineButton type = 'button' onClick = {() => {
                                     setNameValue(owner.name);
                                     setEditingName(true);
-                                }}> {language === 'eng' ? 'Edit' : '수정'} </OutlineButton>
+                                }}> {t('edit')} </OutlineButton>
                             </>
                         )}
                     </InfoRow>
                     <InfoRow>
                         <div>
-                            <InfoLabel> {language === 'eng' ? 'ID' : '아이디'} </InfoLabel>
+                            <InfoLabel> {t('id')} </InfoLabel>
                             <InfoValue> { owner.id } </InfoValue>
                         </div>
                     </InfoRow>
                     <InfoRow>
                         <div>
-                            <InfoLabel> {language === 'eng' ? 'Phone number' : '전화번호'} </InfoLabel>
+                            <InfoLabel> {t('phoneNumber')} </InfoLabel>
                             <InfoValue> { owner.phone } </InfoValue>
                         </div>
                     </InfoRow>
                     <InfoRow>
                         <div>
-                            <InfoLabel> {language === 'eng' ? 'Assigned store' : '담당 매장'} </InfoLabel>
+                            <InfoLabel> {t('assignedStore')} </InfoLabel>
                             <InfoValue> { storeLabel } </InfoValue>
                         </div>
                     </InfoRow>
                     <InfoRow>
                         <div>
-                            <InfoLabel> {language === 'eng' ? 'Account status' : '계정 상태'} </InfoLabel>
+                            <InfoLabel> {t('accountStatus')} </InfoLabel>
                             <StatusBadge> { statusLabel } </StatusBadge>
                         </div>
                     </InfoRow>
                     <WithdrawBox>
                         <div>
-                            <WithdrawTitle> {language === 'eng' ? 'Delete account' : '계정 탈퇴'} </WithdrawTitle>
+                            <WithdrawTitle> {t('deleteAccount')} </WithdrawTitle>
                             <WithdrawText>
-                                {language === 'eng'
-                                    ? 'If you delete your account, your owner information will be removed and cannot be restored. Store information will be kept.'
-                                    : '탈퇴하면 사장님 계정 정보가 삭제되며 다시 복구할 수 없습니다. 담당 매장 정보는 유지됩니다.'}
+                                {t('ifYouDeleteYourAccountYourOwnerInformationWillBe')}
                             </WithdrawText>
                         </div>
                         <WithdrawActions>
                             <WithdrawButton type = 'button' onClick = {() => { void handleWithdraw(); }}>
-                                {language === 'eng' ? 'Delete account' : '계정 탈퇴'}
+                                {t('deleteAccount')}
                             </WithdrawButton>
                         </WithdrawActions>
                     </WithdrawBox>
@@ -776,64 +771,64 @@ export function OwnerAccountTab() {
                 </LeftCard>
                 <RightColumn>
                     <PhoneCard>
-                        <PhoneTitle> {language === 'eng' ? 'Change phone number' : '전화번호 변경'} </PhoneTitle>
+                        <PhoneTitle> {t('changePhoneNumber')} </PhoneTitle>
                         {phoneStep === 3 && (
                             <CardHint $success>
-                                {language === 'eng' ? 'Phone number has been changed.' : '전화번호가 변경되었습니다.'}
+                                {t('phoneNumberHasBeenChanged')}
                             </CardHint>
                         )}
                         <Stepper>
                             <Step $active = { phoneStep === 1 } $done = { phoneStep > 1 }>
                                 <StepDot $active = { phoneStep === 1 } $done = { phoneStep > 1 }>1</StepDot>
-                                <StepLabel $active = { phoneStep === 1 }>{language === 'eng' ? 'New number' : '새 번호 입력'}</StepLabel>
+                                <StepLabel $active = { phoneStep === 1 }>{t('newNumber')}</StepLabel>
                             </Step>
                             <StepLine $done = { phoneStep > 1 } />
                             <Step $active = { phoneStep === 2 } $done = { phoneStep > 2 }>
                                 <StepDot $active = { phoneStep === 2 } $done = { phoneStep > 2 }>2</StepDot>
-                                <StepLabel $active = { phoneStep === 2 }>{language === 'eng' ? 'Verify code' : '인증번호 확인'}</StepLabel>
+                                <StepLabel $active = { phoneStep === 2 }>{t('verifyCode')}</StepLabel>
                             </Step>
                             <StepLine $done = { phoneStep > 2 } />
                             <Step $active = { phoneStep === 3 } $done = { phoneStep === 3 }>
                                 <StepDot $active = { phoneStep === 3 } $done = { phoneStep === 3 }>✓</StepDot>
-                                <StepLabel $active = { phoneStep === 3 }>{language === 'eng' ? 'Done' : '변경 완료'}</StepLabel>
+                                <StepLabel $active = { phoneStep === 3 }>{t('done')}</StepLabel>
                             </Step>
                         </Stepper>
                         {phoneStep === 1 && (
                             <FieldRow>
                                 <Field>
-                                    <FieldLabel> {language === 'eng' ? 'New phone number' : '새 전화번호'} </FieldLabel>
+                                    <FieldLabel> {t('newPhoneNumber')} </FieldLabel>
                                     <TextInput type = 'tel' value = { newPhone }
-                                        placeholder = {language === 'eng' ? 'Enter only numbers.' : "'-' 없이 숫자만 입력해주세요"}
+                                        placeholder = {t('enterOnlyNumbers')}
                                         onChange = {(e) => setNewPhone(e.target.value.replace(/\D/g, ''))} />
                                 </Field>
                                 <PrimaryButton type = 'button' disabled = { phoneLoading } onClick = {() => { void sendPhoneCode(); }}>
-                                    {language === 'eng' ? 'Send code' : '인증번호 전송'}
+                                    {t('sendCode')}
                                 </PrimaryButton>
                             </FieldRow>
                         )}
                         {phoneStep === 2 && (
                             <FieldRow>
                                 <Field>
-                                    <FieldLabel> {language === 'eng' ? 'Verification code' : '인증번호 확인'} </FieldLabel>
+                                    <FieldLabel> {t('verificationCode')} </FieldLabel>
                                     <TextInput type = 'text' inputMode = 'numeric' maxLength = { 6 } value = { verifyCode }
-                                        placeholder = {language === 'eng' ? 'Enter the code' : '인증번호를 입력해주세요'}
+                                        placeholder = {t('enterTheCode')}
                                         onChange = {(e) => setVerifyCode(e.target.value.replace(/\D/g, ''))} />
                                 </Field>
                                 <PrimaryButton type = 'button' disabled = { phoneLoading } onClick = {() => { void confirmPhoneCode(); }}>
-                                    {language === 'eng' ? 'Confirm' : '확인'}
+                                    {t('confirm')}
                                 </PrimaryButton>
                             </FieldRow>
                         )}
                         <div ref = { recaptchaContainerRef } style = {{ position: 'absolute', width: 1, height: 1, left: -9999 }} />
                     </PhoneCard>
                     <PasswordCard>
-                        <CardTitle> {language === 'eng' ? 'Change password' : '비밀번호 변경'} </CardTitle>
+                        <CardTitle> {t('changePassword')} </CardTitle>
                         <CardHint>
-                            { language === 'eng' ? '8-20 characters including letters and numbers' : '영문자, 숫자 포함 8-20자' }
+                            { t('n820CharactersIncludingLettersAndNumbers') }
                         </CardHint>
                         <PasswordStack>
                             <PasswordField>
-                                <FieldLabel> {language === 'eng' ? 'Current password' : '현재 비밀번호'} </FieldLabel>
+                                <FieldLabel> {t('currentPassword')} </FieldLabel>
                                 <CompactPasswordWrap>
                                     <CompactPasswordInput type = { showCurrent ? 'text' : 'password' } value = { currentPassword }
                                         onChange = {(e) => setCurrentPassword(e.target.value)} />
@@ -843,7 +838,7 @@ export function OwnerAccountTab() {
                                 </CompactPasswordWrap>
                             </PasswordField>
                             <PasswordField>
-                                <FieldLabel> {language === 'eng' ? 'New password' : '새 비밀번호'} </FieldLabel>
+                                <FieldLabel> {t('newPassword')} </FieldLabel>
                                 <CompactPasswordWrap>
                                     <CompactPasswordInput type = { showNew ? 'text' : 'password' } value = { newPassword }
                                         onChange = {(e) => setNewPassword(e.target.value)} />
@@ -853,7 +848,7 @@ export function OwnerAccountTab() {
                                 </CompactPasswordWrap>
                             </PasswordField>
                             <PasswordField>
-                                <FieldLabel> {language === 'eng' ? 'Confirm new password' : '새 비밀번호 확인'} </FieldLabel>
+                                <FieldLabel> {t('confirmNewPassword')} </FieldLabel>
                                 <CompactPasswordWrap>
                                     <CompactPasswordInput type = { showConfirm ? 'text' : 'password' } value = { confirmPassword }
                                         onChange = {(e) => setConfirmPassword(e.target.value)} />
@@ -864,15 +859,15 @@ export function OwnerAccountTab() {
                                 {confirmPassword.length > 0 && (
                                     <MatchHint $valid = { confirmPassword === newPassword }>
                                         {confirmPassword === newPassword
-                                            ? (language === 'eng' ? 'The passwords you entered match.' : '입력한 비밀번호가 일치합니다.')
-                                            : (language === 'eng' ? 'The passwords you entered do not match.' : '입력한 비밀번호가 일치하지 않습니다.')}
+                                            ? (t('thePasswordsYouEnteredMatch'))
+                                            : (t('thePasswordsYouEnteredDoNotMatch'))}
                                     </MatchHint>
                                 )}
                             </PasswordField>
                         </PasswordStack>
                         <ButtonRight>
                             <PrimaryButton type = 'button' disabled = { savingPassword } onClick = {() => { void handleChangePassword(); }}>
-                                {language === 'eng' ? 'Change password' : '비밀번호 변경'}
+                                {t('changePassword')}
                             </PrimaryButton>
                         </ButtonRight>
                     </PasswordCard>

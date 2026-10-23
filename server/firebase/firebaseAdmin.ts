@@ -1,7 +1,7 @@
-import path from 'path';
-import { cert, getApps, initializeApp } from 'firebase-admin/app';
-import { getAuth, type Auth } from 'firebase-admin/auth';
-import dotenv from 'dotenv';
+import path from 'path'
+import { cert, getApps, initializeApp } from 'firebase-admin/app'
+import { getAuth, type Auth } from 'firebase-admin/auth'
+import dotenv from 'dotenv'
 
 dotenv.config({ path: path.join(__dirname, '..', '.env') });
 

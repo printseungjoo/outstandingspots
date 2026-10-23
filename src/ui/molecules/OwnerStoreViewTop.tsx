@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import { useLanguage } from '../../contexts/LanguageContext';
+import { useLanguage } from '../../contexts/LanguageContext'
 
 const OwnerStoreViewTopStyled = styled.div`
     width: 100%;
@@ -32,13 +32,13 @@ const SubText = styled.p`
 `;
 
 export function OwnerStoreViewTop() {
-    const { language } = useLanguage();
+    const { t } = useLanguage();
 
     return(
         <OwnerStoreViewTopStyled>
             <TitleDiv>
-                <BoldText> {language === 'eng' ? 'Store Information' : '매장 정보 조회'} </BoldText>
-                <SubText> {language === 'eng' ? 'You can check the store information currently shown to students.' : '현재 학생들에게 보여지는 매장 정보를 확인할 수 있습니다.'} </SubText>
+                <BoldText> {t('storeInformation')} </BoldText>
+                <SubText> {t('youCanCheckTheStoreInformationCurrentlyShownToStudents')} </SubText>
             </TitleDiv>
         </OwnerStoreViewTopStyled>
     )

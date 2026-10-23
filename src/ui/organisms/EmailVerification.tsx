@@ -1,9 +1,11 @@
-import { useState } from 'react';
-import styled from 'styled-components';
+import { useState } from 'react'
+import styled from 'styled-components'
 
-import { SignUpInputWithButton } from '../atoms/SignUpInputWithButton';
-import { useLanguage } from '../../contexts/LanguageContext';
-import { sendStudentEmailCode, verifyStudentEmailCode } from '../../lib/studentEmailApi';
+import { SignUpInputWithButton } from '../atoms/SignUpInputWithButton'
+import { useLanguage } from '../../contexts/LanguageContext'
+import { getT } from '../../i18n'
+import type Language from '../../types/Language'
+import { sendStudentEmailCode, verifyStudentEmailCode } from '../../lib/studentEmailApi'
 
 const ALLOWED_EMAIL_DOMAINS = ['stonybrook.edu', 'fitnyc.edu'];
 
@@ -17,46 +19,37 @@ export function isAllowedSchoolEmail(email: string) {
     return ALLOWED_EMAIL_DOMAINS.includes(domain);
 }
 
-function getEmailErrorMessage(error: unknown, language: 'kor' | 'eng') {
+function getEmailErrorMessage(error: unknown, language: Language) {
+    const t = getT(language);
     const message = error instanceof Error ? error.message : '';
     if (message === 'INVALID_SCHOOL_EMAIL') {
-        return language === 'eng'
-            ? 'Please request verification with an email that has the @stonybrook.edu or @fitnyc.edu domain.'
-            : '@stonybrook.edu나 @fitnyc.edu의 도메인을 가진 이메일로 인증을 요청해주세요.';
+        return t('pleaseRequestVerificationWithAnEmailThatHasTheStonybrook');
     }
     if (message === 'TOO_MANY_REQUESTS') {
-        return language === 'eng' ? 'Too many attempts. Try again later.' : '시도 횟수가 너무 많습니다. 잠시 후 다시 시도해 주세요.';
+        return t('tooManyAttemptsTryAgainLater');
     }
     if (message === 'SMTP_NOT_CONFIGURED') {
-        return language === 'eng'
-            ? 'Email sending is not configured. Set RESEND_API_KEY and RESEND_FROM on the API server, then restart it.'
-            : '메일 발송 설정이 없습니다. API 서버에 RESEND_API_KEY와 RESEND_FROM을 넣고 재시작해 주세요.';
+        return t('emailSendingIsNotConfiguredSetResendApiKeyAnd');
     }
     if (message === 'SMTP_SEND_FAILED') {
-        return language === 'eng'
-            ? 'Could not send the email. Check the Resend API key and verified FROM domain.'
-            : '메일을 보내지 못했습니다. Resend API 키와 인증된 FROM 도메인을 확인해 주세요.';
+        return t('couldNotSendTheEmailCheckTheResendApiKey');
     }
     if (message === 'HTTP 404' || message.includes('Cannot POST')) {
-        return language === 'eng'
-            ? 'The email API is missing. Restart the API server in the server folder.'
-            : '이메일 API가 없습니다. server 폴더에서 API 서버를 재시작해 주세요.';
+        return t('theEmailApiIsMissingRestartTheApiServerIn');
     }
     if (message === 'Failed to fetch' || message.includes('NetworkError') || message.includes('fetch')) {
-        return language === 'eng'
-            ? 'The API server is not running. Start it with npm run dev in the server folder.'
-            : 'API 서버가 꺼져 있습니다. server 폴더에서 npm run dev로 시작해 주세요.';
+        return t('theApiServerIsNotRunningStartItWithNpm');
     }
     if (message === 'CODE_NOT_SENT') {
-        return language === 'eng' ? 'Please request a verification code first.' : '먼저 인증번호를 받아 주세요.';
+        return t('pleaseRequestAVerificationCodeFirst');
     }
     if (message === 'CODE_EXPIRED') {
-        return language === 'eng' ? 'The verification code expired. Please send it again.' : '인증번호가 만료되었습니다. 다시 전송해주세요.';
+        return t('theVerificationCodeExpiredPleaseSendItAgain');
     }
     if (message === 'TOO_MANY_ATTEMPTS' || message === 'INVALID_CODE') {
-        return language === 'eng' ? 'The verification code is invalid.' : '인증번호가 올바르지 않습니다.';
+        return t('theVerificationCodeIsInvalid');
     }
-    return language === 'eng' ? 'Failed to send the verification email.' : '인증 메일 전송에 실패했습니다.';
+    return t('failedToSendTheVerificationEmail');
 }
 
 interface EmailVerificationProps {
@@ -87,7 +80,7 @@ const EmailFields = styled.div`
 `;
 
 export function EmailVerification({ email, onEmailChange, onVerified }: EmailVerificationProps) {
-    const { language } = useLanguage();
+    const { language, t } = useLanguage();
     const [verificationCode, setVerificationCode] = useState<string>('');
     const [codeSent, setCodeSent] = useState<boolean>(false);
     const [verified, setVerified] = useState<boolean>(false);
@@ -95,18 +88,14 @@ export function EmailVerification({ email, onEmailChange, onVerified }: EmailVer
 
     const sendVerificationCode = async () => {
         if (!isAllowedSchoolEmail(email)) {
-            alert(language === 'eng'
-                ? 'Please request verification with an email that has the @stonybrook.edu or @fitnyc.edu domain.'
-                : '@stonybrook.edu나 @fitnyc.edu의 도메인을 가진 이메일로 인증을 요청해주세요.');
+            alert(t('pleaseRequestVerificationWithAnEmailThatHasTheStonybrook'));
             return;
         }
         try {
             setLoading(true);
             await sendStudentEmailCode(email.trim());
             setCodeSent(true);
-            alert(language === 'eng'
-                ? 'The verification code has been sent. If you do not see it, please check your spam folder.'
-                : '인증번호가 전송되었습니다. 메일이 보이지 않으면 스팸함을 확인해 주세요.');
+            alert(t('theVerificationCodeHasBeenSentIfYouDoNot'));
         } catch (error) {
             console.error(error);
             alert(getEmailErrorMessage(error, language));
@@ -117,7 +106,7 @@ export function EmailVerification({ email, onEmailChange, onVerified }: EmailVer
 
     const verifyCode = async () => {
         if (!codeSent) {
-            alert(language === 'eng' ? 'Please request a verification code first.' : '먼저 인증번호를 받아 주세요.');
+            alert(t('pleaseRequestAVerificationCodeFirst'));
             return;
         }
         try {
@@ -144,15 +133,15 @@ export function EmailVerification({ email, onEmailChange, onVerified }: EmailVer
     return (
         <EmailVerificationStyled>
             <EmailFields>
-                <SignUpInputWithButton engTitle = 'School email' korTitle = '학교 이메일 인증'
-                    engPlaceholder = 'Enter your school email.' korPlaceholder = '학교 이메일을 입력해주세요.'
-                    engButtonText = { codeSent ? 'Resend' : 'Verify' } korButtonText = { codeSent ? '재전송' : '인증하기' }
+                <SignUpInputWithButton title = { t('schoolEmail') }
+                    placeholder = { t('enterYourSchoolEmail') }
+                    buttonText = { codeSent ? t('resend') : t('verify') }
                     value = { email } onChange = { handleEmailChange } onButtonClick = { sendVerificationCode }
                     inputReadOnly = { verified } buttonDisabled = { loading || verified } inputType = 'email'
-                    description = { language === 'eng' ? 'Only school emails can be verified.' : '학교 이메일만 인증 가능합니다' } />
-                <SignUpInputWithButton engTitle = 'Confirm' korTitle = '이메일 확인'
-                    engPlaceholder = 'Enter verification code.' korPlaceholder = '이메일로 받은 인증번호를 입력해주세요.'
-                    engButtonText = 'Submit' korButtonText = '제출하기' value = { verificationCode }
+                    description = { t('onlySchoolEmailsCanBeVerified') } />
+                <SignUpInputWithButton title = { t('confirmEmail') }
+                    placeholder = { t('enterEmailVerificationCode') }
+                    buttonText = { t('submitCode') } value = { verificationCode }
                     onChange = {(value) => {
                         if (verified) return;
                         setVerificationCode(value.replace(/\D/g, ''));
@@ -162,11 +151,9 @@ export function EmailVerification({ email, onEmailChange, onVerified }: EmailVer
                     buttonDisabled = { loading || !codeSent || verified }
                     maxLength = { 6 } inputMode = 'numeric'
                     description = { verified
-                        ? (language === 'eng' ? 'Email verified.' : '이메일 인증이 완료되었습니다.')
+                        ? (t('emailVerified'))
                         : codeSent
-                            ? (language === 'eng'
-                                ? 'If you do not see the email, please check your spam folder.'
-                                : '메일이 보이지 않으면 스팸함을 확인해 주세요.')
+                            ? (t('ifYouDoNotSeeTheEmailPleaseCheckYour'))
                             : '\u00A0' } />
             </EmailFields>
         </EmailVerificationStyled>

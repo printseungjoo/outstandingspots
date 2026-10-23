@@ -1,7 +1,8 @@
-import fetchJson from './fetchJson';
-import type Store from '../types/Store';
+import fetchJson from './fetchJson'
+import type Store from '../types/Store'
+import { API_URL } from './constants'
 
-const baseUrl = (import.meta.env.VITE_API_URL as string | undefined) ?? '';
+const baseUrl = API_URL;
 
 export function resolvePhotoUrl(photo: string | undefined) {
     if (!photo) return '';

@@ -1,7 +1,7 @@
-import styled from 'styled-components';
-import { Outlet } from 'react-router-dom';
+import type { ReactNode } from 'react'
+import styled from 'styled-components'
 
-import { OwnerNav } from '../molecules/OwnerNav';
+import { OwnerNav } from '../molecules/OwnerNav'
 
 const OwnerPageStyled = styled.div`
     width: 100%;
@@ -31,12 +31,12 @@ const OwnerContent = styled.div`
     }
 `;
 
-export function OwnerPage() {
+export function OwnerPage({ children }: { children: ReactNode }) {
     return(
         <OwnerPageStyled>
             <OwnerNav />
             <OwnerContent>
-                <Outlet />
+                { (children) }
             </OwnerContent>
         </OwnerPageStyled>
     )

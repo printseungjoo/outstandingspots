@@ -1,7 +1,7 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import { MainContent } from '../organisms/MainContent';
-import { useLanguage } from '../../contexts/LanguageContext';
+import { MainContent } from '../organisms/MainContent'
+import { useLanguage } from '../../contexts/LanguageContext'
 
 const MapPageStyled = styled.div`
     flex: 1;

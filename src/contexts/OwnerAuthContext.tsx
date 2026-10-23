@@ -1,12 +1,13 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import type { ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react'
+import type { ReactNode } from 'react'
 
-import type Owner from '../types/Owner';
-import { fetchOwnerSession, logoutOwnerSession } from '../lib/ownersApi';
+import type Owner from '../types/Owner'
+import { fetchOwnerSession, logoutOwnerSession } from '../lib/ownersApi'
 
 interface OwnerAuthContextValue {
     owner: Owner | null;
     isOwner: boolean;
+    isCheckingOwner: boolean;
     loginOwner: (owner: Owner) => void;
     updateOwner: (owner: Owner) => void;
     logoutOwner: () => void;
@@ -34,20 +35,27 @@ function writeStoredOwner(nextOwner: Owner | null) {
 const OwnerAuthContext = createContext<OwnerAuthContextValue | null>(null);
 
 export function OwnerAuthProvider({ children }: { children: ReactNode }) {
-    const [owner, setOwner] = useState<Owner | null>(readStoredOwner);
+    const [owner, setOwner] = useState<Owner | null>(null);
+    const [isCheckingOwner, setIsCheckingOwner] = useState(true);
 
     useEffect(() => {
         let cancelled = false;
+        const stored = readStoredOwner();
+        if (stored) {
+            setOwner(stored);
+        }
         fetchOwnerSession()
             .then((nextOwner) => {
                 if (cancelled) return;
                 writeStoredOwner(nextOwner);
                 setOwner(nextOwner);
+                setIsCheckingOwner(false);
             })
             .catch(() => {
                 if (cancelled) return;
                 writeStoredOwner(null);
                 setOwner(null);
+                setIsCheckingOwner(false);
             });
         return () => {
             cancelled = true;
@@ -57,6 +65,7 @@ export function OwnerAuthProvider({ children }: { children: ReactNode }) {
     const loginOwner = (nextOwner: Owner) => {
         writeStoredOwner(nextOwner);
         setOwner(nextOwner);
+        setIsCheckingOwner(false);
     };
 
     const updateOwner = (nextOwner: Owner) => {
@@ -71,7 +80,7 @@ export function OwnerAuthProvider({ children }: { children: ReactNode }) {
     };
 
     return (
-        <OwnerAuthContext.Provider value = {{ owner, isOwner: owner !== null, loginOwner, updateOwner, logoutOwner }}>
+        <OwnerAuthContext.Provider value = {{ owner, isOwner: owner !== null, isCheckingOwner, loginOwner, updateOwner, logoutOwner }}>
             { children }
         </OwnerAuthContext.Provider>
     )

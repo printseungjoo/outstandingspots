@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import { useLanguage } from '../../contexts/LanguageContext';
+import { useLanguage } from '../../contexts/LanguageContext'
 
 const LoginButtonStyled = styled.button`
     width: 100%;
@@ -20,11 +20,11 @@ interface LoginButtonProps {
 }
 
 export function LoginButton({ onClick }: LoginButtonProps) {
-    const { language } = useLanguage();
+    const { t } = useLanguage();
     
     return(
         <LoginButtonStyled type = "button" onClick = { onClick }>
-            {language === 'eng' ? 'Login' : '로그인'}
+            {t('login')}
         </LoginButtonStyled>
     )
 }

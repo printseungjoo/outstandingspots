@@ -1,8 +1,8 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import { WebsiteInformation } from '../molecules/WebsiteInformation';
-import type Language from '../../types/Language';
-import { ExitContainer } from '../molecules/ExitContainer';
+import { WebsiteInformation } from '../molecules/WebsiteInformation'
+import type Language from '../../types/Language'
+import { ExitContainer } from '../molecules/ExitContainer'
 
 const WebsiteInformationTabStyled = styled.div`
     position: relative;

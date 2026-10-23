@@ -1,7 +1,7 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import { AdminOwnerSearch } from '../atoms/AdminOwnerSearch';
-import type Owner from '../../types/Owner';
+import { AdminOwnerSearch } from '../atoms/AdminOwnerSearch'
+import type Owner from '../../types/Owner'
 
 const AdminOwnersFilterBarStyled = styled.div`
     width: 100%;

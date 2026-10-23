@@ -1,12 +1,13 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import type { ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react'
+import type { ReactNode } from 'react'
 
-import type Student from '../types/Student';
-import { fetchStudentSession, prependRecentView as nextRecentViews, logoutStudentSession } from '../lib/studentsApi';
+import type Student from '../types/Student'
+import { fetchStudentSession, prependRecentView as nextRecentViews, logoutStudentSession } from '../lib/studentsApi'
 
 interface StudentAuthContextValue {
     student: Student | null;
     isStudent: boolean;
+    isCheckingStudent: boolean;
     loginStudent: (student: Student) => void;
     updateStudent: (student: Student) => void;
     prependRecentView: (storeId: string) => boolean;
@@ -50,16 +51,22 @@ function writeStoredStudent(nextStudent: Student | null) {
 const StudentAuthContext = createContext<StudentAuthContextValue | null>(null);
 
 export function StudentAuthProvider({ children }: { children: ReactNode }) {
-    const [student, setStudent] = useState<Student | null>(readStoredStudent);
+    const [student, setStudent] = useState<Student | null>(null);
+    const [isCheckingStudent, setIsCheckingStudent] = useState(true);
 
     useEffect(() => {
         let cancelled = false;
+        const stored = readStoredStudent();
+        if (stored) {
+            setStudent(stored);
+        }
         fetchStudentSession()
             .then((nextStudent) => {
                 if (cancelled) return;
                 if (!nextStudent) {
                     writeStoredStudent(null);
                     setStudent(null);
+                    setIsCheckingStudent(false);
                     return;
                 }
                 setStudent((current) => {
@@ -75,11 +82,13 @@ export function StudentAuthProvider({ children }: { children: ReactNode }) {
                     writeStoredStudent(merged);
                     return merged;
                 });
+                setIsCheckingStudent(false);
             })
             .catch(() => {
                 if (cancelled) return;
                 writeStoredStudent(null);
                 setStudent(null);
+                setIsCheckingStudent(false);
             });
         return () => {
             cancelled = true;
@@ -90,6 +99,7 @@ export function StudentAuthProvider({ children }: { children: ReactNode }) {
         const normalized = normalizeStudent(nextStudent);
         writeStoredStudent(normalized);
         setStudent(normalized);
+        setIsCheckingStudent(false);
     };
 
     const updateStudent = (nextStudent: Student) => {
@@ -131,7 +141,7 @@ export function StudentAuthProvider({ children }: { children: ReactNode }) {
     };
 
     return (
-        <StudentAuthContext.Provider value = {{ student, isStudent: student !== null, loginStudent, updateStudent, prependRecentView, logoutStudent }}>
+        <StudentAuthContext.Provider value = {{ student, isStudent: student !== null, isCheckingStudent, loginStudent, updateStudent, prependRecentView, logoutStudent }}>
             { children }
         </StudentAuthContext.Provider>
     )

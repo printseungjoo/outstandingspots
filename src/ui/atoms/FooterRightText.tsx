@@ -1,8 +1,9 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import { useLanguage } from '../../contexts/LanguageContext';
+import { useLanguage } from '../../contexts/LanguageContext'
+import { GUIDE_URL } from '../../lib/constants'
 
-const guideUrl = (import.meta.env.VITE_GUIDE_URL as string | undefined) ?? '';
+const guideUrl = GUIDE_URL;
 
 const FooterRightTextStyled = styled.div`
     display: flex;
@@ -40,15 +41,15 @@ const PurpleText = styled.span`
 `;
 
 export function FooterRightText() {
-    const { language } = useLanguage();
+    const { t } = useLanguage();
 
     return(
         <FooterRightTextStyled>
             <GuideLink href = { guideUrl } target = '_blank' rel = 'noopener noreferrer'>
-                <FileIcon src = '/fileIcon.png' alt = { language === 'eng' ? 'Korean web user guide' : '한글 웹 사용 설명서' } />
+                <FileIcon src = '/fileIcon.png' alt = { t('koreanWebUserGuide') } />
                 <BlackText>
-                    { language === 'eng' ? 'Korean Web ' : '한글 웹 ' }
-                    <PurpleText> { language === 'eng' ? 'User Guide' : '사용 설명서' } </PurpleText>
+                    { t('koreanWeb') }
+                    <PurpleText> { t('userGuide') } </PurpleText>
                 </BlackText>
             </GuideLink>
         </FooterRightTextStyled>

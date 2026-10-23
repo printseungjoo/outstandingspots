@@ -1,10 +1,11 @@
-import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { localized, localizedName } from '../../lib/localized'
+import styled from 'styled-components'
+import { useRouter } from 'next/navigation'
 
-import { useLanguage } from '../../contexts/LanguageContext';
-import type Store from '../../types/Store';
-import { resolvePhotoUrl } from '../../lib/storesApi';
-import { useStores } from '../../contexts/StoresContext';
+import { useLanguage } from '../../contexts/LanguageContext'
+import type Store from '../../types/Store'
+import { resolvePhotoUrl } from '../../lib/storesApi'
+import { useStores } from '../../contexts/StoresContext'
 
 const TableWrap = styled.div`
     width: 100%;
@@ -170,17 +171,17 @@ interface AdminStoresManagementTableProps {
 }
 
 export function AdminStoresManagementTable({ stores, showActions = true }: AdminStoresManagementTableProps) {
-    const { language } = useLanguage();
-    const navigate = useNavigate();
+    const { language, t } = useLanguage();
+    const router = useRouter();
     const { deleteStore } = useStores();
 
     async function handleDelete(store: Store) {
         try {
             await deleteStore(store);
-            alert(language === 'eng' ? 'Successfully deleted.' : '매장이 삭제되었습니다.');
+            alert(t('successfullyDeleted'));
         } catch (error) {
             console.error(error);
-            alert(language === 'eng' ? 'Failed to delete the store.' : '매장 삭제에 실패했습니다.');
+            alert(t('failedToDeleteTheStore'));
         }
     }
 
@@ -190,29 +191,29 @@ export function AdminStoresManagementTable({ stores, showActions = true }: Admin
                 <Table>
                     <thead>
                         <tr>
-                            <PhotoTh $equal = { !showActions }> { language === 'eng' ? 'Photo' : '사진' } </PhotoTh>
-                            <NameTh $wide = { !showActions }> { language === 'eng' ? 'Name' : '이름' } </NameTh>
-                            <ThemeTh $wide = { !showActions }> { language === 'eng' ? 'Theme' : '테마' } </ThemeTh>
-                            <DiscountTh $wide = { !showActions }> { language === 'eng' ? 'Discount' : '할인' } </DiscountTh>
-                            {showActions ? <ActionTh> { language === 'eng' ? 'Actions' : '관리' } </ActionTh> : null}
+                            <PhotoTh $equal = { !showActions }> { t('photo') } </PhotoTh>
+                            <NameTh $wide = { !showActions }> { t('name') } </NameTh>
+                            <ThemeTh $wide = { !showActions }> { t('theme') } </ThemeTh>
+                            <DiscountTh $wide = { !showActions }> { t('discount') } </DiscountTh>
+                            {showActions ? <ActionTh> { t('actions') } </ActionTh> : null}
                         </tr>
                     </thead>
                     <tbody>
                         {stores.map((store) => (
                             <tr key = { store._id }>
                                 <Td>
-                                    <StorePhoto src = { resolvePhotoUrl(store.photo) } alt = { language === 'eng' ? store.name.eng : store.name.kor } />
+                                    <StorePhoto src = { resolvePhotoUrl(store.photo) } alt = { localized(store.name, language) } />
                                 </Td>
-                                <Td> { language === 'eng' ? `${store.name.eng} ${store.branch.eng}` : `${store.name.kor} ${store.branch.kor}` } </Td>
-                                <Td> { language === 'eng' ? store.theme?.eng : store.theme?.kor } </Td>
-                                <Td> { language === 'eng' ? store.discount.eng : store.discount.kor } </Td>
+                                <Td> { localizedName(store, language) } </Td>
+                                <Td> { localized(store.theme, language) } </Td>
+                                <Td> { localized(store.discount, language) } </Td>
                                 {showActions ? (
                                     <Td>
-                                        <ActionButton type = 'button' onClick = {() => navigate(`/admin/store/edit/${store._id}`)}>
-                                            { language === 'eng' ? 'Edit' : '수정' }
+                                        <ActionButton type = 'button' onClick = {() => router.push(`/admin/store/edit?storeId=${encodeURIComponent(store._id)}`)}>
+                                            { t('edit') }
                                         </ActionButton>
                                         <ActionButton type = 'button' onClick = {() => { void handleDelete(store); }}>
-                                            { language === 'eng' ? 'Delete' : '삭제' }
+                                            { t('delete') }
                                         </ActionButton>
                                     </Td>
                                 ) : null}
@@ -225,20 +226,20 @@ export function AdminStoresManagementTable({ stores, showActions = true }: Admin
                 {stores.map((store) => (
                     <StoreCard key = { store._id }>
                         <CardTop>
-                            <CardPhoto src = { resolvePhotoUrl(store.photo) } alt = { language === 'eng' ? store.name.eng : store.name.kor } />
+                            <CardPhoto src = { resolvePhotoUrl(store.photo) } alt = { localized(store.name, language) } />
                             <CardInfo>
-                                <CardName> { language === 'eng' ? `${store.name.eng} ${store.branch.eng}` : `${store.name.kor} ${store.branch.kor}` } </CardName>
-                                <CardMeta> { language === 'eng' ? 'Theme' : '테마' }: { language === 'eng' ? store.theme?.eng : store.theme?.kor } </CardMeta>
-                                <CardMeta> { language === 'eng' ? 'Discount' : '할인' }: { language === 'eng' ? store.discount.eng : store.discount.kor } </CardMeta>
+                                <CardName> { localizedName(store, language) } </CardName>
+                                <CardMeta> { t('theme') }: { localized(store.theme, language) } </CardMeta>
+                                <CardMeta> { t('discount') }: { localized(store.discount, language) } </CardMeta>
                             </CardInfo>
                         </CardTop>
                         {showActions ? (
                             <CardActions>
-                                <CardActionButton type = 'button' onClick = {() => navigate(`/admin/store/edit/${store._id}`)}>
-                                    { language === 'eng' ? 'Edit' : '수정' }
+                                <CardActionButton type = 'button' onClick = {() => router.push(`/admin/store/edit?storeId=${encodeURIComponent(store._id)}`)}>
+                                    { t('edit') }
                                 </CardActionButton>
                                 <CardActionButton type = 'button' onClick = {() => { void handleDelete(store); }}>
-                                    { language === 'eng' ? 'Delete' : '삭제' }
+                                    { t('delete') }
                                 </CardActionButton>
                             </CardActions>
                         ) : null}

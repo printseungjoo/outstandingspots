@@ -1,11 +1,12 @@
-import styled from 'styled-components';
-import { useState } from 'react';
+import { localeCode, localized } from '../../lib/localized'
+import styled from 'styled-components'
+import { useState } from 'react'
 
-import { StoresTable } from '../molecules/StoresTable';
-import { AdminStoreFilterBar } from '../molecules/AdminStoreFilterBar';
-import { useStores } from '../../contexts/StoresContext';
-import { useLanguage } from '../../contexts/LanguageContext';
-import type Store from '../../types/Store';
+import { StoresTable } from '../molecules/StoresTable'
+import { AdminStoreFilterBar } from '../molecules/AdminStoreFilterBar'
+import { useStores } from '../../contexts/StoresContext'
+import { useLanguage } from '../../contexts/LanguageContext'
+import type Store from '../../types/Store'
 
 const StoresPageStyled = styled.div`
     width: 100%;
@@ -47,9 +48,9 @@ export function StoresPage() {
         return matchesCategory && (name.includes(query) || theme.includes(query));
     });
     const sortedStores = [...filteredStores].sort((a, b) => {
-        const aName = language === 'eng' ? a.name.eng : a.name.kor;
-        const bName = language === 'eng' ? b.name.eng : b.name.kor;
-        return language === 'eng' ? aName.localeCompare(bName, 'en') : aName.localeCompare(bName, 'ko');
+        const aName = localized(a.name, language);
+        const bName = localized(b.name, language);
+        return aName.localeCompare(bName, localeCode(language));
     });
 
     return(

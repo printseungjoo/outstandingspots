@@ -1,4 +1,4 @@
-import { withApi } from './csrf';
+import { withApi } from './csrf'
 
 export default async function fetchJson<T>(url: string, options: RequestInit = {}): Promise<T> {
     try {

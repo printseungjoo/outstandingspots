@@ -1,12 +1,15 @@
-import styled from 'styled-components';
-import { useState } from 'react';
+'use client'
 
-import { AdminStoresManagementTable } from '../molecules/AdminStoresManagementTable';
-import { AdminStoreManagementTop } from '../molecules/AdminStoreManagementTop';
-import { AdminStoreFilterBar } from '../molecules/AdminStoreFilterBar';
-import { useStores } from '../../contexts/StoresContext';
-import { useLanguage } from '../../contexts/LanguageContext';
-import type Store from '../../types/Store';
+import styled from 'styled-components'
+import { useState } from 'react'
+
+import { AdminStoresManagementTable } from '../molecules/AdminStoresManagementTable'
+import { AdminStoreManagementTop } from '../molecules/AdminStoreManagementTop'
+import { AdminStoreFilterBar } from '../molecules/AdminStoreFilterBar'
+import { useStores } from '../../contexts/StoresContext'
+import { useLanguage } from '../../contexts/LanguageContext'
+import { localeCode, localizedName } from '../../lib/localized'
+import type Store from '../../types/Store'
 
 const AdminStoreManagementTabStyled = styled.div`
     width: 100%;
@@ -39,9 +42,9 @@ export function AdminStoreManagementTab() {
         return matchesCategory && (name.includes(query) || theme.includes(query));
     });
     const sortedStores = [...filteredStores].sort((a, b) => {
-        const aName = language === 'eng' ? `${a.name.eng} ${a.branch.eng}` : `${a.name.kor} ${a.branch.kor}`;
-        const bName = language === 'eng' ? `${b.name.eng} ${b.branch.eng}` : `${b.name.kor} ${b.branch.kor}`;
-        return language === 'eng' ? aName.localeCompare(bName, 'en') : aName.localeCompare(bName, 'ko');
+        const aName = localizedName(a, language);
+        const bName = localizedName(b, language);
+        return aName.localeCompare(bName, localeCode(language));
     });
 
     return(

@@ -1,5 +1,5 @@
-import crypto from 'crypto';
-import type { CookieOptions, Request, Response } from 'express';
+import crypto from 'crypto'
+import type { CookieOptions, Request, Response } from 'express'
 
 export const TOKEN_TTL_MS = 12 * 60 * 60 * 1000;
 

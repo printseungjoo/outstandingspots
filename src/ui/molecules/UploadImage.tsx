@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
-import type { ChangeEvent } from 'react';
-import styled from 'styled-components';
+import { useEffect, useState } from 'react'
+import type { ChangeEvent } from 'react'
+import styled from 'styled-components'
 
-import { useLanguage } from '../../contexts/LanguageContext';
+import { useLanguage } from '../../contexts/LanguageContext'
 
 const UploadImageStyled = styled.div`
     display: flex;
@@ -111,7 +111,7 @@ async function adjustImage(file: File | undefined): Promise<Blob | null> {
 }
 
 export function UploadImage({ onChangePhoto, initialPreviewUrl }: UploadImageProps) {
-    const { language } = useLanguage();
+    const { t } = useLanguage();
 
     const [previewUrl, setPreviewUrl] = useState<string | null>(initialPreviewUrl ?? null);
 
@@ -140,13 +140,13 @@ export function UploadImage({ onChangePhoto, initialPreviewUrl }: UploadImagePro
     return(
         <UploadImageStyled>
             <TitleDiv>
-                <Title> {language === 'eng' ? 'Store Photo' : '매장 사진'} </Title>
+                <Title> {t('storePhoto')} </Title>
             </TitleDiv>
             <ImageFileInput type = 'file' accept = 'image/*' id = 'imageFileInput' onChange = { handleChange } />
             <VisibleImageFileInput htmlFor = 'imageFileInput'>
                 {previewUrl
-                    ? <PreviewImg src = { previewUrl } alt = { language === 'eng' ? 'Store preview' : '매장 미리보기' } />
-                    : (language === 'eng' ? 'Upload Image' : '이미지 업로드')}
+                    ? <PreviewImg src = { previewUrl } alt = { t('storePreview') } />
+                    : (t('uploadImage'))}
             </VisibleImageFileInput>
         </UploadImageStyled>
     )

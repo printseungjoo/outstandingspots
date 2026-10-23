@@ -1,18 +1,19 @@
-import styled from 'styled-components';
-import { useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components'
+import { useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
 
-import { useLanguage } from '../../contexts/LanguageContext';
-import { SignUpInput } from '../atoms/SignUpInput';
-import { SignUpSearchStore } from '../atoms/SignUpSearchStore';
-import { SignUpIdInputWithDescription } from '../atoms/SignUpIdInputWithDescription';
-import { SignUpPasswordInputWithDescription } from '../atoms/SignUpPasswordInputWithDescription';
-import { PhoneVerification } from '../organisms/PhoneVerification';
-import { signupOwner } from '../../lib/ownersApi';
-import { fetchStores } from '../../lib/storesApi';
-import { resolveStoreId } from '../../lib/resolveStoreId';
-import { firebaseAuth } from '../../firebase/firebase';
-import type Language from '../../types/Language';
+import { useLanguage } from '../../contexts/LanguageContext'
+import { getT } from '../../i18n'
+import { SignUpInput } from '../atoms/SignUpInput'
+import { SignUpSearchStore } from '../atoms/SignUpSearchStore'
+import { SignUpIdInputWithDescription } from '../atoms/SignUpIdInputWithDescription'
+import { SignUpPasswordInputWithDescription } from '../atoms/SignUpPasswordInputWithDescription'
+import { PhoneVerification } from '../organisms/PhoneVerification'
+import { signupOwner } from '../../lib/ownersApi'
+import { fetchStores } from '../../lib/storesApi'
+import { resolveStoreId } from '../../lib/resolveStoreId'
+import { firebaseAuth } from '../../firebase/firebase'
+import type Language from '../../types/Language'
 
 const StoreSignUpPageStyled = styled.div`
     width: 100%;
@@ -230,36 +231,35 @@ const SignUpButton = styled.button`
 `;
 
 function getSignupErrorMessage(error: unknown, language: Language) {
+    const t = getT(language);
     const message = error instanceof Error ? error.message : '';
     if (message === 'DUPLICATE_ID' || message === '이미 있는 아이디입니다.') {
-        return language === 'eng' ? 'This ID is already in use.' : '이미 있는 아이디입니다.';
+        return t('thisIdIsAlreadyInUse');
     }
     if (message === 'DUPLICATE_PHONE' || message === '이미 가입된 전화번호입니다.' || message === '이미 사용 중인 전화번호입니다.') {
-        return language === 'eng' ? 'This phone number is already registered.' : '이미 가입된 전화번호입니다.';
+        return t('thisPhoneNumberIsAlreadyRegistered');
     }
     if (message === 'DUPLICATE_ACCOUNT' || message === '이미 가입된 계정입니다.') {
-        return language === 'eng' ? 'This account is already registered.' : '이미 가입된 계정입니다.';
+        return t('thisAccountIsAlreadyRegistered');
     }
     if (message.includes('서버') && message.includes('Firebase')) {
-        return language === 'eng'
-            ? 'Server Firebase settings are invalid. Check FIREBASE_PRIVATE_KEY in server/.env.'
-            : '서버 Firebase 설정이 올바르지 않습니다. server/.env의 FIREBASE_PRIVATE_KEY를 확인해 주세요.';
+        return t('serverFirebaseSettingsAreInvalidCheckFirebasePrivateKeyIn');
     }
     if (message.includes('전화번호 인증')) {
-        return language === 'eng' ? 'Please verify your phone number again.' : '전화번호 인증을 다시 완료해 주세요.';
+        return t('pleaseVerifyYourPhoneNumberAgain');
     }
     if (message.includes('일치하지')) {
-        return language === 'eng' ? 'The phone number does not match the verified number.' : '전화번호가 인증 정보와 일치하지 않습니다.';
+        return t('thePhoneNumberDoesNotMatchTheVerifiedNumber');
     }
     if (message.includes('매장')) {
-        return language === 'eng' ? 'Please enter both the store name and the branch name.' : '매장과 지점명을 같이 입력하세요.';
+        return t('pleaseEnterBothTheStoreNameAndTheBranchName');
     }
-    return language === 'eng' ? 'Failed to sign up.' : '회원가입에 실패했습니다.';
+    return t('failedToSignUp');
 }
 
 export function StoreSignUpPage() {
-    const { language } = useLanguage();
-    const navigate = useNavigate();
+    const { language, t } = useLanguage();
+    const router = useRouter();
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [phoneToken, setPhoneToken] = useState('');
@@ -273,21 +273,19 @@ export function StoreSignUpPage() {
         if (isSubmitting) return;
         const typedStore = String(new FormData(form).get('storeQuery') ?? storeInputRef.current?.value ?? '');
         if (!name.trim() || !phone.trim() || !id.trim() || !password) {
-            alert(language === 'eng' ? 'Please fill in all fields.' : '모든 항목을 입력해 주세요.');
+            alert(t('pleaseFillInAllFields'));
             return;
         }
         if (!typedStore.trim()) {
-            alert(language === 'eng'
-                ? 'Please enter both the store name and the branch name.'
-                : '매장과 지점명을 같이 입력하세요.');
+            alert(t('pleaseEnterBothTheStoreNameAndTheBranchName'));
             return;
         }
         if (!phoneToken) {
-            alert(language === 'eng' ? 'Please verify your phone number.' : '전화번호 인증을 완료해 주세요.');
+            alert(t('pleaseVerifyYourPhoneNumber'));
             return;
         }
         if (password !== passwordCheck) {
-            alert(language === 'eng' ? 'Passwords do not match.' : '비밀번호가 일치하지 않습니다.');
+            alert(t('passwordsDoNotMatch'));
             return;
         }
         setIsSubmitting(true);
@@ -295,9 +293,7 @@ export function StoreSignUpPage() {
             const latestStores = await fetchStores();
             const selectedStoreId = resolveStoreId(typedStore, latestStores);
             if (!selectedStoreId) {
-                alert(language === 'eng'
-                    ? 'Please enter both the store name and the branch name.'
-                    : '매장과 지점명을 같이 입력하세요.');
+                alert(t('pleaseEnterBothTheStoreNameAndTheBranchName'));
                 return;
             }
             let freshToken = phoneToken;
@@ -309,7 +305,7 @@ export function StoreSignUpPage() {
                 console.error(error);
             }
             if (!freshToken) {
-                alert(language === 'eng' ? 'Please verify your phone number again.' : '전화번호 인증을 다시 완료해 주세요.');
+                alert(t('pleaseVerifyYourPhoneNumberAgain'));
                 return;
             }
             await signupOwner({
@@ -319,8 +315,8 @@ export function StoreSignUpPage() {
                 password,
                 storeId: selectedStoreId
             }, freshToken);
-            alert(language === 'eng' ? 'Sign up completed.' : '회원가입이 완료되었습니다.');
-            navigate('/login');
+            alert(t('signUpCompleted'));
+            router.push('/login');
         } catch (error) {
             console.error(error);
             alert(getSignupErrorMessage(error, language));
@@ -336,32 +332,32 @@ export function StoreSignUpPage() {
                     <StoreIconFrame>
                         <StoreIcon src = '/coloredStoreIcon.png' alt = 'store icon' />
                     </StoreIconFrame>
-                    <Title> { language === 'eng' ? 'Store owner sign up' : '매장 사장님 회원가입' } </Title>
-                    <Description> { language === 'eng' ? 'Only the owner of the' : '사전 계약된 매장의 사장님만' } </Description>
-                    <Description> { language === 'eng' ? 'pre-contracted store can sign up.' : '회원가입 가능합니다.' } </Description>
+                    <Title> { t('storeOwnerSignUp') } </Title>
+                    <Description> { t('onlyTheOwnerOfThe') } </Description>
+                    <Description> { t('preContractedStoreCanSignUp') } </Description>
                 </LeftDiv>
                 <RightDiv onSubmit = {(event) => {
                     event.preventDefault();
                     void handleSubmit(event.currentTarget);
                 }}>
-                    <SignUpInput engTitle = 'Name' korTitle = '성함' engPlaceholder = 'Enter your full name.' korPlaceholder = '사장님 실명을 입력해주세요.'
+                    <SignUpInput title = { t('fullName') } placeholder = { t('enterYourFullName') }
                         value = { name } onChange = { setName } />
                     <PhoneVerification phone = { phone } onPhoneChange = {(value) => { setPhone(value); setPhoneToken(''); }} onVerified = { setPhoneToken } />
                     <SignUpSearchStore storeInputRef = { storeInputRef } />
                     <SignUpIdPasswordDiv>
-                        <SignUpIdInputWithDescription engTitle = 'ID' korTitle = '아이디' engPlaceholder = 'Enter your id.' korPlaceholder = '아이디를 입력해주세요.' engDescription = '4-20 characters including number, lowercase eng letter' korDescription = '영문 소문자, 숫자 포함 4-20자'
+                        <SignUpIdInputWithDescription title = { t('id') } placeholder = { t('enterYourIdField') } description = { t('idRuleDetail') }
                             value = { id } onChange = { setId } />
-                        <SignUpPasswordInputWithDescription engTitle = 'Password' korTitle = '비밀번호' engPlaceholder = 'Enter your password.' korPlaceholder = '비밀번호를 입력해주세요.' engDescription = '8-20 characters including number, eng letter' korDescription = '영문자, 숫자 포함 8-20자'
+                        <SignUpPasswordInputWithDescription title = { t('password') } placeholder = { t('enterYourPasswordField') } description = { t('passwordRuleDetail') }
                             value = { password } onChange = { setPassword } />
-                        <SignUpPasswordInputWithDescription engTitle = 'Check' korTitle = '비밀번호 확인' engPlaceholder = 'Enter your password again.' korPlaceholder = '비밀번호를 다시 입력해주세요.'
+                        <SignUpPasswordInputWithDescription title = { t('checkPassword') } placeholder = { t('enterYourPasswordAgain') }
                             value = { passwordCheck } onChange = { setPasswordCheck } matchWith = { password } />
                     </SignUpIdPasswordDiv>
                     <ButtonRow>
-                        <CancelButton type = 'button' onClick = {() => navigate('/login')}>
-                            { language === 'eng' ? 'Cancel' : '취소' }
+                        <CancelButton type = 'button' onClick = {() => router.push('/login')}>
+                            { t('cancel') }
                         </CancelButton>
                         <SignUpButton type = 'submit' disabled = { isSubmitting }>
-                            { language === 'eng' ? 'Submit' : '제출' }
+                            { t('submit') }
                         </SignUpButton>
                     </ButtonRow>
                 </RightDiv>

@@ -1,6 +1,7 @@
-import styled from 'styled-components';
+import { getT } from '../../i18n'
+import styled from 'styled-components'
 
-import type Language from '../../types/Language';
+import type Language from '../../types/Language'
 
 const HeaderTitleStyled = styled.div<{ $compactOnMobile?: boolean }>`
     display: flex;
@@ -82,16 +83,17 @@ interface HeaderTitleProps {
 }
 
 export function HeaderTitle({ language, breakSubtitleOnMobile = false, compactOnMobile = false }: HeaderTitleProps) {
+    const t = getT(language);
     return(
         <HeaderTitleStyled $compactOnMobile = { compactOnMobile } onClick = {() => window.location.reload()}>
             <HeaderIcon $compactOnMobile = { compactOnMobile } src = '/headerIcon.png' alt = 'Outstanding Spots' />
             <HeaderTitleDiv>
                 <BoldText $compactOnMobile = { compactOnMobile }> Outstanding Spots </BoldText>
                 <SubText $compactOnMobile = { compactOnMobile }>
-                    { language === 'eng' ? 'SUNY Korea Nearby Partner Stores' : 'SUNY Korea 주변 제휴 매장' }
+                    { t('sunyKoreaNearbyPartnerStores') }
                     {' '}
                     <MobileBreak $show = { breakSubtitleOnMobile } />
-                    { language === 'eng' ? 'Info' : '안내 서비스' }
+                    { t('info') }
                 </SubText>
             </HeaderTitleDiv>
         </HeaderTitleStyled>

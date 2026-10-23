@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import styled from 'styled-components';
+import { useState } from 'react'
+import styled from 'styled-components'
 
-import { LoginForm } from '../organisms/LoginForm';
-import { useLanguage } from '../../contexts/LanguageContext';
+import { LoginForm } from '../organisms/LoginForm'
+import { useLanguage } from '../../contexts/LanguageContext'
 
 const LoginPageStyled = styled.div`
     position: relative;
@@ -107,7 +107,7 @@ const FormSlot = styled.div<{ $showOnNarrow: boolean }>`
 `;
 
 export function LoginPage() {
-    const { language } = useLanguage();
+    const { t } = useLanguage();
     const [responsiveRole, setResponsiveRole] = useState<'student' | 'store'>('student');
 
     return(
@@ -117,22 +117,22 @@ export function LoginPage() {
                     <RoleToggleThumb $role = { responsiveRole } />
                     <RoleToggleButton type = 'button' $active = { responsiveRole === 'student' }
                         onClick = {() => setResponsiveRole('student')}>
-                        { language === 'eng' ? 'Student' : '학생' }
+                        { t('student') }
                     </RoleToggleButton>
                     <RoleToggleButton type = 'button' $active = { responsiveRole === 'store' }
                         onClick = {() => setResponsiveRole('store')}>
-                        { language === 'eng' ? 'Owner' : '사장님' }
+                        { t('owner') }
                     </RoleToggleButton>
                 </RoleToggle>
                 <FormSlot $showOnNarrow = { responsiveRole === 'student' }>
-                    <LoginForm who = { language === 'eng' ? 'Student Login' : '학생 로그인' }
-                        onlyForWho = { language === 'eng' ? 'Only for SUNY Korea students' : '한국뉴욕주립대학교 학생만 가능합니다.' }
+                    <LoginForm who = { t('studentLogin') }
+                        onlyForWho = { t('onlyForSunyKoreaStudents') }
                         loginRole = 'student' />
                 </FormSlot>
                 <LoginBackgroundImage src = '/loginBackgroundImage.png' alt = 'loginBackgroundImage' />
                 <FormSlot $showOnNarrow = { responsiveRole === 'store' }>
-                    <LoginForm who = { language === 'eng' ? 'Owner Login' : '사장님 로그인' }
-                        onlyForWho = { language === 'eng' ? 'Only for pre-contracted stores' : '사전에 계약된 매장 직원만 가능합니다.' }
+                    <LoginForm who = { t('ownerLogin') }
+                        onlyForWho = { t('onlyForPreContractedStores') }
                         loginRole = 'store' />
                 </FormSlot>
             </LoginMain>

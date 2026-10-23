@@ -1,9 +1,9 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import { StoreInformation } from '../molecules/StoreInformation';
-import type Store from '../../types/Store';
-import type Language from '../../types/Language';
-import { ExitContainer } from '../molecules/ExitContainer';
+import { StoreInformation } from '../molecules/StoreInformation'
+import type Store from '../../types/Store'
+import type Language from '../../types/Language'
+import { ExitContainer } from '../molecules/ExitContainer'
 
 const StoreInformationTabStyled = styled.div`
     position: relative;

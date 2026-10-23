@@ -1,7 +1,8 @@
-import styled from 'styled-components';
+import { localized } from '../../lib/localized'
+import styled from 'styled-components'
 
-import type Store from '../../types/Store';
-import type Language from '../../types/Language';
+import type Store from '../../types/Store'
+import type Language from '../../types/Language'
 
 const AutocompleteList = styled.div`
     pointer-events: none;
@@ -46,7 +47,7 @@ export function Autocomplete({ language, matchDataList, nowIndex, onSelectStore 
                         onSelectStore(store)
                     }}
                 >
-                    {language === 'eng' ? store.name.eng : store.name.kor}
+                    {localized(store.name, language)}
                 </div>
             ))}
         </AutocompleteList>

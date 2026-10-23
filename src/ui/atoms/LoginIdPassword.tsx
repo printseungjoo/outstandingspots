@@ -1,9 +1,9 @@
-import styled from 'styled-components';
-import { byPrefixAndName } from '../../icon/icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState } from 'react';
+import styled from 'styled-components'
+import { byPrefixAndName } from '../../icon/icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useState } from 'react'
 
-import { useLanguage } from '../../contexts/LanguageContext';
+import { useLanguage } from '../../contexts/LanguageContext'
 
 const LoginIdStyled = styled.div`
     width: 100%;
@@ -84,7 +84,7 @@ interface LoginIdPasswordProps {
 }
 
 export function LoginIdPassword({ onIdChange, onPasswordChange }: LoginIdPasswordProps) {
-    const { language } = useLanguage();
+    const { t } = useLanguage();
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
     const handleIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -99,11 +99,11 @@ export function LoginIdPassword({ onIdChange, onPasswordChange }: LoginIdPasswor
         <>
             <LoginIdStyled>
                 <ColoredMyPageIcon icon = {byPrefixAndName.fad['user']} />
-                <LoginIdInput type = 'text' placeholder = {language === 'eng' ? 'Enter your ID' : 'ID를 입력해주세요'} onChange = { handleIdChange } />
+                <LoginIdInput type = 'text' placeholder = {t('enterYourId')} onChange = { handleIdChange } />
             </LoginIdStyled>
             <LoginPasswordStyled>
                 <Icon icon = {byPrefixAndName.fas['lock']} />
-                <LoginPasswordInput type = { showPassword ? 'text' : 'password' } placeholder = {language === 'eng' ? 'Enter your password' : '비밀번호를 입력해주세요'} onChange = { handlePasswordChange } />
+                <LoginPasswordInput type = { showPassword ? 'text' : 'password' } placeholder = {t('enterYourPassword')} onChange = { handlePasswordChange } />
                 <ToggleIcon icon = {byPrefixAndName.far['eye']} onClick = {() => setShowPassword((visible) => !visible)} />
             </LoginPasswordStyled>
         </>

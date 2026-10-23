@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
+import { localized } from '../../lib/localized'
+import { useEffect, useRef, useState } from 'react'
+import styled from 'styled-components'
 
-import { useCategories } from '../../contexts/CategoryContext';
-import { useLanguage } from '../../contexts/LanguageContext';
+import { useCategories } from '../../contexts/CategoryContext'
+import { useLanguage } from '../../contexts/LanguageContext'
 
 const AdminStoreSearchByCategoryStyled = styled.div`
     min-width: 0;
@@ -98,10 +99,10 @@ interface AdminStoreSearchByCategoryProps {
 
 export function AdminStoreSearchByCategory({ selectedCategory, onChangeSelectedCategory }: AdminStoreSearchByCategoryProps) {
     const { categories } = useCategories();
-    const { language } = useLanguage();
+    const { language, t } = useLanguage();
     const [open, setOpen] = useState(false);
     const wrapRef = useRef<HTMLDivElement>(null);
-    const allLabel = language === 'eng' ? 'All' : '전체';
+    const allLabel = t('all');
     const selectedLabel = selectedCategory === 'all'
         ? allLabel
         : (categories.find((category) => category.name.kor === selectedCategory)?.name[language] ?? allLabel);
@@ -118,7 +119,7 @@ export function AdminStoreSearchByCategory({ selectedCategory, onChangeSelectedC
 
     return(
         <AdminStoreSearchByCategoryStyled>
-            <Text> { language === 'eng' ? 'Filter' : '필터' } </Text>
+            <Text> { t('filter') } </Text>
             <SearchDiv ref = { wrapRef }>
                 <SelectButton type = 'button' onClick = {() => setOpen((value) => !value)}>
                     { selectedLabel }
@@ -138,7 +139,7 @@ export function AdminStoreSearchByCategory({ selectedCategory, onChangeSelectedC
                                     onChangeSelectedCategory(category.name.kor);
                                     setOpen(false);
                                 }}>
-                                { language === 'eng' ? category.name.eng : category.name.kor }
+                                { localized(category.name, language) }
                             </OptionItem>
                         ))}
                     </OptionsList>

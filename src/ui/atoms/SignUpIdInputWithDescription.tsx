@@ -1,8 +1,7 @@
-import styled from 'styled-components';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import styled from 'styled-components'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-import { useLanguage } from '../../contexts/LanguageContext';
-import { byPrefixAndName } from '../../icon/icons';
+import { byPrefixAndName } from '../../icon/icons'
 
 const SignUpIdInputWithDescriptionStyled = styled.div`
     box-sizing: border-box;
@@ -81,30 +80,26 @@ function isValidOwnerId(value: string) {
 }
 
 interface SignUpIdInputWithDescriptionProps {
-    engTitle: string;
-    korTitle: string;
-    engPlaceholder: string;
-    korPlaceholder: string;
-    engDescription?: string;
-    korDescription?: string;
+    title: string;
+    placeholder: string;
+    description?: string;
     value?: string;
     onChange?: (value: string) => void;
     hideHintOnNarrow?: boolean;
 }
 
-export function SignUpIdInputWithDescription({ engTitle, korTitle, engPlaceholder, korPlaceholder, engDescription, korDescription, value, onChange, hideHintOnNarrow }: SignUpIdInputWithDescriptionProps) {
-    const { language } = useLanguage();
+export function SignUpIdInputWithDescription({ title, placeholder, description, value, onChange, hideHintOnNarrow }: SignUpIdInputWithDescriptionProps) {
     const typed = (value ?? '').length > 0;
     const valid = isValidOwnerId(value ?? '');
 
     return(
         <SignUpIdInputWithDescriptionStyled>
-            <Title> { language === 'eng' ? engTitle : korTitle } </Title>
+            <Title> { title } </Title>
             <InputField>
-                <Input type = "text" value = { value } placeholder = { language === 'eng' ? engPlaceholder : korPlaceholder }
+                <Input type = "text" value = { value } placeholder = { placeholder }
                     onChange = {(e) => onChange?.(e.target.value)} />
                 <DescriptionRow $hideOnNarrow = { hideHintOnNarrow }>
-                    <Description> { language === 'eng' ? engDescription : korDescription } </Description>
+                    <Description> { description } </Description>
                     {typed && (<ValidityIcon icon = { valid ? byPrefixAndName.fas.check : byPrefixAndName.fas.xmark } $valid = { valid } />)}
                 </DescriptionRow>
             </InputField>

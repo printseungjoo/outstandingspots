@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 const ToggleButtonStyled = styled.div`
     display: flex;

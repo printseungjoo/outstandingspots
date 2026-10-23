@@ -1,5 +1,6 @@
-import type Store from '../types/Store';
-import type Language from '../types/Language';
+import { localizedName } from './localized'
+import type Store from '../types/Store'
+import type Language from '../types/Language'
 
 function normalizeStoreText(value: string) {
     return value.trim().replace(/\s+/g, ' ').toLowerCase().normalize('NFC');
@@ -10,15 +11,7 @@ function compactStoreText(value: string) {
 }
 
 export function storeFullName(store: Store, language: Language) {
-    const name = ((language === 'eng' ? store.name?.eng : store.name?.kor) ?? '').trim();
-    const branch = ((language === 'eng' ? store.branch?.eng : store.branch?.kor) ?? '').trim();
-    if (!branch) {
-        return name;
-    }
-    if (name.endsWith(branch)) {
-        return name;
-    }
-    return `${name} ${branch}`;
+    return localizedName(store, language);
 }
 
 function storeLabels(store: Store) {

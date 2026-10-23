@@ -1,9 +1,9 @@
-import styled from 'styled-components';
-import { useContext } from 'react';
+import styled from 'styled-components'
+import { useContext } from 'react'
 
-import { Languages } from '../atoms/Languages';
-import type Language from '../../types/Language';
-import { LanguageContext } from '../../contexts/LanguageContext';
+import { Languages } from '../atoms/Languages'
+import type Language from '../../types/Language'
+import { LanguageContext } from '../../contexts/LanguageContext'
 
 const LanguageButton = styled.div`
     display: inline-flex;

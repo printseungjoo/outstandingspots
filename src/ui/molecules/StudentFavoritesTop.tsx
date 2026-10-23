@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import { useLanguage } from '../../contexts/LanguageContext';
+import { useLanguage } from '../../contexts/LanguageContext'
 
 const StudentFavoritesTopStyled = styled.div`
     width: 100%;
@@ -32,15 +32,13 @@ const SubText = styled.p`
 `;
 
 export function StudentFavoritesTop() {
-    const { language } = useLanguage();
+    const { t } = useLanguage();
 
     return(
         <StudentFavoritesTopStyled>
             <TitleDiv>
-                <BoldText> { language === 'eng' ? 'Favorite stores' : '즐겨찾기한 매장' } </BoldText>
-                <SubText> { language === 'eng'
-                    ? 'Shows the stores you favorited on the map page.'
-                    : '지도 페이지에서 즐겨찾기를 누른 매장들을 보여줍니다.' } </SubText>
+                <BoldText> { t('favoriteStores') } </BoldText>
+                <SubText> { t('showsTheStoresYouFavoritedOnTheMapPage') } </SubText>
             </TitleDiv>
         </StudentFavoritesTopStyled>
     )

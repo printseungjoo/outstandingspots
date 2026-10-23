@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import { useLanguage } from '../../contexts/LanguageContext';
+import { useLanguage } from '../../contexts/LanguageContext'
 
 const AdminStoreSearchStyled = styled.div`
     min-width: 0;
@@ -78,11 +78,11 @@ interface AdminStoreSearchProps {
 }
 
 export function AdminStoreSearch({ searchValue, onChangeSearchValue }: AdminStoreSearchProps) {
-    const { language } = useLanguage();
+    const { language, t } = useLanguage();
 
     return(
         <AdminStoreSearchStyled>
-            <Text> {language === 'eng' ? 'Search' : '검색'} </Text>
+            <Text> {t('search')} </Text>
             <SearchDiv>
                 <SearchBarDiv>
                     <SearchIcon> 🔍 </SearchIcon>
