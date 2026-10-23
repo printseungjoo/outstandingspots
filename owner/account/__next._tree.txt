@@ -1,0 +1,5 @@
+:HL["/_next/static/chunks/1fbmoo-1ibmia.css","style"]
+3:[["children",{"s":"__PAGE__","h":160}]]
+2:[["children",{"s":"account","h":96,"c":"$Q3"}]]
+1:[["children",{"s":"owner","h":96,"c":"$Q2"}]]
+0:{"b":"0qqxdR-zF6UEFlR0GGR7P","t":{"t":{"s":"","h":80,"c":"$Q1"}}}
